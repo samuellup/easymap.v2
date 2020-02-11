@@ -88,6 +88,15 @@ f3=$project_name/3_workflow_output
 my_status_file=$f2/status
 echo 'pid workflow '$$ >> $my_status_file
 
+#Check genome size to set interval_width
+{
+	interval_width=`python2 $location/scripts_snp/set-interval.py -a $f1/$my_gs`
+} || {
+	interval_width=4000000
+	echo $(date "+%F > %T")': set-interval.py failed.' >> $my_log_file
+}
+echo $(date "+%F > %T")': set-interval.py finished.' >> $my_log_file
+
 
 ##################################################################################################################################################################################
 #																																												 #
@@ -112,7 +121,7 @@ echo $(date "+%F > %T")': HISAT2-build finished.' >> $my_log_file
 function get_problem_va {  
 	if [ $my_sample_mode == se ] 
 	then
-		#Run hisat2 unpaired to align raw F2 reads to genome 
+		#Run hisat2 unpaired to align raw reads to genome 
 		{
 			$location/hisat2/hisat2 -p $threads -x $f1/$my_ix -U $my_rd -S $f1/alignment1.sam 2> $f2/hisat2_problem-sample_std2.txt
 
@@ -127,7 +136,7 @@ function get_problem_va {
 
 	if [ $my_sample_mode == pe ] 
 	then
-		#Run hisat2 paired to align raw F2 reads to genome 
+		#Run hisat2 paired to align raw reads to genome 
 		{
 			$location/hisat2/hisat2  -p $threads  -x $f1/$my_ix -1 $my_rf -2 $my_rr -S $f1/alignment1.sam 2> $f2/hisat2_problem-sample_std2.txt
 
@@ -227,7 +236,7 @@ function get_problem_va {
 function get_control_va { 
 	if [ $my_control_mode == se ] 
 	then
-		#Run hisat2 unpaired to align raw F2 reads to genome 
+		#Run hisat2 unpaired to align raw reads to genome 
 		{
 			$location/hisat2/hisat2  -p $threads  -x $f1/$my_ix -U $my_p_rd -S $f1/alignment1P.sam 2> $f2/hisat2_control-sample_std2.txt
 
@@ -242,7 +251,7 @@ function get_control_va {
 
 	if [ $my_control_mode == pe ] 
 	then
-		#Run hisat2 paired to align raw F2 reads to genome 
+		#Run hisat2 paired to align raw reads to genome 
 		{
 			$location/hisat2/hisat2  -p $threads -x $f1/$my_ix -1 $my_p_rf -2 $my_p_rr -S $f1/alignment1P.sam 2> $f2/hisat2_control-sample_std2.txt
 
@@ -451,7 +460,7 @@ function cr_analysis {
 	# python2 ./graphic_output/graphic-output.py -my_mut snp -asnp ./user_projects/project/1_intermediate_files/F2_control_comparison_drawn.va -bsnp ./user_projects/project/1_intermediate_files/gnm_ref_merged/genome.fa -rrl 150 -iva ./user_projects/project/1_intermediate_files/varanalyzer_output.txt -gff ./user_data/complete.gff -pname user_projects/project  -cross bc -snp_analysis_type par  
 	# (6) Create graphic output
 	{
-		python2 $location/graphic_output/graphic-output.py -my_mut $my_mut -asnp $f1/F2_control_comparison_drawn.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $project_name/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $project_name  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
+		python2 $location/graphic_output/graphic-output.py -my_mut $my_mut -interval_width $interval_width -asnp $f1/F2_control_comparison_drawn.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $project_name/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $project_name  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
 		
 	} || {
 		echo $(date "+%F > %T")': Error during execution of graphic-output.py .' >> $my_log_file

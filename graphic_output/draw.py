@@ -19,6 +19,7 @@ parser.add_argument('-f', action="store", dest = 'output_html')
 #Arguments for point mutation mapping graphic output
 parser.add_argument('-asnp', action="store", dest = 'input_snp')		
 parser.add_argument('-bsnp', action="store", dest = 'input_f_snp')		#Fasta genome input
+parser.add_argument('-interval_width', action="store", dest = 'interval_width')
 
 #Arguments for large insertions mapping graphic output
 parser.add_argument('-a', action="store", dest = 'input')		
@@ -557,15 +558,40 @@ def candidates_zoom():
 	
 	#Axis rulers_____________________
 	#X Axis
-	mark = 68
-	mark_2 = 68 + 500000/scaling_factor_x/5
-	x_tag = int(reg_min)
-	while mark in range(68, wide-50):
-		draw.line((mark, int(81/100.0*height) ) + (mark, int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)	
-		w, h = draw.textsize(str(x_tag))
-		draw.text(((mark - w/2 -4), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
-		mark = mark + 500000/scaling_factor_x
-		x_tag = x_tag + 500000
+	interval_width = int(args.interval_width)
+	if interval_width == 4000000:
+		mark = 68
+		mark_2 = 68 + 500000/scaling_factor_x/5
+		x_tag = int(reg_min)
+		while mark in range(68, wide-50):
+			draw.line((mark, int(81/100.0*height) ) + (mark, int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)	
+			w, h = draw.textsize(str(x_tag))
+			draw.text(((mark - w/2 -4), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
+			mark = mark + 500000/scaling_factor_x
+			x_tag = x_tag + 500000
+
+	if interval_width == 20000000:
+		mark = 68
+		mark_2 = 68 + 4000000/scaling_factor_x/5
+		x_tag = int(reg_min)
+		while mark in range(68, wide-50):
+			draw.line((mark, int(81/100.0*height) ) + (mark, int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)
+			w, h = draw.textsize(str(x_tag))
+			draw.text(((mark - w/2 -4), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
+			mark += 4000000/scaling_factor_x
+			x_tag += 4000000
+
+	if interval_width == 10000000:
+		mark = 68
+		mark_2 = 68 + 2000000/scaling_factor_x/5 
+		x_tag = int(reg_min)
+		while mark in range(68, wide-50):
+			draw.line((mark, int(81/100.0*height) ) + (mark, int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)
+			w, h = draw.textsize(str(x_tag))
+			draw.text(((mark - w/2 -4), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
+			mark += 2000000/scaling_factor_x
+			x_tag += 2000000
+
 
 	#Y axis
 	fa_img_0 = int(80/100.0*height) - int(0/scaling_factor_y) -1
