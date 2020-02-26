@@ -31,7 +31,10 @@ for chromosome in ch:
 	if int(ch[chromosome]) > 4000000:
 		n_chr += 1
 		tot_len += int(ch[chromosome])
-av_chr = tot_len/n_chr
+try:
+	av_chr = tot_len/n_chr
+except:
+	av_chr = 40000000
 
 #Sets default interval with as 4mb and switches it in three categories accodding to average chromosome size
 interval_width = 4000000
