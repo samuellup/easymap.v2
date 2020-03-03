@@ -727,7 +727,7 @@ if mut_type == 'snp':
 	for f in sorted(files):
 		if 'candidates' in str(f) and 'zoom' in str(f):
 			output.write(
-			'		<p>Zooming-in the window containing the candidate polymorphisms, including only typical EMS changes. </p>' + '\n'
+			'		<p>Zooming-in the window containing the candidate polymorphisms. </p>' + '\n'
 			'		<left> <img class="img" src="'  +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" > </left>' + '\n'
 			)
 			
