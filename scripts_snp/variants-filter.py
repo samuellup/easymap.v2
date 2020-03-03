@@ -35,9 +35,9 @@ f2 = open(output, 'w')
 step = args.step
 
 #_________________________________CANDIDATE REGION FILTER___________________________________________________________________________________
-if step == '1':
+if step == '1' or step == '5':
 	pass
-elif step == '2':
+elif step == '2' or step == '4':
 	f3 = open(args.cand_reg_file, 'r')
 	f3lines = f3.readlines()
 	for i, line in enumerate(f3lines):
@@ -73,14 +73,15 @@ def limits():
 
 chromosome = args.chr
 
-if step == '1' or step == '2':
+if step == '1' or step == '2' or step == '4' or step == '5':
 	for i, line in enumerate(lines):
 		if not line.startswith('#'):
 			sp = line.split('\t')
+			ref_b = sp[2]
+			alt_b = sp[3]
+
 			if args.mut_type.strip() == 'EMS' and ((str(sp[0].strip())  in chromosome) or (chromosome[0] == '*')): 
 				limits()
-				ref_b = sp[2]
-				alt_b = sp[3]
 				if (
 						(selector == 1)
 						and ((ref_b.strip() == 'G' and alt_b.strip() == 'A')
@@ -90,9 +91,24 @@ if step == '1' or step == '2':
 						
 			elif args.mut_type.strip() == 'all' and ((str(sp[0].strip())  in chromosome) or (chromosome[0] == '*')):
 				limits()
-				if selector == 1: 
+				if selector == 1 and step =='2': 
 					f2.write(line)	
+
+				if selector == 1 and step == '4':
+					if len(ref_b) > 1 or len(alt_b) > 1:
+						f2.write(line)
+                                if selector == 1 and step == '5':
+                                        if len(ref_b) > 1 or len(alt_b) > 1:
+                                                f2.write(line)
+
+
 	f2.close()
+
+
+
+
+
+
 
 if step == '3':
 	# Function to parse fasta file (based on one of the Biopython IOs)

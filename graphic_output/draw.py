@@ -1607,10 +1607,20 @@ def gene_plot():
 			else:
 				aach = 'no'
 
-			#Base change
-			draw.text((int(snp_pos - int(0.036*wide)), int(0.67*height)), (
-				str(p[4][3]) +   '        '  +
-				str(p[4][4])), font=fnt4, fill=(0,0,0,255))   
+			#Base change # SDL V2 update - fix for indels
+			msg_1 = str(p[4][3])
+			msg_2 = str(p[4][4])
+			w1, h1 = draw.textsize(msg_1, font=fnt4)
+			w2, h2 = draw.textsize(msg_2, font=fnt4)
+
+			draw.text(((  snp_pos - (w1 + 22)   ),(int(0.67*height))), msg_1, font=fnt4, fill=(0,0,0,255))
+                        draw.text(((  snp_pos +       31    ),(int(0.67*height))), msg_2, font=fnt4, fill=(0,0,0,255))
+
+			# Deprecated
+			#draw.text((int(snp_pos - (int(0.036*wide) + 16*(len(str(p[4][3]).strip())-1) )), int(0.67*height)), (
+			#	str(p[4][3]) +   '        '  +
+			#	str(p[4][4])), font=fnt4, fill=(0,0,0,255))   
+
 
 			#Arrows
 			#Base

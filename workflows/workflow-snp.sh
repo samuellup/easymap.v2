@@ -65,7 +65,7 @@ snp_analysis_type=${18}
 stringency=${20}
 
 #Set number of maximum CPU for steps compatible with multithreading, default = 1 
-threads=1
+threads=2
 
 # Set internal variables according to the SNP validation stringency chosen by the user
 if [ $stringency == high_stringency ]; then
@@ -373,9 +373,12 @@ function depth_alignment {
 
 function cr_analysis {
 
-	# Run vcf filter, selecting snps in the candidate region defined by map-mutation.py, with an alelic frequence > 0.8 and corresponding to EMS mutations
+	# Run vcf filter, selecting snps in the candidate region defined by map-mutation.py, with an alelic frequence > 0.8 and corresponding to EMS mutations # SDL V2 Update - Manages indels
 	{
+		python2 $location/scripts_snp/variants-operations.py -a $f1/F2_raw.va -b $f1/control_raw.va -c $f1/F2_control_comparison_raw.va -mode A -primary 1  2>> $my_log_file
 		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison.va -b $f1/final_variants.va -step 2 -cand_reg_file $f1/map_info.txt -af_min 0.8 -mut_type EMS  2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison_raw.va -b $f1/final_indels.va -step 4 -cand_reg_file $f1/map_info.txt -af_min 0.8 -mut_type all  2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison_raw.va -b $f1/final_indels_total.va -step 5 -cand_reg_file $f1/map_info.txt -af_min 0.8 -mut_type all  2>> $my_log_file
 
 	} || {
 		echo $(date "+%F > %T")': Error during the second execution of variants-filter.py .' >> $my_log_file
@@ -388,7 +391,9 @@ function cr_analysis {
 	# Create input for varanalyzer and run varanalyzer.py (one file for the candidate region and one for the whole genome)
 	{
 		python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/final_variants.va -b $f1/snp-to-varanalyzer.txt  2>> $my_log_file
-		python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/F2_control_comparison.va -b $f1/snp-to-varanalyzer-total.txt  2>> $my_log_file
+		python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/F2_control_comparison.va -b $f1/snp-to-varanalyzer-total.txt  2>> $my_log_file		
+		python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/final_indels.va -b $f1/indel-to-varanalyzer.txt  2>> $my_log_file
+		python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/final_indels_total.va -b $f1/indel-to-varanalyzer-total.txt  2>> $my_log_file
 
 	} || {
 		echo $(date "+%F > %T")': Error during execution of snp-to-varanalyzer.py .' >> $my_log_file
@@ -399,8 +404,10 @@ function cr_analysis {
 	echo $(date "+%F > %T")': Input for varanalyzer finished.' >> $my_log_file
 	# Varanalyzer
 	{
-		python2 $location/varanalyzer/varanalyzer.py -itp snp -con $f1/$my_gs -gff $f0/$my_gff -var $f1/snp-to-varanalyzer.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output.txt 2>> $my_log_file
-		python2 $location/varanalyzer/varanalyzer.py -itp snp -con $f1/$my_gs -gff $f0/$my_gff -var $f1/snp-to-varanalyzer-total.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_total.txt  2>> $my_log_file
+		python2 $location/varanalyzer/varanalyzer.py -itp snp -con $f1/$my_gs -gff $f0/$my_gff -var $f1/snp-to-varanalyzer.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_snp.txt 2>> $my_log_file
+		python2 $location/varanalyzer/varanalyzer.py -itp snp -con $f1/$my_gs -gff $f0/$my_gff -var $f1/snp-to-varanalyzer-total.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_total_temp.txt  2>> $my_log_file
+		touch $f1/varanalyzer_output_indel.txt ;       python2 $location/varanalyzer/varanalyzer.py -itp lim -con $f1/$my_gs -gff $f0/$my_gff -var $f1/indel-to-varanalyzer.txt       -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_indel.txt  2>> $my_log_file
+                touch $f1/varanalyzer_output_indel_total.txt ; python2 $location/varanalyzer/varanalyzer.py -itp lim -con $f1/$my_gs -gff $f0/$my_gff -var $f1/indel-to-varanalyzer-total.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_indel_total.txt  2>> $my_log_file
 
 	} || {
 		echo $(date "+%F > %T")': Error during execution of varanalyzer.py .' >> $my_log_file
@@ -409,6 +416,11 @@ function cr_analysis {
 		exit
 	}
 	echo $(date "+%F > %T")': Varanalyzer finished.' >> $my_log_file
+
+	#SDL V2 update
+	awk 'FNR>1' $f1/varanalyzer_output_snp.txt $f1/varanalyzer_output_indel.txt > $f1/varanalyzer_output.txt
+	awk 'FNR>1' $f1/varanalyzer_output_total_temp.txt $f1/varanalyzer_output_indel_total.txt > $f1/varanalyzer_output_total.txt
+
 
 	# Run primer generation script
 	{
@@ -421,8 +433,11 @@ function cr_analysis {
 	echo $(date "+%F > %T")': primer-generation.py finished.' >> $my_log_file
 	
 	# Run extend-snp-variants-info                                              --project-name $project_name
-	result_extend_snp_info=`python2 $location/scripts_snp/extend-snp-variants-info.py  --variants $f1/primer_generation_output.txt --snp-info $f1/snp-to-varanalyzer.txt --project-name $project_name --map-info $f1/map_info.txt --output-file $f3/candidate_variants.txt --region CR 2>> $my_log_file`
-	result_extend_snp_info=`python2 $location/scripts_snp/extend-snp-variants-info.py  --variants $f1/primer_generation_output_total.txt --snp-info $f1/snp-to-varanalyzer-total.txt --project-name $project_name --map-info $f1/map_info.txt --output-file $f3/candidate_variants_total.txt --region total 2>> $my_log_file`
+	# SDL V2 FIX
+	awk 'FNR>1' $f1/snp-to-varanalyzer-total.txt $f1/indel-to-varanalyzer-total.txt > $f1/variants-to-varanalyzer-total.txt 
+	awk 'FNR>1' $f1/snp-to-varanalyzer.txt $f1/indel-to-varanalyzer.txt > $f1/variants-to-varanalyzer.txt 
+	result_extend_snp_info=`python2 $location/scripts_snp/extend-snp-variants-info.py  --variants $f1/primer_generation_output.txt --snp-info $f1/variants-to-varanalyzer.txt --project-name $project_name --map-info $f1/map_info.txt --output-file $f3/candidate_variants.txt --region CR 2>> $my_log_file`
+	result_extend_snp_info=`python2 $location/scripts_snp/extend-snp-variants-info.py  --variants $f1/primer_generation_output_total.txt --snp-info $f1/variants-to-varanalyzer-total.txt --project-name $project_name --map-info $f1/map_info.txt --output-file $f3/candidate_variants_total.txt --region total 2>> $my_log_file`
 	
 	if [ $result_extend_snp_info == 'success' ]; then
 		echo $(date "+%F > %T")": extend-snp-variants-info.py finished." >> $my_log_file
