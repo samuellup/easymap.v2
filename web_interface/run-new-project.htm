@@ -120,7 +120,22 @@ body {font-size:16px;}
 			
 			<div id="backgroundCrossCtype" style="display:none;"> <!-- Not displayed by default -->
 				<hr style="width: 100%; border: 2px solid rgb(150,150,150)" class="w3-round">
-				
+					
+				Expected mutation type:
+				<div class="buttons-wrap">
+					<div class="mx-button">
+						<input type="radio" class="mutType" name="mxMT" id="button47" />
+						<label for="button47" unselectable>EMS mutation</label>
+					</div>
+					<div class="mx-button">
+						<input type="radio" class="mutType" name="mxMT" id="button48" />
+						<label for="button48" unselectable>All mutations</label>
+					</div>
+					<div class="clear-floats"></div>
+				</div>
+				<div id="mutTypeValidationInfo" class="warningMessage"></div>
+
+
 				Mutant background:
 				<div class="buttons-wrap">
 					<div class="mx-button">

@@ -87,13 +87,15 @@ if step == '1' or step == '2' or step == '4' or step == '5':
 						and ((ref_b.strip() == 'G' and alt_b.strip() == 'A')
 						or (ref_b.strip() == 'C' and alt_b.strip() == 'T'))
 					):
-						f2.write(line)
+						if step !='4' and step !='5':
+							f2.write(line)
 						
 			elif args.mut_type.strip() == 'all' and ((str(sp[0].strip())  in chromosome) or (chromosome[0] == '*')):
 				limits()
 				if selector == 1 and step =='2': 
-					f2.write(line)	
-
+					f2.write(line)
+				if selector == 1 and step =='1':
+					f2.write(line)
 				if selector == 1 and step == '4':
 					if len(ref_b) > 1 or len(alt_b) > 1:
 						f2.write(line)

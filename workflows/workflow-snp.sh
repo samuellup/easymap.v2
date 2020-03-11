@@ -63,9 +63,10 @@ my_mutbackgroud=${16}											#ref / noref : genetic background of the mutatio
 my_pseq=${17}													#mut / nomut : sequenced parental provided is the mutagenized one or the other		
 snp_analysis_type=${18}
 stringency=${20}
+exp_mut_type=${21}
 
 #Set number of maximum CPU for steps compatible with multithreading, default = 1 
-threads=2
+threads=1
 
 # Set internal variables according to the SNP validation stringency chosen by the user
 if [ $stringency == high_stringency ]; then
@@ -197,7 +198,7 @@ function get_problem_va {
 	depth_alignment $f1/alignment1.bam $f3/frequence_depth_alignment_distribution_sample.png
 
 	#Run vcf filter
-	if [ $my_cross == bc ]; then mut_type=EMS ; fi
+	if [ $my_cross == bc ]; then mut_type=all ; fi		#SDL V2 Update, prev: then mut_type=EMS
 	if [ $my_cross == oc ]; then mut_type=all ; fi
 
 	if [ $av_rd -gt 25 ]; then dp_min=15 ; fi
@@ -208,7 +209,7 @@ function get_problem_va {
 
 
 	{
-		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_raw.va -b $f1/F2_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -dp_max $dp_max -qual_min $problemSample_snpQualityTheshold -mut_type $mut_type  2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_raw.va -b $f1/F2_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -dp_max $dp_max -qual_min $problemSample_snpQualityTheshold -mut_type all  2>> $my_log_file
 
 	} || {
 		echo 'Error during execution of variants-filter.py with F2 data.' >> $my_log_file
@@ -376,8 +377,8 @@ function cr_analysis {
 	# Run vcf filter, selecting snps in the candidate region defined by map-mutation.py, with an alelic frequence > 0.8 and corresponding to EMS mutations # SDL V2 Update - Manages indels
 	{
 		python2 $location/scripts_snp/variants-operations.py -a $f1/F2_raw.va -b $f1/control_raw.va -c $f1/F2_control_comparison_raw.va -mode A -primary 1  2>> $my_log_file
-		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison.va -b $f1/final_variants.va -step 2 -cand_reg_file $f1/map_info.txt -af_min 0.8 -mut_type EMS  2>> $my_log_file
-		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison_raw.va -b $f1/final_indels.va -step 4 -cand_reg_file $f1/map_info.txt -af_min 0.8 -mut_type all  2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison.va -b $f1/final_variants.va -step 2 -cand_reg_file $f1/map_info.txt -af_min 0.8 -mut_type $exp_mut_type  2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison_raw.va -b $f1/final_indels.va -step 4 -cand_reg_file $f1/map_info.txt -af_min 0.8 -mut_type $exp_mut_type  2>> $my_log_file
 		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison_raw.va -b $f1/final_indels_total.va -step 5 -cand_reg_file $f1/map_info.txt -af_min 0.8 -mut_type all  2>> $my_log_file
 
 	} || {

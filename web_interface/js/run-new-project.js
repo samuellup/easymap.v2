@@ -342,6 +342,26 @@ window.onload = function() {
 		document.getElementById("contTypeValidationInfo").style.display = "none";
 	}
 
+	// DEV - Mutation type: determine option button selected and define the appropiate command argument
+	function buttons_mutType() {
+		HideCheckoutBoxes();
+
+		var options = document.getElementsByClassName("mutType");
+		for (var i=0; i<options.length; i++) {
+			if (options[i].checked == true) {
+				var checkedOption = options[i].id;
+			}
+		}
+		if (checkedOption == 'button47') {
+			cmdArgs[24] = 'EMS';
+		} else {
+			cmdArgs[24] = 'all';
+		}
+		//updateCmd();
+		document.getElementById("mutTypeValidationInfo").style.display = "none";
+	}
+
+
 	// Check if combination of mutant background, cross performed, and origin of control reads, is supported
 	function checkBackgroundCrossCtypeIntermediateCheck() {
 		HideCheckoutBoxes();
@@ -799,8 +819,9 @@ window.onload = function() {
 							   "&control_parental=" + cmdArgs[19] +
 							   "&sim_mut=" + cmdArgs[20] +
 							   "&sim_recsel=" + cmdArgs[21] +
-							   "&sim_seq=" + cmdArgs[22] +
-							   "&stringency=" + cmdArgs[23];
+							   "&sim_seq=" + cmdArgs[22] + 
+							   "&stringency=" + cmdArgs[23] + "&exp_mut_type=" + cmdArgs[24];
+
 
 		//console.log('argsStringToPost: ' + argsStringToPost);
 
@@ -875,7 +896,7 @@ window.onload = function() {
 					'n/p','n/p','n/p','n/p',
 					'n/p','n/p','n/p','n/p',
 					'n/p','n/p','n/p','n/p',
-					'n/p','n/p','n/p','n/p'];
+					'n/p','n/p','n/p','n/p','n/p'];
 
 	// Create the command string for the first time (for development purposes only)
 	//updateCmd();
@@ -907,6 +928,8 @@ window.onload = function() {
 	document.getElementById("button15").onclick = buttons_contType;
 	document.getElementById("button16").onclick = buttons_contType;
 	document.getElementById("button17").onclick = buttons_contType;
+	document.getElementById("button47").onclick = buttons_mutType;
+       	document.getElementById("button48").onclick = buttons_mutType;
 
 	//React to interactions with reads selectors
 	document.getElementById("form1").readsProblemSelector.onclick = checkProblemReads;
@@ -926,6 +949,7 @@ window.onload = function() {
 
 	// React to interactions with button to check input and go to the gateway to run a new project
 	document.getElementById("checkFormButton").onclick = commandFinalCheck;
+
 
 	// React to interactions with button to run project
 	document.getElementById("runProjectButton").onclick = runProject;

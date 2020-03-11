@@ -26,6 +26,9 @@
 # [21] $sim_recsel										.                      rfd+pos+mod+nre
 # [22] $sim_seq											.                      rd+rl+fl+ber+gbs
 # [23] $stringency
+# [24] $exp_mut_type
+
+
 
 # sim-mut.py
 # nbr:		${20}[0]
@@ -93,6 +96,7 @@ sim_mut=${20}
 sim_recsel=${21}
 sim_seq=${22}
 stringency=${23}
+exp_mut_type=${24}
 
 ############################################################
 # Several necessary checking/preparation steps before actually running easymap
@@ -181,6 +185,8 @@ echo "Simulator (sim-mut.py) command:				" ${20} >> $my_log_file
 echo "Simulator (sim-recsel.py) command:			" ${21} >> $my_log_file
 echo "Simulator (sim-seq.py) command:				" ${22} >> $my_log_file
 echo "Stringency:									" ${23} >> $my_log_file
+echo "Expected mutation type:                                                                       " ${24} >> $my_log_file
+
 
 echo "" >> $my_log_file
 echo "######################################################" >> $my_log_file
@@ -272,7 +278,7 @@ if [ $workflow == 'ins' ]; then
 fi
 
 if [ $workflow == 'snp' ]; then
-	workflow_result=`./workflows/workflow-snp.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $cross_type $is_ref_strain $control_parental $snp_analysis_type $lib_type_ctrl $stringency`
+	workflow_result=`./workflows/workflow-snp.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $cross_type $is_ref_strain $control_parental $snp_analysis_type $lib_type_ctrl $stringency $exp_mut_type`
 
 	if [ $workflow_result == 0 ]; then
 		echo $(date "+%F > %T")": Analysis workflow finished correctly." >> $my_log_file
