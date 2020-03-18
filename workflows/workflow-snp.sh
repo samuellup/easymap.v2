@@ -93,10 +93,10 @@ echo 'pid workflow '$$ >> $my_status_file
 {
 	interval_width=`python2 $location/scripts_snp/set-interval.py -a $f1/$my_gs`
 } || {
-	interval_width=4000000
+	interval_width=4000007
 	echo $(date "+%F > %T")': set-interval.py failed.' >> $my_log_file
 }
-echo $(date "+%F > %T")': set-interval.py finished.' >> $my_log_file
+echo $(date "+%F > %T")': set-interval.py finished, interval set at: '$interval_width   >> $my_log_file
 
 
 ##################################################################################################################################################################################
@@ -554,7 +554,7 @@ then
 	if [ $(wc -l < $f1/F2_control_comparison.va) -gt 1 ]
 	then 
 		{
-			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 600000 -window_space 500000 -output $f1/map_info.txt -control_modality $my_mutbackgroud -interval_width 4000000 -snp_analysis_type $snp_analysis_type  2>> $my_log_file
+			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 600000 -window_space 500000 -output $f1/map_info.txt -control_modality $my_mutbackgroud -interval_width $interval_width -snp_analysis_type $snp_analysis_type  2>> $my_log_file
 
 		} || {
 			echo $(date "+%F > %T")': Error during execution of map-mutation.py .' >> $my_log_file
@@ -624,7 +624,7 @@ then
 	if [ $(wc -l < $f1/F2_control_comparison.va) -gt 1 ]
 	then 
 		{
-			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 350000 -window_space 250000 -output $f1/map_info.txt -control_modality $my_mutbackgroud -interval_width 4000000 -snp_analysis_type par  2>> $my_log_file
+			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 350000 -window_space 250000 -output $f1/map_info.txt -control_modality $my_mutbackgroud -interval_width $interval_width  -snp_analysis_type par  2>> $my_log_file
 
 		} || {
 			echo $(date "+%F > %T")': Error during execution of map-mutation.py .' >> $my_log_file
@@ -707,7 +707,7 @@ then
 	if [ $(wc -l < $f1/F2_control_comparison.va) -gt 1 ]
 	then 
 		{
-			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 250000 -window_space 25000 -output $f1/map_info.txt -control_modality $my_mutbackgroud -interval_width 4000000 -snp_analysis_type $snp_analysis_type  2>> $my_log_file
+			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 250000 -window_space 25000 -output $f1/map_info.txt -control_modality $my_mutbackgroud -interval_width $interval_width  -snp_analysis_type $snp_analysis_type  2>> $my_log_file
 
 
 		} || {
@@ -797,7 +797,7 @@ then
 	if [ $(wc -l < $f1/F2_control_comparison_mapping.va) -gt 1 ]
 	then 
 		{
-			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison_mapping.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 250000 -window_space 25000 -output $f1/map_info.txt -control_modality noref -interval_width 4000000 -snp_analysis_type $snp_analysis_type  2>> $my_log_file
+			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison_mapping.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 250000 -window_space 25000 -output $f1/map_info.txt -control_modality noref -interval_width $interval_width -snp_analysis_type $snp_analysis_type  2>> $my_log_file
 
 		} || {
 			echo $(date "+%F > %T")': Error during execution of map-mutation.py .' >> $my_log_file
@@ -870,7 +870,7 @@ then
 	if [ $(wc -l < $f1/F2_control_comparison_mapping.va) -gt 1 ]
 	then 
 		{
-			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison_mapping.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 250000 -window_space 25000 -output $f1/map_info.txt -control_modality $my_mutbackgroud -interval_width 4000000 -snp_analysis_type $snp_analysis_type  2>> $my_log_file
+			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison_mapping.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 250000 -window_space 25000 -output $f1/map_info.txt -control_modality $my_mutbackgroud -interval_width $interval_width -snp_analysis_type $snp_analysis_type  2>> $my_log_file
 
 		} || {
 			echo $(date "+%F > %T")': Error during execution of map-mutation.py .' >> $my_log_file
