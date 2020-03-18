@@ -176,6 +176,7 @@ window.onload = function() {
 	
 	// Determine option button selected and define the appropriate command argument
 	function buttons_analysisType() {
+
 		HideCheckoutBoxes();
 
 		var options = document.getElementsByClassName("analysisType");
@@ -196,7 +197,7 @@ window.onload = function() {
 			if (cmdArgs[3] == 'sim') {
 				document.getElementById("simDataInterface").style.display = "block";
 			}
-		} else {
+		} else if (checkedOption == 'button2') {
 			cmdArgs[2] = 'snp';
 			document.getElementById("insSeqField").style.display = "none";
 			document.getElementById("readsControl").style.display = "block";
@@ -208,11 +209,20 @@ window.onload = function() {
 			if (cmdArgs[3] == 'sim') {
 				document.getElementById("simDataInterface").style.display = "block";
 			}
+
+		} else if (checkedOption == 'button40') {
+			cmdArgs[2] = 'dens';
+			cmdArgs[3] = 'exp'
+			document.getElementById("insSeqField").style.display = "none";
+			document.getElementById("readsControl").style.display = "block";
+			document.getElementById("expDataInterface").style.display = "block";
+			document.getElementById("dataSource").style.display = "none";
 		}
+
 		//updateCmd();
 		document.getElementById("analysisTypeValidationInfo").style.display = "none";		
 	}
-	
+
 	// Determine option button selected and define the appropriate command argument
 	function buttons_dataSource() {
 		HideCheckoutBoxes();
@@ -911,6 +921,7 @@ window.onload = function() {
 	// React to interactions with the main 2-way selectors
 	document.getElementById("button1").onclick = buttons_analysisType;
 	document.getElementById("button2").onclick = buttons_analysisType;
+	document.getElementById("button40").onclick = buttons_analysisType;
 	document.getElementById("button3").onclick = buttons_dataSource;
 	document.getElementById("button4").onclick = buttons_dataSource;
 	

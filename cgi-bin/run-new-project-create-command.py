@@ -30,7 +30,8 @@ cmdString = str(arguments['program'].value) + ' ' + \
 			str(arguments['sim_mut'].value) + ' ' + \
 			str(arguments['sim_recsel'].value) + ' ' + \
 			str(arguments['sim_seq'].value) + ' ' + \
-			str(arguments['stringency'].value)
+			str(arguments['stringency'].value) + ' ' + \
+                        str(arguments['exp_mut_type'].value)
 
 processedCmdString = cmdString.replace('~', '+');
 print processedCmdString
