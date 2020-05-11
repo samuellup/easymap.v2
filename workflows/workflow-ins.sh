@@ -511,9 +511,10 @@ fi
 
 } || {
 	echo $(date "+%F > %T")': Error during Graphic_alignment execution in sample alignment.' >> $my_log_file
-	exit_code=1
-	echo $exit_code
-	exit
+	av_rd=10
+	#exit_code=1
+	#echo $exit_code
+	#exit
 }
 
 
@@ -538,7 +539,7 @@ fi
 echo $(date "+%F > %T")': Report file created.' >> $my_log_file
 
 #Cleanup
-#rm -rf $f1/sim_data
+rm -rf $f1/sim_data
 rm -f $f1/*.fq
 rm -f $f1/*.bt2
 
