@@ -11,7 +11,7 @@
 # If $read_f and $read_r = n/p, that is because $lib_type = se, so it is ignored by the program.
 # If $ann_file = n/p, this is because user did no have it. This program has the deal with this: if data not provided, simply do not
 # include gene annotated info to the report.
-# Testing Visual Studio
+# 
 # my_log_file		>	$1
 # project_name		>	$2
 # workflow			>	$3
@@ -44,13 +44,13 @@ export location="$PWD" 			#Save path to hisat2-build and hisat2 in variable BT2
 my_log_file=$1
 project_name=$2
 my_sample_mode=$5 												#[pe, se], paired/single  
-my_control_mode=${19}											#TEMPORAL, in future independent						
+my_control_mode=${19}											#
 my_rd=$7											 			#reads (single)
 my_rf=$8 														#forward reads
 my_rr=$9												 		#reverse reads 			
-my_p_rd=${12}											 		#reads (single) parent	
-my_p_rf=${13} 													#forward reads parent	
-my_p_rr=${14}											 		#reverse reads parent	
+my_p_rd=${12}											 		#reads (single) control	
+my_p_rf=${13} 													#forward reads control	
+my_p_rr=${14}											 		#reverse reads control	
 my_gs=gnm_ref_merged/genome.fa 									#genome sequence
 my_ix=genome_index 							
 my_gff=${10}													#Genome feature file
@@ -58,9 +58,6 @@ my_ann=${11}
 my_rrl=250 														#Regulatory region length
 my_log_file=$1
 my_mut=snp  													#my_mut takes the values 'snp' in this workflow and 'lin' in the large insertions workflow, for the execution of the graphic output module
-my_cross=${15}													#oc / bc : f2 obtained by outcross or backcross 									
-my_mutbackgroud=${16}											#ref / noref : genetic background of the mutation									
-my_pseq=${17}													#mut / nomut : sequenced parental provided is the mutagenized one or the other		
 snp_analysis_type=${18}
 stringency=${20}
 exp_mut_type=${21}
@@ -89,7 +86,7 @@ f3=$project_name/3_workflow_output
 my_status_file=$f2/status
 echo 'pid workflow '$$ >> $my_status_file
 
-#Check genome size to set interval_width
+# Check genome size to set interval_width
 {
 	interval_width=`python2 $location/scripts_snp/set-interval.py -a $f1/$my_gs`
 } || {
@@ -98,6 +95,17 @@ echo 'pid workflow '$$ >> $my_status_file
 }
 echo $(date "+%F > %T")': set-interval.py finished, interval set at: '$interval_width   >> $my_log_file
 
+# Set variant density mapping window width and step according to genome size
+if [ $interval_width -lt 4000009 ]; then
+	dens_width=500000
+	dens_step=250000
+elif [ $interval_width -gt 4000009 ] && [ $interval_width -lt 11000000 ]; then
+	dens_width=1000000
+	dens_step=1000000
+elif [ $interval_width -gt 4000009 ]; then
+	dens_width=3000000
+	dens_step=3000000
+fi
 
 ##################################################################################################################################################################################
 #																																												 #
@@ -521,397 +529,97 @@ function cr_analysis {
 
 #_________________________________________________________________________________________________________________________________________________________________________________
 
-#_________________________________Case 1 and 5: Mutant in ref/noref background, backcross, mutant parental control (ref/noref bc mut)_______________________________________________________________
-#_________________________________________________________________________________________________________________________________________________________________________________
-
-if [ $my_pseq == mut ] && [ $my_cross == bc ]  && [ $snp_analysis_type == par ]
-then
-
-	# (1) Get problem and control VA files
-	get_problem_va 
-	get_control_va
-
-	#draw snps
-	python2 $location/graphic_output/graphic-output.py -my_mut af_control -asnp $f1/control_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-	python2 $location/graphic_output/graphic-output.py -my_mut af_sample -asnp $f1/F2_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-
-	# (2) Run VA operations: Remove control SNPs from problem file
-	my_operation_mode=A
-	{
-		python2 $location/scripts_snp/variants-operations.py -a $f1/F2_filtered.va -b $f1/control_filtered.va -c $f1/F2_control_comparison.va -mode $my_operation_mode -primary 1  2>> $my_log_file
-
-	} || {
-		echo $(date "+%F > %T")': Error during first execution of variants-operations.py .' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': VCF operations finished.' >> $my_log_file
-
-	# (3) Run mapping analysis
-	my_analysis_mode=back
-
-	if [ $(wc -l < $f1/F2_control_comparison.va) -gt 1 ]
-	then 
-		{
-			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 600000 -window_space 500000 -output $f1/map_info.txt -control_modality $my_mutbackgroud -interval_width $interval_width -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-
-		} || {
-			echo $(date "+%F > %T")': Error during execution of map-mutation.py .' >> $my_log_file
-			exit_code=1
-			echo $exit_code
-			exit
-		}
-		echo $(date "+%F > %T")': Mutation mapping module finished.' >> $my_log_file
-
-		# (4) Candidate region analysis function
-		cr_analysis F2_control_comparison.va 0.1
-
-	else 
-		echo $(date "+%F > %T")': No informative polymorphisms can be identified for mutation mapping. Please review your input data.' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-
-	fi
-fi
-
-
-#_________________________________________________________________________________________________________________________________________________________________________________
-#
-#_________________________________Case 2 and case 6: Backcross, f2wt control (bc mut)_________________________________________________________________________________________
-#_________________________________________________________________________________________________________________________________________________________________________________
-
-#if [ $my_mutbackgroud == ref ] && [ $my_cross == bc ]  && [ $snp_analysis_type == f2wt ]
-if [ $my_cross == bc ]  && [ $snp_analysis_type == f2wt ]
-then
-
-	# (1) Get problem and control VA files
-	get_problem_va
-	get_control_va
-
-	#draw snps
-	python2 $location/graphic_output/graphic-output.py -my_mut af_control -asnp $f1/control_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-	python2 $location/graphic_output/graphic-output.py -my_mut af_sample -asnp $f1/F2_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-
-	# (2) Run VA filter: eliminate SNPs with FA > 0.5 from control reads
-	{
-		python2 $location/scripts_snp/variants-filter.py -a $f1/control_filtered.va -b $f1/control_filtered2.va -step 3 -fasta $f1/$my_gs -af_max 0.5 2>> $my_log_file
-
-	} || {
-		echo $(date "+%F > %T")': Error during execution of variants-filter.py with control data.' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': First VCF filtering step of control data finished.' >> $my_log_file
-
-	# (3) Run af-comparison: Intersection of filtered control SNPs with problem reads: outputs VA file with 4 columns of allele absolute frequence
-	{
-		python2 $location/scripts_snp/af-comparison.py -mode $my_mutbackgroud -f2_mut $f1/F2_filtered.va -f2_wt $f1/control_filtered2.va -out $f1/F2_control_comparison.va -f_input $f1/$my_gs -step 1 2>> $my_log_file 
-
-	} || {
-		echo $(date "+%F > %T")': Error during execution of af_comparison.py .' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': Allelic frequence comparison finished.' >> $my_log_file
-
-	# (4) Run mapping analysis
-	my_analysis_mode=back
-
-	if [ $(wc -l < $f1/F2_control_comparison.va) -gt 1 ]
-	then 
-		{
-			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 350000 -window_space 250000 -output $f1/map_info.txt -control_modality $my_mutbackgroud -interval_width $interval_width  -snp_analysis_type par  2>> $my_log_file
-
-		} || {
-			echo $(date "+%F > %T")': Error during execution of map-mutation.py .' >> $my_log_file
-			exit_code=1
-			echo $exit_code
-			exit
-		}
-		echo $(date "+%F > %T")': Mutation mapping module finished.' >> $my_log_file
-
-		# (5) Re-write F2_control_comparison.va
-		{
-			python2 $location/scripts_snp/af-comparison.py -mode $my_mutbackgroud -f2_mut $f1/F2_filtered.va -f2_wt $f1/control_filtered2.va -out $f1/F2_control_comparison.va -f_input $f1/$my_gs -step 2 2>> $my_log_file 
-
-		} || {
-			echo $(date "+%F > %T")': Error during execution of af_comparison.py .' >> $my_log_file
-			exit_code=1
-			echo $exit_code
-			exit
-		}
-		echo $(date "+%F > %T")': Allelic frequence comparison finished.' >> $my_log_file
-
-		# Filler SNPs: AFs between 0.2 and 0.8 present in both samples, only for drawing 
-
-		{
-			python2 $location/scripts_snp/af-comparison.py -mode $my_mutbackgroud -f2_mut $f1/F2_filtered.va -f2_wt $f1/control_filtered.va -out $f1/filler_variants.va -f_input $f1/$my_gs -step 3 2>> $my_log_file 
-
-		} || {
-			echo $(date "+%F > %T")': Error during execution of af_comparison.py .' >> $my_log_file
-			exit_code=1
-			echo $exit_code
-			exit
-		}
-		echo $(date "+%F > %T")': Allelic frequence comparison finished.' >> $my_log_file
-
-		# (7) Candidate region analysis funtion
-		cr_analysis F2_control_comparison.va 0.1
-
-	else 
-		echo $(date "+%F > %T")': No informative polymorphisms can be identified for mutation mapping. Please review your input data.' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	fi	
-fi
-
-
-# _________________________________________________________________________________________________________________________________________________________________________________
-
-# _________________________________Case 3: Mutant in ref background, outcross, mutant parental control (ref oc mut)________________________________________________________________
-# _________________________________________________________________________________________________________________________________________________________________________________
-
-
-if [ $my_mutbackgroud == ref ] && [ $my_pseq == mut ] && [ $my_cross == oc ]  && [ $snp_analysis_type == par ]
-then
-
-	# (1) Get problem and control VA files
-	get_problem_va
-	get_control_va
-
-	#draw snps
-	python2 $location/graphic_output/graphic-output.py -my_mut af_control -asnp $f1/control_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-	python2 $location/graphic_output/graphic-output.py -my_mut af_sample -asnp $f1/F2_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-
-	# (2) Run VA operations: Remove control SNPs from problem file
-	my_operation_mode=A
-	{
-		python2 $location/scripts_snp/variants-operations.py -a $f1/F2_filtered.va -b $f1/control_filtered.va -c $f1/F2_control_comparison.va -mode $my_operation_mode -primary 1  2>> $my_log_file
-
-	} || {
-		echo $(date "+%F > %T")': Error during first execution of variants-operations.py .' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': VCF operations finished.' >> $my_log_file
-
-	# (3) Run mapping analysis
-	my_analysis_mode=out
-
-	if [ $(wc -l < $f1/F2_control_comparison.va) -gt 1 ]
-	then 
-		{
-			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 250000 -window_space 25000 -output $f1/map_info.txt -control_modality $my_mutbackgroud -interval_width $interval_width  -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-
-
-		} || {
-			echo $(date "+%F > %T")': Error during execution of map-mutation.py .' >> $my_log_file
-			exit_code=1
-			echo $exit_code
-			exit
-		}
-		echo $(date "+%F > %T")': Mutation mapping module finished.' >> $my_log_file
-
-		# (4) Candidate region analysis function
-		cr_analysis F2_control_comparison.va 0.1
-
-	else 
-		echo $(date "+%F > %T")': No informative polymorphisms can be identified for mutation mapping. Please review your input data.' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	fi
-	
-fi
-
-
-#_________________________________________________________________________________________________________________________________________________________________________________
-
-#_________________________________Case 4: Mutant in ref background, outcross, wt parental control (ref oc nomut)________________________________________________________________
 #_________________________________________________________________________________________________________________________________________________________________________________
 
 
-if [ $my_mutbackgroud == ref ] && [ $my_pseq == nomut ] && [ $my_cross == oc ]  && [ $snp_analysis_type == par ]
-then
-	# (1) Get control VA file
-	get_control_va
-
-	# (2) Run vcf filter to get SNPs with af > 0.75
-	{
-		python2 $location/scripts_snp/variants-filter.py -a $f1/control_filtered.va -b $f1/control_filtered2.va -step 3 -fasta $f1/$my_gs -af_min 0.75  2>> $my_log_file
-		#draw snps
-		python2 $location/graphic_output/graphic-output.py -my_mut af_control -asnp $f1/control_filtered2.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-
-	} || {
-		echo $(date "+%F > %T")': Error during the second execution of variants-filter.py .' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': Second VCF filtering step finished.' >> $my_log_file
+# (1) Get problem and control VA files
+get_problem_va 
+get_control_va
 
 
-	# (3) Change ref seq, generate a "noref genome"
-	{
-		python2 $location/scripts_snp/change-snp.py -var $f1/control_filtered2.va  -gnm_ref $f1/$my_gs -out $f1/gnm_ref_merged/genome2.fa  2>> $my_log_file
-	
-		rm -rf $f1/$my_gs
-		mv $f1/gnm_ref_merged/genome2.fa $f1/gnm_ref_merged/genome.fa
+# (2) Run VA operations: Remove control SNPs from problem file
+my_operation_mode=A
+{
+	python2 $location/scripts_snp/variants-operations.py -a $f1/F2_filtered.va -b $f1/control_filtered.va -c $f1/F2_control_comparison.va -mode $my_operation_mode -primary 1  2>> $my_log_file
 
-	} || {
-		echo $(date "+%F > %T")': Error during first execution of variants-operations.py .' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': VCF operations finished.' >> $my_log_file
+} || {
+	echo $(date "+%F > %T")': Error during first execution of variants-operations.py .' >> $my_log_file
+	exit_code=1
+	echo $exit_code
+	exit
+}
+echo $(date "+%F > %T")': VCF operations finished.' >> $my_log_file
 
-	# (4) Get problem VA file
-	get_problem_va
+# (3) Generate files for variant density analysis
+{
+	python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison.va -b $f1/F2_filtered_EMS.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -dp_max $dp_max -qual_min $problemSample_snpQualityTheshold -mut_type EMS  2>> $my_log_file
+	python2 $location/scripts_snp/variants-filter.py -a $f1/F2_filtered_EMS.va -b $f1/F2_filtered_EMS_hz.va -step 3 -fasta $f1/$my_gs -af_min 0.98 -dp_min $dp_min -dp_max $dp_max -qual_min $problemSample_snpQualityTheshold -mut_type EMS  2>> $my_log_file
 
-	#draw snps
-	python2 $location/graphic_output/graphic-output.py -my_mut af_sample -asnp $f1/F2_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
+} || {
+	echo 'Error during execution of variants-filter.py with F2 data.' >> $my_log_file
+	exit_code=1
+	echo $exit_code
+	exit
+}
+echo $(date "+%F > %T")': First VCF filtering step of F2 data finished.' >> $my_log_file
 
-	# (5) Run VA operations: Intersection to get SNPs for mapping the mutation
-	my_operation_mode=I
-	{
-		python2 $location/scripts_snp/variants-operations.py -a $f1/F2_filtered.va -b $f1/control_filtered2.va -c $f1/F2_control_comparison_mapping.va -mode $my_operation_mode -primary 1  2>> $my_log_file
+# (4) Run variant density analysis on the files
+{
+	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_filtered.va  -out $f1/F2_filtered_dens.va -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
+	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_control_comparison.va  -out $f1/F2_control_comparison_dens.va -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
+	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_filtered_EMS.va  -out $f1/F2_filtered_EMS_dens.va -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
+	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_filtered_EMS_hz.va  -out $f1/F2_filtered_EMS_hz_dens.va -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
 
-	} || {
-		echo $(date "+%F > %T")': Error during first execution of variants-operations.py .' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': VCF operations finished.' >> $my_log_file
+} || {
+	echo $(date "+%F > %T")': Error during execution of dens-counter.py .' >> $my_log_file
+	exit_code=1
+	echo $exit_code
+	exit
+}
+echo $(date "+%F > %T")': Mutation density counter module finished.' >> $my_log_file
 
-	# (6) Run mapping analysis
-	my_analysis_mode=out
+# (5) Run variant density mapping 
+{
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_dens.va  -out $f1/F2_filtered_max.va  2>> $my_log_file
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_control_comparison_dens.va  -out $f1/F2_control_comparison_max.va  2>> $my_log_file
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_EMS_dens.va  -out $f1/F2_filtered_EMS_max.va  2>> $my_log_file
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_EMS_hz_dens.va  -out $f1/F2_filtered_EMS_hz_max.va  2>> $my_log_file
 
-	if [ $(wc -l < $f1/F2_control_comparison_mapping.va) -gt 1 ]
-	then 
-		{
-			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison_mapping.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 250000 -window_space 25000 -output $f1/map_info.txt -control_modality noref -interval_width $interval_width -snp_analysis_type $snp_analysis_type  2>> $my_log_file
+} || {
+	echo $(date "+%F > %T")': Error during execution of dens-mapping.py .' >> $my_log_file
+	exit_code=1
+	echo $exit_code
+	exit
+}
+echo $(date "+%F > %T")': Mutation density mapping module finished.' >> $my_log_file
 
-		} || {
-			echo $(date "+%F > %T")': Error during execution of map-mutation.py .' >> $my_log_file
-			exit_code=1
-			echo $exit_code
-			exit
-		}
-		echo $(date "+%F > %T")': Mutation mapping module finished.' >> $my_log_file
+# (6) Generate graphic output
+{
+	python2 $location/graphic_output/graphic-output.py -my_mut dens -pname $project_name  -bsnp $f1/$my_gs -1 $f1/F2_filtered_dens.va -2 $f1/F2_control_comparison_dens.va -3 $f1/F2_filtered_EMS_dens.va -4 $f1/F2_filtered_EMS_hz_dens.va 2>> $my_log_file
 
-		# (7) Run VA operations: Remove control SNPs from problem file 
-		my_operation_mode=A
-		{
-			python2 $location/scripts_snp/variants-operations.py -a $f1/F2_filtered.va -b $f1/control_filtered.va -c $f1/F2_control_comparison.va -mode $my_operation_mode -primary 1  2>> $my_log_file
-			#draw snps
-			#python2 $location/graphic_output/graphic-output.py -my_mut af_candidates -asnp $f1/F2_control_comparison.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  
+} || {
+	echo $(date "+%F > %T")': Error during generation of graphic output.' >> $my_log_file
+	exit_code=1
+	echo $exit_code
+	exit
+}
+echo $(date "+%F > %T")': Graphic output generated.' >> $my_log_file
 
-		} || {
-			echo $(date "+%F > %T")': Error during first execution of variants-operations.py .' >> $my_log_file
-			exit_code=1
-			echo $exit_code
-			exit
-		}
-		echo $(date "+%F > %T")': VCF operations finished.' >> $my_log_file
+# (7) Generate report
+{ 
+	python2 $location/graphic_output/report.py  -log $my_log_file -output_html $f3/report.html -project $project_name -mut_type dens -files_dir $f3   2>> $my_log_file
 
-		# (8) Candidate region analysis function
-		cr_analysis F2_control_comparison_mapping.va 0.1
-	else 
-		echo $(date "+%F > %T")': No informative polymorphisms can be identified for mutation mapping. Please review your input data.' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	fi
-fi
-
-
-
-#_________________________________________________________________________________________________________________________________________________________________________________
-
-#_________________________________Case 7: Mutant in noref background, outcross, mutant parental control (noref oc mut)________________________________________________________________
-#_________________________________________________________________________________________________________________________________________________________________________________
-
-if [ $my_mutbackgroud == noref ] && [ $my_pseq == mut ] && [ $my_cross == oc ]  && [ $snp_analysis_type == par ]
-then
-
-	# (1) Get problem and control VA files
-	get_problem_va
-	get_control_va
-
-	#draw snps
-	python2 $location/graphic_output/graphic-output.py -my_mut af_control -asnp $f1/control_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-	python2 $location/graphic_output/graphic-output.py -my_mut af_sample -asnp $f1/F2_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-
-	# (2) Run VA operations: Intersection to get mapping SNPs
-	my_operation_mode=I
-	{
-		python2 $location/scripts_snp/variants-operations.py -a $f1/F2_filtered.va -b $f1/control_filtered.va -c $f1/F2_control_comparison_mapping.va -mode $my_operation_mode -primary 1  2>> $my_log_file
-
-	} || {
-		echo $(date "+%F > %T")': Error during first execution of variants-operations.py .' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': VCF operations finished.' >> $my_log_file
-
-	# (3) Run mapping analysis
-	my_analysis_mode=out
-
-
-	if [ $(wc -l < $f1/F2_control_comparison_mapping.va) -gt 1 ]
-	then 
-		{
-			python2 $location/scripts_snp/map-mutation.py -file $f1/F2_control_comparison_mapping.va -fasta $f1/$my_gs -mode $my_analysis_mode -window_size 250000 -window_space 25000 -output $f1/map_info.txt -control_modality $my_mutbackgroud -interval_width $interval_width -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-
-		} || {
-			echo $(date "+%F > %T")': Error during execution of map-mutation.py .' >> $my_log_file
-			exit_code=1
-			echo $exit_code
-			exit
-		}
-		echo $(date "+%F > %T")': Mutation mapping module finished.' >> $my_log_file
-
-
-		# (4) Run VA operations: Remove control SNPs from problem
-		my_operation_mode=A
-		{
-			python2 $location/scripts_snp/variants-operations.py -a $f1/F2_filtered.va -b $f1/control_filtered.va -c $f1/F2_control_comparison.va -mode $my_operation_mode -primary 1  2>> $my_log_file
-			#draw snps
-			#python2 $location/graphic_output/graphic-output.py -my_mut af_candidates -asnp $f1/F2_control_comparison.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  
-
-		} || {
-			echo $(date "+%F > %T")': Error during first execution of variants-operations.py .' >> $my_log_file
-			exit_code=1
-			echo $exit_code
-			exit
-		}
-		echo $(date "+%F > %T")': VCF operations finished.' >> $my_log_file
-
-		# (5) Candidate region analysis function
-		cr_analysis F2_control_comparison_mapping.va 0.1
-
-	else 
-		echo $(date "+%F > %T")': No informative polymorphisms can be identified for mutation mapping. Please review your input data.' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	fi
-fi
+} || {
+	echo $(date "+%F > %T")': Error during generation of report file.' >> $my_log_file
+	#exit_code=1									# REMOVED FOR TESTING
+	#echo $exit_code
+	#exit
+}
+echo $(date "+%F > %T")': Report file generated.' >> $my_log_file
 
 
 #Intermediate files cleanup
 rm -f $f1/*.bam
 rm -f $f1/*.bai
-if [ -d "$f1/sim_data" ]; then rm -Rf $f1/sim_data/; fi
-
 
 echo $exit_code

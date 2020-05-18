@@ -2,7 +2,7 @@
 
 #from __future__ import division
 import argparse
-from draw import fa_vs_pos, insertions_overview_and_histograms, gene_plot, legend, candidates_zoom, gene_legend
+from draw import fa_vs_pos, insertions_overview_and_histograms, gene_plot, legend, candidates_zoom, gene_legend, dens_graphs
 parser = argparse.ArgumentParser()
 
 #INPUT VARIABLES FOR SNP
@@ -19,6 +19,12 @@ parser.add_argument('-b', action="store", dest = 'input_f')				#Fasta genome inp
 parser.add_argument('-gff', action="store", dest = 'gff')				#Genome feature file
 parser.add_argument('-m', action="store", dest = 'mode', default = 'pe')
 parser.add_argument('-ins_pos', action="store", dest = 'ins_pos')
+
+# INPUT VARIABLES FOR DENS
+parser.add_argument('-1', action="store", dest = 'F2')		
+parser.add_argument('-2', action="store", dest = 'F2_filtered')				
+parser.add_argument('-3', action="store", dest = 'EMS')
+parser.add_argument('-4', action="store", dest = 'EMS_hz')	
 
 #SHARED VARIABLES
 parser.add_argument('-iva', action="store", dest = 'input_va')	 		#Output de varanalyzer
@@ -52,5 +58,11 @@ elif args.my_mut == 'lin':
 
 	#Gene gene_plot
 	gene_plot()
+
+
+elif args.my_mut == 'dens':
+	#DENS vs POS images
+	dens_graphs()
+
 
 #gene_legend()

@@ -1,7 +1,7 @@
 
 #python ./graphic_output/report.py -variants ./user_projects/project/3_workflow_output/candidate_variants.txt -log ./user_projects/project/2_logs/log.log -output_html ./user_projects/project/3_workflow_output/report.html -project user_projects/project  -mut_type snp -files_dir ./user_projects/project/3_workflow_output/
 #python ./graphic_output/report.py -variants ./user_projects/project/3_workflow_output/insertions_output.txt -log ./user_projects/project/2_logs/log.log -output_html ./user_projects/project/3_workflow_output/report.html -project user_projects/project  -mut_type lin -files_dir ./user_projects/project/3_workflow_output/
-
+#python ./report.py -log ./in/log.log -output_html ./out/report.html -project user_projects/project  -mut_type dens -files_dir ./in/
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -17,15 +17,11 @@ args = parser.parse_args()
 
 #Log input
 input_log = args.log
-
 #VAriants input
 input_var = args.variants
-
-
 #HTML output
 output_html = args.output_html
 output = open(output_html, 'w')
-
 #Others
 mut_type = args.mut_type
 
@@ -329,6 +325,39 @@ if mut_type == 'snp' and data_source == 'exp':
 '		</tr>' + '\n'
 			)
 
+if mut_type == 'dens': 
+	if reads_type == 'pe':
+		output.write(
+'		<tr>' + '\n'
+'			<td> <b>Input test read files:</b></td>' + '\n'
+'			<td>' + reads_f + ', &nbsp;&nbsp;&nbsp;&nbsp;' + reads_r + '</td>' + '\n'
+'		</tr>' + '\n'
+		)
+
+	elif reads_type == 'se':
+		output.write(
+'		<tr>' + '\n'
+'			<td> <b>Input test read files:</b></td>' + '\n'
+'			<td>' + reads_s + '</td>' + '\n'
+'		</tr>' + '\n'
+			)
+
+	if reads_type_control == 'pe':
+		output.write(
+'		<tr>' + '\n'
+'			<td> <b>Input control read files:</b></td>' + '\n'
+'			<td>' + reads_f_control + ', &nbsp;&nbsp;&nbsp;&nbsp;' + reads_r_control + '</td>' + '\n'
+'		</tr>' + '\n'
+		)
+
+	elif reads_type_control == 'se':
+		output.write(
+'		<tr>' + '\n'
+'			<td> <b>Input control read files:</b></td>' + '\n'
+'			<td>' + reads_s_control + '</td>' + '\n'
+'		</tr>' + '\n'
+			)
+
 
 if data_source == 'sim':
 	if mut_type == 'lin':
@@ -422,7 +451,7 @@ if data_source == 'exp':
 			)
 
 
-	if mut_type == 'snp': 
+	if mut_type == 'snp' or mut_type == "dens": 
 		if reads_type == 'pe':
 			output.write(
 	'		<b>Test reads quality assessment<br></b>' + '\n'
@@ -454,7 +483,7 @@ if data_source == 'exp':
 			)
 
 #Read depth distribution graphics
-if mut_type == 'snp': 
+if mut_type == 'snp' or mut_type == "dens": 
 	output.write(
 	'		<b>Test and control samples read depth distribution<br></b>' + '\n'
 	'		<p>Test sample<br></p>' + '\n'
@@ -686,6 +715,28 @@ if mut_type == 'lin':
 		'		<br><a href="report_images.zip" target="_blank">Click to download all image files</a>' + '\n'
 		'		<hr class="easymap">' + '\n'
 		)
+
+
+
+#__________________________________Density mapping cartographic report________________________________________________________________
+if mut_type == 'dens':
+	#Chromosomes DENS vs POS
+	output.write(
+	'		<h2>Density analysis overview</h2>' + '\n'
+	'		<p>All input contigs are displayed, variant density mapping is plotted for each chromosome. </p>' + '\n'
+		) 
+	for f in sorted(files):
+		if 'dens_map_' in str(f):
+			output.write(
+			'		<left> <img class="img" src="' +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" > </left>' + '\n'
+			)
+
+
+
+
+
+
+
 
 
 #__________________________________SNP cartographic report________________________________________________________________
@@ -946,8 +997,8 @@ output.close()
 # have been replaced. report.html is intended to be viewed by someone using the command-line interface. rfeed.html
 # is used to feed view-report.php in the web-interface with the correct path to resources (images, files, links) 
 
-htmlFile2 = open('user_projects/' + project_name + '/3_workflow_output/rfeed.html', 'w')
-#htmlFile2 = open('user_projects/project/3_workflow_output/rfeed.html', 'w')
+#htmlFile2 = open('user_projects/' + project_name + '/3_workflow_output/rfeed.html', 'w')											< IN-PROGRAM
+htmlFile2 = open('3_workflow_output/rfeed.html', 'w')														# < TESTING	
 
 with open(output_html, 'r') as htmlFile1:
 		for line in htmlFile1:

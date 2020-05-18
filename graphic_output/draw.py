@@ -26,6 +26,12 @@ parser.add_argument('-a', action="store", dest = 'input')
 parser.add_argument('-b', action="store", dest = 'input_f')				#Fasta genome input
 parser.add_argument('-ins_pos', action="store", dest = 'ins_pos')
 
+#Arguments for density mapping graphic output
+parser.add_argument('-1', action="store", dest = 'F2')		
+parser.add_argument('-2', action="store", dest = 'F2_filtered')				
+parser.add_argument('-3', action="store", dest = 'EMS')
+parser.add_argument('-4', action="store", dest = 'EMS_hz')		
+
 args = parser.parse_args()
 project = args.project_name
 
@@ -52,7 +58,320 @@ def red(p):
 		r = str(p)[:3] + ' Mb'
 	return r; 
 
-args = parser.parse_args()
+#############################################################################################################
+#																											#
+# 								Density mapping - Chromosome Overview										#
+#																											#
+#############################################################################################################
+def dens_ovw():
+	# Input files
+	F2 = args.F2
+	F2_filtered = args.F2_filtered
+	EMS = args.EMS
+	EMS_hz = args.EMS_hz
+
+	# Genome file
+	contig_source = args.input_f_snp
+
+	# Function to parse fasta file (based on one of the Biopython IOs)
+	def read_fasta(fp):
+		name, seq = None, []
+		for line in fp:
+			line = line.rstrip()
+			if line.startswith('>'):
+				if name: yield (name, ''.join(seq))
+				name, seq = line, []
+			else:
+				seq.append(line)
+		if name: yield (name, ''.join(seq))
+
+	# Read contig fasta file
+	contig_lengths = list()
+	with open(contig_source) as fp:
+		fastalist = list()
+		for name_contig, seq_contig in read_fasta(fp):
+			innerlist = list()
+			innerlist.append(name_contig.strip('>'))
+			innerlist.append(len(seq_contig))
+			fastalist.append(innerlist)
+			contig_lengths.append(len(seq_contig))
+
+	#DENS vs POS overview graphs 	
+	wide=1000					
+	height=int(0.67*wide)
+	im = Image.new("RGB", (wide, height), (255,255,255))	
+	draw = ImageDraw.Draw(im)
+	#get fonts from foler 'fonts'
+	fnt2 = ImageFont.truetype('fonts/VeraMono.ttf', 14)
+
+	# Sub-graph rectangle
+	sub_width=int(0.9*wide)
+	sub_height=int(0.12*wide)		
+
+	#Scaling factor x
+	n_chr = len(fastalist)
+	len_gnm = 0
+	for f in fastalist: 
+		if int(f[1]) > 2000000: len_gnm += int(f[1])
+	scaling_factor_x = float(len_gnm)/float(sub_width-10*(n_chr-1))						#nt/pixel        
+
+	r = red(int(len_gnm))
+	if 'Mb' in r:
+		max_graph_x = int(len_gnm) + 10000
+	elif 'kb' in r: 
+		max_graph_x = int(len_gnm)
+
+	for c in range(1,5):
+		# Set base point for sub-graph
+		if c == 1: base = [int(0.06*wide), int(0.05*wide)]
+		if c == 2: base = [int(0.06*wide), int(0.20*wide)]
+		if c == 3: base = [int(0.06*wide), int(0.35*wide)]
+		if c == 4: base = [int(0.06*wide), int(0.50*wide)]
+
+		# Set input file
+		if c == 1: dens_data = F2
+		if c == 2: dens_data = F2_filtered
+		if c == 3: dens_data = EMS
+		if c == 4: dens_data = EMS_hz
+
+		# Sub-graph title
+		if c == 1: sub_title = 'Total SNP'
+		if c == 2: sub_title = 'Filtered SNP'
+		if c == 3: sub_title = 'EMS SNP'
+		if c == 4: sub_title = 'Homozygous EMS SNP'
+		w, h = draw.textsize(str(sub_title))
+		draw.text((base[0], base[1]-20), str(sub_title), fill=(0,0,0), font=fnt2)		
+
+		# Y axis marks and labels
+		max_dens=0
+		sep_y = 0
+		dens_step = 0
+		for line in open(dens_data, "r"): 
+			if len(line.split()) >= 3:
+				if int(line.split()[2]) > max_dens: max_dens = int(line.split()[2])
+		if max_dens > 0: 
+			sclf = float(max_dens)/float(sub_height - 10)
+			step_val = float(max_dens)/5
+			mark_y=base[1]+sub_height
+			tag_y=0
+			while mark_y >= base[1] and mark_y <= base[1]+sub_height:
+				draw.line((base[0]-3, mark_y)+(base[0], mark_y), fill=(0,0,0))
+				w, h = draw.textsize(str(tag_y))
+				draw.text((base[0]-w-13, mark_y-6), str(tag_y) , font=fnt2, fill=(0,0,0))
+				mark_y -= int(step_val/sclf)
+				tag_y += int(step_val)
+		if max_dens == 0: 
+			tag_y = 0
+			draw.line((base[0]-3,base[1]+10)+(base[0], base[1]+10), fill=(0,0,0))
+			draw.text((base[0]-30, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
+
+		# Sub-grah areas
+		prev_pos_start=base[0]
+		for ind, chr in enumerate(fastalist):
+			pos_start = int(float(chr[1])/float(scaling_factor_x)) +prev_pos_start
+
+			# x axis marks and labels
+			mb_step=5
+			sep = int(mb_step*1000000/float(scaling_factor_x))
+			tag = 0
+			for ma in range(prev_pos_start, pos_start-10, sep): 
+				draw.line((ma, base[1]+sub_height)+(ma, base[1]+3+sub_height), fill=(0,0,0))
+				if c == 4:
+					w, h = draw.textsize(str(tag))
+					draw.text((ma-w/2, base[1]+sub_height+8), str(tag), font=fnt2, fill=(0,0,0))
+					tag +=mb_step
+
+			# Data plotting
+			if c == 1: re,g,b = 209, 56, 56
+			if c == 2: re,g,b = 56, 127, 209
+			if c == 3: re,g,b = 56, 209, 71
+			if c == 4: re,g,b = 209, 56, 158
+			prev_pos_x = prev_pos_start
+			prev_pos_y = base[1]+sub_height
+			for line in open(dens_data, "r"):
+				if str(line.split()[0]).lower() == str(chr[0]).lower(): 
+					pos_x_r = int(line.split()[1])
+					pos_y_r = int(line.split()[2])
+					pos_x_gr = (pos_x_r / scaling_factor_x) + prev_pos_start
+					pos_y_gr =  base[1] + sub_height - (pos_y_r / sclf) 
+					if pos_x_gr < pos_start: 
+						draw.line((prev_pos_x, prev_pos_y)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				# Drawing overall line
+
+					prev_pos_x, prev_pos_y = pos_x_gr, pos_y_gr
+					
+
+			# Sub-plot areas
+			draw.rectangle([(prev_pos_start, base[1]), (pos_start, base[1]+sub_height)], outline=(0,0,0), width=(1))
+			
+			# Chromosome titles
+			#
+			#
+			#
+
+			prev_pos_start = pos_start + 10
+
+	#Crop and save image, specifying the format with the extension
+	im.save('./output/dens-overview.png')
+
+
+# testing : python graphic-output.py  -bsnp genome.fa
+# python graphic-output.py   -bsnp genome.fa -1 F2_filtered_dens.va -2 F2_control_comparison_dens.va -3 F2_filtered_EMS_dens.va -4 F2_filtered_EMS_hz_dens.va 
+
+
+
+#############################################################################################################
+#																											#
+# 								Density mapping - Chromosome drawings										#
+#																											#
+#############################################################################################################
+def dens_graphs():
+	# Input files
+	F2 = args.F2
+	F2_filtered = args.F2_filtered
+	EMS = args.EMS
+	EMS_hz = args.EMS_hz
+
+	# Genome file
+	contig_source = args.input_f_snp
+
+	# Function to parse fasta file (based on one of the Biopython IOs)
+	def read_fasta(fp):
+		name, seq = None, []
+		for line in fp:
+			line = line.rstrip()
+			if line.startswith('>'):
+				if name: yield (name, ''.join(seq))
+				name, seq = line, []
+			else:
+				seq.append(line)
+		if name: yield (name, ''.join(seq))
+
+	# Read contig fasta file
+	contig_lengths = list()
+	with open(contig_source) as fp:
+		fastalist = list()
+		for name_contig, seq_contig in read_fasta(fp):
+			innerlist = list()
+			innerlist.append(name_contig.strip('>'))
+			innerlist.append(len(seq_contig))
+			fastalist.append(innerlist)
+			contig_lengths.append(len(seq_contig))
+
+	#DENS vs POS graphs 
+	for i in fastalist:
+		if int(i[1]) > 2000000: 
+			wide=1000					
+			height=int(0.6*wide)
+			im = Image.new("RGB", (wide, height), (255,255,255))	
+			draw = ImageDraw.Draw(im)
+			#get fonts from foler 'fonts'
+			fnt2 = ImageFont.truetype('fonts/VeraMono.ttf', 14)
+
+			r = red(int(i[1]))
+			if 'Mb' in r:
+				max_graph_x = int(i[1]) + 10000
+			elif 'kb' in r: 
+				max_graph_x = int(i[1])
+
+			# Sub-graph rectangle
+			sub_width=int(0.42*wide)
+			sub_height=int(0.2*wide)		
+
+			#Scaling factor x
+			scaling_factor_x = (max_graph_x)/(sub_width) 								#nts/pixel        
+			for c in range(1,5):
+				# Set base point for sub-graph
+				if c == 1: base = [int(0.06*wide), int(0.05*wide)]
+				if c == 2: base = [int(0.53*wide), int(0.05*wide)]
+				if c == 3: base = [int(0.06*wide), int(0.32*wide)]
+				if c == 4: base = [int(0.53*wide), int(0.32*wide)]
+
+				# Set input file
+				if c == 1: dens_data = F2
+				if c == 2: dens_data = F2_filtered
+				if c == 3: dens_data = EMS
+				if c == 4: dens_data = EMS_hz
+
+				# X axis marks
+				mb_step=2														 # Step set every 2 MB for early development
+				ch_len = i[1]
+				sep = sub_width/int(r.split()[0]) * mb_step                    
+				tag=0
+				for mark in range(base[0], base[0]+sub_width+1, sep): 
+					draw.line((mark, base[1]+sub_height+3) + (mark, base[1]+sub_height), fill=(0,0,0))
+					w, h = draw.textsize(str(tag))
+					draw.text((mark-w/2-1, base[1]+sub_height+6), str(tag), font=fnt2, fill=(0,0,0))
+					tag +=mb_step
+
+				# Y axis marks
+				max_dens=0
+				sep_y=0
+				dens_step=0
+				for line in open(dens_data, "r"):
+					if str(line.split()[0]).lower() == str(i[0]).lower():
+						if int(line.split()[2]) > max_dens: max_dens = int(line.split()[2])
+				if max_dens > 0 :
+					sclf = float(max_dens)/(sub_height-10)
+					step_val = float(max_dens)/10
+					mark_y=base[1]+sub_height
+					tag_y = 0
+
+					while  mark_y >= base[1] and mark_y <= base[1]+sub_height:
+						draw.line((base[0]-3, mark_y)+(base[0], mark_y), fill=(0,0,0))
+						w, h = draw.textsize(str(tag_y))
+						draw.text((base[0]-w-13, mark_y-6), str(tag_y) , font=fnt2, fill=(0,0,0))
+						mark_y -= int(step_val/sclf)
+						tag_y += int(step_val)
+				if max_dens == 0: 
+					tag_y = 0
+					draw.line((base[0]-3,base[1]+10)+(base[0], base[1]+10), fill=(0,0,0))
+					draw.text((base[0]-30, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
+
+				# Data plotting
+				if c == 1: re,g,b = 209, 56, 56
+				if c == 2: re,g,b = 56, 127, 209
+				if c == 3: re,g,b = 56, 209, 71
+				if c == 4: re,g,b = 209, 56, 158
+				prev_pos_x = base[0]
+				prev_pos_y = base[1]+sub_height
+				for line in open(dens_data, "r"):
+					if str(line.split()[0]).lower() == str(i[0]).lower(): 
+						pos_x_r = int(line.split()[1])
+						pos_y_r = int(line.split()[2])
+						pos_x_gr = (pos_x_r / scaling_factor_x) + base[0]
+						pos_y_gr =  base[1] + sub_height - (pos_y_r / sclf) 
+						# Drawing filled area
+						for fill_x in range(prev_pos_x, pos_x_gr, 1):
+							if fill_x < base[0]+sub_width:
+								fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
+								#draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+2), fill=(220, 220, 220))
+						if pos_x_gr < base[0]+sub_width+5: 
+							draw.line((prev_pos_x, prev_pos_y-1)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				# Drawing overall line
+						prev_pos_x, prev_pos_y = pos_x_gr, pos_y_gr
+						
+				# Draws sub-plot area  
+				draw.rectangle([(base[0], base[1]), (base[0] +sub_width, base[1]+sub_height)], outline=(0,0,0), width=(1))
+				#draw.ellipse([(base[0], base[1]), (base[0] +4, base[1]+4)], fill=(255, 0, 0))						#for testing 
+
+				# Sub-graph title
+				if c == 1: sub_title = 'Total SNP'
+				if c == 2: sub_title = 'Filtered SNP'
+				if c == 3: sub_title = 'EMS SNP'
+				if c == 4: sub_title = 'Homozygous EMS SNP'
+				w, h = draw.textsize(str(sub_title))
+				draw.text((base[0]+sub_width/2-w/2 - 5, base[1]-25), str(sub_title), fill=(0,0,0), font=fnt2)		
+
+			# Chromosome title
+			chrm_title = str(i[0])+' (Mb)'
+			w, h = draw.textsize(str(chrm_title))
+			draw.text((wide/2-w/2-10, 550), chrm_title, fill=(0,0,0), font=fnt2)		
+
+			#Crop and save image, specifying the format with the extension
+			im.save('./output/' + str(i[0]) + '.png')
+
+
+# testing : python graphic-output.py  -bsnp genome.fa
+# python graphic-output.py   -bsnp genome.fa -1 F2_filtered_dens.va -2 F2_control_comparison_dens.va -3 F2_filtered_EMS_dens.va -4 F2_filtered_EMS_hz_dens.va 
 
 
 #############################################################################################################
@@ -218,30 +537,6 @@ def fa_vs_pos():
 						fa_img = int(80/100.0*height) - int(fa/scaling_factor_y) - 1
 						pos_img = int(int(sp[1])/scaling_factor_x) + 70
 						draw.ellipse((pos_img-2, fa_img-2, pos_img+2, fa_img+2), fill=(167, 190, 206))
-
-
-				'''
-				# Problem variants
-				problem_var = open(project + '/1_intermediate_files/F2_filtered.va', 'r')
-				for line in problem_var:
-					sp = line.split()
-					if i[0].lower() == sp[0].lower():
-						fa = float(sp[6])/(float(sp[6])+float(sp[5]))
-						fa_img = int(80/100.0*height) - int(fa/scaling_factor_y)
-						pos_img = int(int(sp[1])/scaling_factor_x) + int(70)
-						draw.ellipse((pos_img-2, fa_img-2, pos_img+2, fa_img+2), fill=(167, 190, 206)) 
-
-				#Control variants
-				problem_var = open(project + '/1_intermediate_files/control_filtered.va', 'r')
-				for line in problem_var:
-					sp = line.split()
-					if i[0].lower() == sp[0].lower():
-						fa = float(sp[6])/(float(sp[6])+float(sp[5]))
-						fa_img = int(80/100.0*height) - int(fa/scaling_factor_y)
-						pos_img = int(int(sp[1])/scaling_factor_x) + int(70)
-						draw.ellipse((pos_img-2, fa_img-2, pos_img+2, fa_img+2), fill=(237, 194, 168)) 
-				'''
-
 
 				#Mapping variants
 				for l, line in enumerate(lines):
