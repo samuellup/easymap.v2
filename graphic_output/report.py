@@ -726,7 +726,6 @@ if mut_type == 'dens':
 	'		<p>All input contigs are displayed, variant density mapping is plotted for each chromosome. </p>' + '\n'
 		) 
 	for f in sorted(files):
-<<<<<<< HEAD
 		if 'dens-overview' in str(f):
 			output.write(
 			'		<left> <img class="img" src="' +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" > </left>' + '\n'
@@ -737,24 +736,8 @@ if mut_type == 'dens':
 	'		<p>All input contigs are displayed, variant density mapping is plotted for each chromosome. </p>' + '\n'
 		) 
 	for f in sorted(files):
-=======
->>>>>>> eb0d8710fc7ce57b9004ad83411c22254144b0d4
-		if 'dens_map_' in str(f):
-			output.write(
-			'		<left> <img class="img" src="' +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" > </left>' + '\n'
-			)
 
 
-
-
-
-
-
-
-<<<<<<< HEAD
-=======
-
->>>>>>> eb0d8710fc7ce57b9004ad83411c22254144b0d4
 #__________________________________SNP cartographic report________________________________________________________________
 if mut_type == 'snp':
 
@@ -1013,13 +996,8 @@ output.close()
 # have been replaced. report.html is intended to be viewed by someone using the command-line interface. rfeed.html
 # is used to feed view-report.php in the web-interface with the correct path to resources (images, files, links) 
 
-<<<<<<< HEAD
 htmlFile2 = open('user_projects/' + project_name + '/3_workflow_output/rfeed.html', 'w')										#	< IN-PROGRAM
 #htmlFile2 = open('3_workflow_output/rfeed.html', 'w')														# < TESTING	
-=======
-#htmlFile2 = open('user_projects/' + project_name + '/3_workflow_output/rfeed.html', 'w')											< IN-PROGRAM
-htmlFile2 = open('3_workflow_output/rfeed.html', 'w')														# < TESTING	
->>>>>>> eb0d8710fc7ce57b9004ad83411c22254144b0d4
 
 with open(output_html, 'r') as htmlFile1:
 		for line in htmlFile1:
