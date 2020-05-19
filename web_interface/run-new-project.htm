@@ -89,13 +89,14 @@ body {font-size:16px;}
 
 			<div id="analysisTypeValidationInfo" class="warningMessage"></div>
 			
-			Data source:
-			<div class="buttons-wrap">
-				<div class="mx-button">
+			
+			<div id="dataSource" class="buttons-wrap" style="display:none; margin-bottom:22px";>
+				Data source:<br>
+				<div class="mx-button" style="margin-top:12px">
 					<input type="radio" class="dataSource" name="mx34" id="button3" />
 					<label for="button3" unselectable>Use my own reads</label>
 				</div>
-				<div class="mx-button">
+				<div class="mx-button" style="margin-top:12px">
 					<input type="radio" class="dataSource" name="mx34" id="button4" />
 					<label for="button4" unselectable>Simulate data</label>
 				</div>
@@ -124,24 +125,25 @@ body {font-size:16px;}
 			<select id="annFileSelector" style="display:block; margin-bottom:22px;"></select>
 			<div id="annFileValidationInfo" class="warningMessage"></div>
 			
-			<div id="backgroundCrossCtype" style="display:none;"> <!-- Not displayed by default -->
+
+			<div class="buttons-wrap" id="expMutType" style="display:none">
 				<hr style="width: 100%; border: 2px solid rgb(150,150,150)" class="w3-round">
-					
-				Expected mutation type:
-				<div class="buttons-wrap">
-					<div class="mx-button">
-						<input type="radio" class="mutType" name="mxMT" id="button47" />
-						<label for="button47" unselectable>EMS mutation</label>
-					</div>
-					<div class="mx-button">
-						<input type="radio" class="mutType" name="mxMT" id="button48" />
-						<label for="button48" unselectable>All mutations</label>
-					</div>
-					<div class="clear-floats"></div>
+				Expected mutation type:<br>
+				<div class="mx-button" style="margin-top:12px" >
+					<input type="radio" class="mutType" name="mxMT" id="button47" />
+					<label for="button47" unselectable>EMS mutation </label>
 				</div>
-				<div id="mutTypeValidationInfo" class="warningMessage"></div>
+				<div class="mx-button" style="margin-top:12px">
+					<input type="radio" class="mutType" name="mxMT" id="button48" />
+					<label for="button48" unselectable>All mutations</label>
+				</div>
+				<div class="clear-floats"></div>
+			</div>
+			<div id="mutTypeValidationInfo" class="warningMessage"></div>
 
 
+			<div id="backgroundCrossCtype" style="display:none;"> <!-- Not displayed by default -->
+					
 				Mutant background:
 				<div class="buttons-wrap">
 					<div class="mx-button">

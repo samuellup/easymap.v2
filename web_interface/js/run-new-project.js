@@ -187,10 +187,12 @@ window.onload = function() {
 		}
 		if (checkedOption == 'button1') {
 			cmdArgs[2] = 'ins';
+			document.getElementById("expMutType").style.display = "none";
 			document.getElementById("insSeqField").style.display = "block";
 			document.getElementById("readsControl").style.display = "none";
 			document.getElementById("backgroundCrossCtype").style.display = "none";
 			document.getElementById("simRecselInterface").style.display = "none";
+			document.getElementById("dataSource").style.display = "block";
 			if (cmdArgs[3] == 'exp') {
 				document.getElementById("expDataInterface").style.display = "block";
 			}
@@ -199,10 +201,12 @@ window.onload = function() {
 			}
 		} else if (checkedOption == 'button2') {
 			cmdArgs[2] = 'snp';
+			document.getElementById("expMutType").style.display = "block";
 			document.getElementById("insSeqField").style.display = "none";
 			document.getElementById("readsControl").style.display = "block";
 			document.getElementById("backgroundCrossCtype").style.display = "block";
 			document.getElementById("simRecselInterface").style.display = "block";
+			document.getElementById("dataSource").style.display = "block";
 			if (cmdArgs[3] == 'exp') {
 				document.getElementById("expDataInterface").style.display = "block";
 			}
@@ -213,10 +217,15 @@ window.onload = function() {
 		} else if (checkedOption == 'button40') {
 			cmdArgs[2] = 'dens';
 			cmdArgs[3] = 'exp'
-			document.getElementById("insSeqField").style.display = "none";
 			document.getElementById("readsControl").style.display = "block";
-			document.getElementById("expDataInterface").style.display = "block";
+			document.getElementById("expMutType").style.display = "none";
+			document.getElementById("backgroundCrossCtype").style.display = "none";
+			document.getElementById("insSeqField").style.display = "none";
+			document.getElementById("expDataInterface").style.display = "none";
 			document.getElementById("dataSource").style.display = "none";
+			if (cmdArgs[3] == 'exp') {
+				document.getElementById("expDataInterface").style.display = "block";
+			}
 		}
 
 		//updateCmd();
