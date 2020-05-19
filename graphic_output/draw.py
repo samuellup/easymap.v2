@@ -58,12 +58,6 @@ def red(p):
 		r = str(p)[:3] + ' Mb'
 	return r; 
 
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> eb0d8710fc7ce57b9004ad83411c22254144b0d4
 #############################################################################################################
 #																											#
 # 								Density mapping - Chromosome Overview										#
@@ -217,11 +211,7 @@ def dens_ovw():
 			prev_pos_start = pos_start + 10
 
 	#Crop and save image, specifying the format with the extension
-<<<<<<< HEAD
 	im.save(project + '/3_workflow_output/dens-overview.png')
-=======
-	im.save('./output/dens-overview.png')
->>>>>>> eb0d8710fc7ce57b9004ad83411c22254144b0d4
 
 
 # testing : python graphic-output.py  -bsnp genome.fa
@@ -317,10 +307,7 @@ def dens_graphs():
 				max_dens=0
 				sep_y=0
 				dens_step=0
-<<<<<<< HEAD
 				sclf = 0
-=======
->>>>>>> eb0d8710fc7ce57b9004ad83411c22254144b0d4
 				for line in open(dens_data, "r"):
 					if str(line.split()[0]).lower() == str(i[0]).lower():
 						if int(line.split()[2]) > max_dens: max_dens = int(line.split()[2])
@@ -348,7 +335,6 @@ def dens_graphs():
 				if c == 4: re,g,b = 209, 56, 158
 				prev_pos_x = base[0]
 				prev_pos_y = base[1]+sub_height
-<<<<<<< HEAD
 				if max_dens > 0:
 					for line in open(dens_data, "r"):
 						if str(line.split()[0]).lower() == str(i[0]).lower(): 
@@ -365,23 +351,7 @@ def dens_graphs():
 								draw.line((prev_pos_x, prev_pos_y-1)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				# Drawing overall line
 							prev_pos_x, prev_pos_y = pos_x_gr, pos_y_gr
 							
-=======
-				for line in open(dens_data, "r"):
-					if str(line.split()[0]).lower() == str(i[0]).lower(): 
-						pos_x_r = int(line.split()[1])
-						pos_y_r = int(line.split()[2])
-						pos_x_gr = (pos_x_r / scaling_factor_x) + base[0]
-						pos_y_gr =  base[1] + sub_height - (pos_y_r / sclf) 
-						# Drawing filled area
-						for fill_x in range(prev_pos_x, pos_x_gr, 1):
-							if fill_x < base[0]+sub_width:
-								fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
-								#draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+2), fill=(220, 220, 220))
-						if pos_x_gr < base[0]+sub_width+5: 
-							draw.line((prev_pos_x, prev_pos_y-1)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				# Drawing overall line
-						prev_pos_x, prev_pos_y = pos_x_gr, pos_y_gr
-						
->>>>>>> eb0d8710fc7ce57b9004ad83411c22254144b0d4
+
 				# Draws sub-plot area  
 				draw.rectangle([(base[0], base[1]), (base[0] +sub_width, base[1]+sub_height)], outline=(0,0,0), width=(1))
 				#draw.ellipse([(base[0], base[1]), (base[0] +4, base[1]+4)], fill=(255, 0, 0))						#for testing 
@@ -399,15 +369,9 @@ def dens_graphs():
 			w, h = draw.textsize(str(chrm_title))
 			draw.text((wide/2-w/2-10, 550), chrm_title, fill=(0,0,0), font=fnt2)		
 
-<<<<<<< HEAD
 			# Save image, specifying the format with the extension
 			project = args.project_name
 			im.save(project + '/3_workflow_output/dens_map_' + str(i[0]) + '.png')
-=======
-			#Crop and save image, specifying the format with the extension
-			im.save('./output/' + str(i[0]) + '.png')
->>>>>>> eb0d8710fc7ce57b9004ad83411c22254144b0d4
-
 
 # testing : python graphic-output.py  -bsnp genome.fa
 # python graphic-output.py   -bsnp genome.fa -1 F2_filtered_dens.va -2 F2_control_comparison_dens.va -3 F2_filtered_EMS_dens.va -4 F2_filtered_EMS_hz_dens.va 

@@ -2,11 +2,7 @@
 
 #from __future__ import division
 import argparse
-<<<<<<< HEAD
 from draw import fa_vs_pos, insertions_overview_and_histograms, gene_plot, legend, candidates_zoom, gene_legend, dens_graphs,dens_ovw
-=======
-from draw import fa_vs_pos, insertions_overview_and_histograms, gene_plot, legend, candidates_zoom, gene_legend, dens_graphs
->>>>>>> eb0d8710fc7ce57b9004ad83411c22254144b0d4
 parser = argparse.ArgumentParser()
 
 #INPUT VARIABLES FOR SNP
@@ -67,10 +63,6 @@ elif args.my_mut == 'lin':
 elif args.my_mut == 'dens':
 	#DENS vs POS images
 	dens_graphs()
-<<<<<<< HEAD
 	dens_ovw()
-=======
 
->>>>>>> eb0d8710fc7ce57b9004ad83411c22254144b0d4
 
-#gene_legend()
