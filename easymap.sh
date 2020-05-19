@@ -4,7 +4,7 @@
 #                                           		verify-input.py
 #  [0] ./easymap.sh										.
 #  [1] $project_name									.
-#  [2] $workflow[ins/snp]								.                      Maybe add a 3rd workflow: Analysis of SNPs
+#  [2] $workflow[ins/snp]								.
 #  [3] $data_source[exp/sim]							.
 #  [4] $ref_seq											*
 #  [5] $ins_seq											*
@@ -21,7 +21,7 @@
 # [16] $is_ref_strain [ref/noref]						.                      Only for linkage analysis mapping
 # [17] $cross_type [oc/bc]								.                      Only for linkage analysis mapping
 # [18] $snp_analysis_type [par/f2wt]					.
-# [19] $control_parental [mut/nomut] 					.                      Only for linkage analysis mapping
+# [19] $control_parental [mut/nomut] 					.                      Only for linkage analysis mapping and variant density mapping
 # [20] $sim_mut											.                      nbr+mod
 # [21] $sim_recsel										.                      rfd+pos+mod+nre
 # [22] $sim_seq											.                      rd+rl+fl+ber+gbs
@@ -283,6 +283,18 @@ if [ $workflow == 'snp' ]; then
 	if [ $workflow_result == 0 ]; then
 		echo $(date "+%F > %T")": Analysis workflow finished correctly." >> $my_log_file
 	else 
+		echo $(date "+%F > %T")": Analysis workflow failed (see details above in this log)." >> $my_log_file
+		echo "Easymap analysis failed. See log file for more info"
+		echo 'status:error' >> $my_status_file
+		exit
+	fi
+fi
+
+if [ $workflow == 'dens' ]; then
+	workflow_result=`./workflows/workflow-dens.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $cross_type $is_ref_strain $control_parental $snp_analysis_type $lib_type_ctrl $stringency $exp_mut_type`
+	if [ $workflow_result == 0 ]; then
+		echo $(date "+%F > %T")": Analysis workflow finished correctly." >> $my_log_file
+	else
 		echo $(date "+%F > %T")": Analysis workflow failed (see details above in this log)." >> $my_log_file
 		echo "Easymap analysis failed. See log file for more info"
 		echo 'status:error' >> $my_status_file
