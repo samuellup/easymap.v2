@@ -63,7 +63,7 @@ stringency=${20}
 exp_mut_type=${21}
 
 #Set number of maximum CPU for steps compatible with multithreading, default = 1 
-threads=2
+threads=1
 
 # Set internal variables according to the SNP validation stringency chosen by the user
 if [ $stringency == high_stringency ]; then
@@ -554,6 +554,7 @@ echo $(date "+%F > %T")': VCF operations finished.' >> $my_log_file
 {
 	python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison.va -b $f1/F2_filtered_EMS.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -dp_max $dp_max -qual_min $problemSample_snpQualityTheshold -mut_type EMS  2>> $my_log_file
 	python2 $location/scripts_snp/variants-filter.py -a $f1/F2_filtered_EMS.va -b $f1/F2_filtered_EMS_hz.va -step 3 -fasta $f1/$my_gs -af_min 0.98 -dp_min $dp_min -dp_max $dp_max -qual_min $problemSample_snpQualityTheshold -mut_type EMS  2>> $my_log_file
+	python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison.va -b $f1/F2_hz.va -step 3 -fasta $f1/$my_gs -af_min 0.98 -dp_min $dp_min -dp_max $dp_max -qual_min $problemSample_snpQualityTheshold   2>> $my_log_file
 
 } || {
 	echo 'Error during execution of variants-filter.py with F2 data.' >> $my_log_file
@@ -569,6 +570,7 @@ echo $(date "+%F > %T")': First VCF filtering step of F2 data finished.' >> $my_
 	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_control_comparison.va  -out $f1/F2_control_comparison_dens.va -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
 	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_filtered_EMS.va  -out $f1/F2_filtered_EMS_dens.va -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
 	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_filtered_EMS_hz.va  -out $f1/F2_filtered_EMS_hz_dens.va -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
+	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_hz.va  -out $f1/F2_hz_dens.va -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
 
 } || {
 	echo $(date "+%F > %T")': Error during execution of dens-counter.py .' >> $my_log_file
@@ -580,10 +582,11 @@ echo $(date "+%F > %T")': Mutation density counter module finished.' >> $my_log_
 
 # (5) Run variant density mapping 
 {
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_dens.va  -out $f1/F2_filtered_max.va  2>> $my_log_file
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_control_comparison_dens.va  -out $f1/F2_control_comparison_max.va  2>> $my_log_file
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_EMS_dens.va  -out $f1/F2_filtered_EMS_max.va  2>> $my_log_file
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_EMS_hz_dens.va  -out $f1/F2_filtered_EMS_hz_max.va  2>> $my_log_file
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_dens.va  -out $f1/mapping_max.va  2>> $my_log_file
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_control_comparison_dens.va  -out $f1/mapping_max.va  2>> $my_log_file
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_EMS_dens.va  -out $f1/mapping_max.va  2>> $my_log_file
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_EMS_hz_dens.va  -out $f1/mapping_max.va  2>> $my_log_file
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_hz_dens.va  -out $f1/mapping_max.va  2>> $my_log_file
 
 } || {
 	echo $(date "+%F > %T")': Error during execution of dens-mapping.py .' >> $my_log_file
@@ -595,7 +598,7 @@ echo $(date "+%F > %T")': Mutation density mapping module finished.' >> $my_log_
 
 # (6) Generate graphic output
 {
-	python2 $location/graphic_output/graphic-output.py -my_mut dens -pname $project_name  -bsnp $f1/$my_gs -1 $f1/F2_filtered_dens.va -2 $f1/F2_control_comparison_dens.va -3 $f1/F2_filtered_EMS_dens.va -4 $f1/F2_filtered_EMS_hz_dens.va 2>> $my_log_file
+	python2 $location/graphic_output/graphic-output.py -my_mut dens -pname $project_name  -bsnp $f1/$my_gs -1 $f1/F2_filtered_dens.va -2 $f1/F2_control_comparison_dens.va -3 $f1/F2_filtered_EMS_dens.va -4 $f1/F2_filtered_EMS_hz_dens.va -5 $f1/F2_hz_dens.va -mut_type $exp_mut_type 2>> $my_log_file
 
 } || {
 	echo $(date "+%F > %T")': Error during generation of graphic output.' >> $my_log_file

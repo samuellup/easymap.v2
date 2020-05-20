@@ -735,11 +735,14 @@ if mut_type == 'dens':
 	'		<h2>Density analysis insight</h2>' + '\n'
 	'		<p>All input contigs are displayed, variant density mapping is plotted for each chromosome. </p>' + '\n'
 		) 
+	
 	for f in sorted(files):
 		if 'dens_map' in str(f):
 			output.write(
 			'		<left> <img class="img" src="' +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" > </left>' + '\n'
 			)
+
+
 
 
 #__________________________________SNP cartographic report________________________________________________________________
