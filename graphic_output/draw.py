@@ -169,7 +169,7 @@ def dens_ovw():
 			if max_dens == 0: 
 				tag_y = 0
 				draw.line((base[0]-3,base[1]+10)+(base[0], base[1]+10), fill=(0,0,0))
-				draw.text((base[0]-30, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
+				draw.text((base[0]-19, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
 
 			# Sub-grah areas
 			prev_pos_start=base[0]
@@ -210,9 +210,9 @@ def dens_ovw():
 				draw.rectangle([(prev_pos_start, base[1]), (pos_start, base[1]+sub_height)], outline=(0,0,0), width=(1))
 				
 				# Chromosome titles
-				#
-				#
-				#
+				if c==4:
+					w, h = draw.textsize(str(chr[0]))
+					draw.text((prev_pos_start + (pos_start - prev_pos_start)/2-w/2-5, base[1]+sub_height+30), str(chr[0]), font=fnt2, fill=(0,0,0))
 
 				prev_pos_start = pos_start + 10
 
@@ -263,7 +263,7 @@ def dens_ovw():
 			if max_dens == 0: 
 				tag_y = 0
 				draw.line((base[0]-3,base[1]+10)+(base[0], base[1]+10), fill=(0,0,0))
-				draw.text((base[0]-30, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
+				draw.text((base[0]-19, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
 
 			# Sub-grah areas
 			prev_pos_start=base[0]
@@ -303,10 +303,10 @@ def dens_ovw():
 				draw.rectangle([(prev_pos_start, base[1]), (pos_start, base[1]+sub_height)], outline=(0,0,0), width=(1))
 				
 				# Chromosome titles
-				#
-				#
-				#
-
+				if c==3:
+					w, h = draw.textsize(str(chr[0]))
+					draw.text((prev_pos_start + (pos_start - prev_pos_start)/2-w/2-5, base[1]+sub_height+30), str(chr[0]), font=fnt2, fill=(0,0,0))
+				
 				prev_pos_start = pos_start + 10
 
 
@@ -431,7 +431,7 @@ def dens_graphs():
 					if max_dens == 0: 
 						tag_y = 0
 						draw.line((base[0]-3,base[1]+10)+(base[0], base[1]+10), fill=(0,0,0))
-						draw.text((base[0]-30, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
+						draw.text((base[0]-19, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
 
 					# Data plotting
 					if c == 1: re,g,b = 209, 56, 56
@@ -550,7 +550,7 @@ def dens_graphs():
 						if max_dens == 0: 
 							tag_y = 0
 							draw.line((base[0]-3,base[1]+10)+(base[0], base[1]+10), fill=(0,0,0))
-							draw.text((base[0]-30, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
+							draw.text((base[0]-19, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
 
 						# Data plotting
 						if c == 1: re,g,b = 209, 56, 56
@@ -617,7 +617,7 @@ def dens_graphs():
 						if max_dens == 0: 
 							tag_y = 0
 							draw.line((base[0]-3,base[1]+10)+(base[0], base[1]+10), fill=(0,0,0))
-							draw.text((base[0]-30, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
+							draw.text((base[0]-19, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
 
 						# Data plotting
 						if c == 1: re,g,b = 209, 56, 56
