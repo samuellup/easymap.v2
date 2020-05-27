@@ -12,6 +12,7 @@ parser.add_argument('-log', action="store", dest = 'log')
 parser.add_argument('-output_html', action="store", dest = 'output_html')
 parser.add_argument('-project', action="store", dest = 'project')
 parser.add_argument('-files_dir', action="store", dest = 'files_dir')
+parser.add_argument('-cand_reg_file', action="store", dest = 'cand_reg_file')
 
 args = parser.parse_args()
 
@@ -720,7 +721,7 @@ if mut_type == 'lin':
 
 #__________________________________Density mapping cartographic report________________________________________________________________
 if mut_type == 'dens':
-	#Chromosomes DENS vs POS
+	#Chromosomes DENS vs POS overview
 	output.write(
 	'		<h2>Density analysis overview</h2>' + '\n'
 	'		<p>All input contigs are displayed, variant density mapping is plotted for each chromosome. </p>' + '\n'
@@ -731,16 +732,31 @@ if mut_type == 'dens':
 			'		<left> <img class="img" src="' +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" > </left>' + '\n'
 			)
 
+	# Selected chromosome 
 	output.write(
-	'		<h2>Density analysis insight</h2>' + '\n'
-	'		<p>All input contigs are displayed, variant density mapping is plotted for each chromosome. </p>' + '\n'
+	'		<h2>Selected genomic region</h2>' + '\n'
+	'		<p>An insight on the contig with a region containing a higher density of polymorphisms. </p>' + '\n'
 		) 
-	
-	for f in sorted(files):
-		if 'dens_map' in str(f):
-			output.write(
-			'		<left> <img class="img" src="' +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" > </left>' + '\n'
-			)
+	with open(args.cand_reg_file, "r") as cr_input: 
+		cr_chr = "none"
+		for line in cr_input: 
+			if line.startswith("?"): 
+				sp = line.split()
+				cr_chr = str(sp[1])
+
+	if cr_chr == "none": 
+		output.write('<br><p>No candidate region selected, please manually review the results. </p>' + '\n'	)
+
+	if cr_chr != "none":
+		for f in sorted(files):
+			if 'dens_map' in str(f) and cr_chr.lower() in str(f).lower():
+				output.write(
+				'		<left> <img class="img" src="' +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" > </left>' + '\n'
+				)
+
+	output.write(
+		'	<br><p>Click to see <a href="candidate_variants.txt" target="_blank">extended information</a>  or  <a href="candidate_variants_total.txt" target="_blank"> all variants</a>. </p>' + '\n'
+		)
 
 
 

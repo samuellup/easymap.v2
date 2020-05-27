@@ -33,6 +33,7 @@ parser.add_argument('-3', action="store", dest = 'EMS')
 parser.add_argument('-4', action="store", dest = 'EMS_hz')		
 parser.add_argument('-5', action="store", dest = 'HZ')		
 parser.add_argument('-mut_type', action="store", dest = 'mut_type', default="EMS")		
+parser.add_argument('-cr_file', action="store", dest = 'cr_file')					
 
 
 args = parser.parse_args()
@@ -331,6 +332,13 @@ def dens_graphs():
 	# Genome file
 	contig_source = args.input_f_snp
 
+	# Candidate Region file															
+	cr_file = open(args.cr_file, "r")
+	for line in cr_file: 
+		if line.startswith("?"): 
+			sp = line.split()
+			candidate_region = [sp[1], sp[2], sp[3]]
+
 	# Function to parse fasta file (based on one of the Biopython IOs)
 	def read_fasta(fp):
 		name, seq = None, []
@@ -433,11 +441,13 @@ def dens_graphs():
 						draw.line((base[0]-3,base[1]+10)+(base[0], base[1]+10), fill=(0,0,0))
 						draw.text((base[0]-19, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
 
+					# Color scheme																					
+					if c == 1: re,g,b,re_f,g_f,b_f = 209, 56, 56, 240, 137, 137
+					if c == 2: re,g,b,re_f,g_f,b_f = 56, 127, 209, 135, 182, 237
+					if c == 3: re,g,b,re_f,g_f,b_f = 56, 209, 71, 154, 252, 164
+					if c == 4: re,g,b,re_f,g_f,b_f = 209, 56, 158, 247, 161, 218
+
 					# Data plotting
-					if c == 1: re,g,b = 209, 56, 56
-					if c == 2: re,g,b = 56, 127, 209
-					if c == 3: re,g,b = 56, 209, 71
-					if c == 4: re,g,b = 209, 56, 158
 					prev_pos_x = base[0]
 					prev_pos_y = base[1]+sub_height
 					for line in open(dens_data, "r"):
@@ -446,15 +456,24 @@ def dens_graphs():
 							pos_y_r = int(line.split()[2])
 							pos_x_gr = (pos_x_r / scaling_factor_x) + base[0]
 							pos_y_gr =  base[1] + sub_height - (pos_y_r / sclf) 
-							# Drawing filled area
-							for fill_x in range(prev_pos_x, pos_x_gr, 1):
-								if fill_x < base[0]+sub_width:
-									fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
-									#draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+2), fill=(220, 220, 220))
+							# Drawing CR filled area
+							try: 
+								if str(i[0]).lower() == str(candidate_region[0]).lower():
+									cr_start = int(candidate_region[1])
+									cr_end = int(candidate_region[2])
+									for fill_x in range(prev_pos_x, pos_x_gr, 1):
+										if fill_x < base[0]+sub_width:
+											if pos_x_r > cr_start and pos_x_r < cr_end: 
+												fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
+												draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+2), fill=(re_f,g_f,b_f))
+							except: 
+								pass
+
+							# Drawing overall line
 							if pos_x_gr < base[0]+sub_width+5: 
-								draw.line((prev_pos_x, prev_pos_y-1)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				# Drawing overall line
+								draw.line((prev_pos_x, prev_pos_y-1)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				
 							prev_pos_x, prev_pos_y = pos_x_gr, pos_y_gr
-							
+			
 					# Draws sub-plot area  
 					draw.rectangle([(base[0], base[1]), (base[0] +sub_width, base[1]+sub_height)], outline=(0,0,0), width=(1))
 					#draw.ellipse([(base[0], base[1]), (base[0] +4, base[1]+4)], fill=(255, 0, 0))						#for testing 
@@ -553,8 +572,9 @@ def dens_graphs():
 							draw.text((base[0]-19, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
 
 						# Data plotting
-						if c == 1: re,g,b = 209, 56, 56
-						if c == 2: re,g,b = 56, 127, 209
+						# Color scheme																					#_CR_
+						if c == 1: re,g,b,re_f,g_f,b_f = 209, 56, 56, 240, 137, 137
+						if c == 2: re,g,b,re_f,g_f,b_f = 56, 127, 209, 135, 182, 237
 						prev_pos_x = base[0]
 						prev_pos_y = base[1]+sub_height
 						for line in open(dens_data, "r"):
@@ -563,15 +583,23 @@ def dens_graphs():
 								pos_y_r = int(line.split()[2])
 								pos_x_gr = (pos_x_r / scaling_factor_x) + base[0]
 								pos_y_gr =  base[1] + sub_height - (pos_y_r / sclf) 
-								# Drawing filled area
-								for fill_x in range(prev_pos_x, pos_x_gr, 1):
-									if fill_x < base[0]+sub_width:
-										fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
-										#draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+2), fill=(220, 220, 220))
+								# Drawing CR filled area
+								try: 
+									if str(i[0]).lower() == str(candidate_region[0]).lower():
+										cr_start = int(candidate_region[1])
+										cr_end = int(candidate_region[2])
+										for fill_x in range(prev_pos_x, pos_x_gr, 1):
+											if fill_x < base[0]+sub_width:
+												if pos_x_r > cr_start and pos_x_r < cr_end: 
+													fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
+													draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+2), fill=(re_f,g_f,b_f))
+								except: 
+									pass
+								# Drawing overall line
 								if pos_x_gr < base[0]+sub_width+5: 
-									draw.line((prev_pos_x, prev_pos_y-1)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				# Drawing overall line
+									draw.line((prev_pos_x, prev_pos_y-1)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 			
 								prev_pos_x, prev_pos_y = pos_x_gr, pos_y_gr
-								
+									
 						# Draws sub-plot area  
 						draw.rectangle([(base[0], base[1]), (base[0] +sub_width, base[1]+sub_height)], outline=(0,0,0), width=(1))
 						#draw.ellipse([(base[0], base[1]), (base[0] +4, base[1]+4)], fill=(255, 0, 0))						#for testing 
@@ -620,9 +648,9 @@ def dens_graphs():
 							draw.text((base[0]-19, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
 
 						# Data plotting
-						if c == 1: re,g,b = 209, 56, 56
-						if c == 2: re,g,b = 56, 127, 209
-						if c == 3: re,g,b = 56, 209, 71
+						if c == 1: re,g,b,re_f,g_f,b_f = 209, 56, 56, 240, 137, 137
+						if c == 2: re,g,b,re_f,g_f,b_f = 56, 127, 209, 135, 182, 237
+						if c == 3: re,g,b,re_f,g_f,b_f = 56, 209, 71, 154, 252, 164
 						prev_pos_x = base[0]
 						prev_pos_y = base[1]+sub_height
 						for line in open(dens_data, "r"):
@@ -631,16 +659,23 @@ def dens_graphs():
 								pos_y_r = int(line.split()[2])
 								pos_x_gr = (pos_x_r / scaling_factor_x_3) + base[0]
 								pos_y_gr =  base[1] + sub_height - (pos_y_r / sclf) 
-								# Drawing filled area
-								for fill_x in range(prev_pos_x, pos_x_gr, 1):
-									if fill_x < base[0]+sub_width:
-										fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
-										#draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+2), fill=(220, 220, 220))
+								# Drawing CR filled area
+								try: 
+									if str(i[0]).lower() == str(candidate_region[0]).lower():
+										cr_start = int(candidate_region[1])
+										cr_end = int(candidate_region[2])
+										for fill_x in range(prev_pos_x, pos_x_gr, 1):
+											if fill_x < base[0]+sub_width:
+												if pos_x_r > cr_start and pos_x_r < cr_end: 
+													fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
+													draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+2), fill=(re_f,g_f,b_f))
+								except: 
+									pass
+								# Drawing overall line
 								if pos_x_gr < base[0]+sub_width_3+5: 
-									draw.line((prev_pos_x, prev_pos_y-1)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				# Drawing overall line
+									draw.line((prev_pos_x, prev_pos_y-1)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				
 								prev_pos_x, prev_pos_y = pos_x_gr, pos_y_gr
-								
-						# Draws sub-plot area  
+							# Draws sub-plot area  
 						draw.rectangle([(base[0], base[1]), (base[0] +sub_width_3, base[1]+sub_height)], outline=(0,0,0), width=(1))
 						#draw.ellipse([(base[0], base[1]), (base[0] +4, base[1]+4)], fill=(255, 0, 0))						#for testing 
 

@@ -27,6 +27,7 @@ parser.add_argument('-3', action="store", dest = 'EMS')
 parser.add_argument('-4', action="store", dest = 'EMS_hz')	
 parser.add_argument('-5', action="store", dest = 'HZ')		
 parser.add_argument('-mut_type', action="store", dest = 'mut_type', default="EMS")		
+parser.add_argument('-cr_file', action="store", dest = 'cr_file')		
 
 #SHARED VARIABLES
 parser.add_argument('-iva', action="store", dest = 'input_va')	 		#Output de varanalyzer

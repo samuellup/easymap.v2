@@ -63,7 +63,7 @@ stringency=${20}
 exp_mut_type=${21}
 
 #Set number of maximum CPU for steps compatible with multithreading, default = 1 
-threads=1
+threads=3
 
 # Set internal variables according to the SNP validation stringency chosen by the user
 if [ $stringency == high_stringency ]; then
@@ -375,153 +375,6 @@ function depth_alignment {
 ##################################################################################################################################################################################
 #																																												 #
 #																																												 #
-#																	CANDIDATE REGION ANALYSIS FUNCTION																			 #
-#																																												 #
-#																																												 #
-##################################################################################################################################################################################
-
-function cr_analysis {
-
-	# Run vcf filter, selecting snps in the candidate region defined by map-mutation.py, with an alelic frequence > 0.8 and corresponding to EMS mutations # SDL V2 Update - Manages indels
-	{
-		python2 $location/scripts_snp/variants-operations.py -a $f1/F2_raw.va -b $f1/control_raw.va -c $f1/F2_control_comparison_raw.va -mode A -primary 1  2>> $my_log_file
-		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison.va -b $f1/final_variants.va -step 2 -cand_reg_file $f1/map_info.txt -af_min 0.8 -mut_type $exp_mut_type  2>> $my_log_file
-		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison_raw.va -b $f1/final_indels.va -step 4 -cand_reg_file $f1/map_info.txt -af_min 0.8 -mut_type $exp_mut_type  2>> $my_log_file
-		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison_raw.va -b $f1/final_indels_total.va -step 5 -cand_reg_file $f1/map_info.txt -af_min 0.8 -mut_type all  2>> $my_log_file
-
-	} || {
-		echo $(date "+%F > %T")': Error during the second execution of variants-filter.py .' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': Second VCF filtering step finished.' >> $my_log_file
-
-	# Create input for varanalyzer and run varanalyzer.py (one file for the candidate region and one for the whole genome)
-	{
-		python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/final_variants.va -b $f1/snp-to-varanalyzer.txt  2>> $my_log_file
-		python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/F2_control_comparison.va -b $f1/snp-to-varanalyzer-total.txt  2>> $my_log_file		
-		python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/final_indels.va -b $f1/indel-to-varanalyzer.txt  2>> $my_log_file
-		python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/final_indels_total.va -b $f1/indel-to-varanalyzer-total.txt  2>> $my_log_file
-
-	} || {
-		echo $(date "+%F > %T")': Error during execution of snp-to-varanalyzer.py .' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': Input for varanalyzer finished.' >> $my_log_file
-	# Varanalyzer
-	{
-		python2 $location/varanalyzer/varanalyzer.py -itp snp -con $f1/$my_gs -gff $f0/$my_gff -var $f1/snp-to-varanalyzer.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_snp.txt 2>> $my_log_file
-		python2 $location/varanalyzer/varanalyzer.py -itp snp -con $f1/$my_gs -gff $f0/$my_gff -var $f1/snp-to-varanalyzer-total.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_total_temp.txt  2>> $my_log_file
-		touch $f1/varanalyzer_output_indel.txt ;       python2 $location/varanalyzer/varanalyzer.py -itp lim -con $f1/$my_gs -gff $f0/$my_gff -var $f1/indel-to-varanalyzer.txt       -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_indel.txt  2>> $my_log_file
-                touch $f1/varanalyzer_output_indel_total.txt ; python2 $location/varanalyzer/varanalyzer.py -itp lim -con $f1/$my_gs -gff $f0/$my_gff -var $f1/indel-to-varanalyzer-total.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_indel_total.txt  2>> $my_log_file
-
-	} || {
-		echo $(date "+%F > %T")': Error during execution of varanalyzer.py .' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': Varanalyzer finished.' >> $my_log_file
-
-	#SDL V2 update
-	awk 'FNR>1' $f1/varanalyzer_output_snp.txt $f1/varanalyzer_output_indel.txt > $f1/varanalyzer_output.txt
-	awk 'FNR>1' $f1/varanalyzer_output_total_temp.txt $f1/varanalyzer_output_indel_total.txt > $f1/varanalyzer_output_total.txt
-
-
-	# Run primer generation script
-	{
-		python2 $location/primers/primer-generation.py -file $f1/varanalyzer_output.txt -fasta $f1/$my_gs -out $f1/primer_generation_output.txt  -mode 2   2>> $my_log_file
-		python2 $location/primers/primer-generation.py -file $f1/varanalyzer_output_total.txt -fasta $f1/$my_gs -out $f1/primer_generation_output_total.txt  -mode 2   2>> $my_log_file
-
-	}|| {
-		echo $(date "+%F > %T")': primer-generation.py failed.'>> $my_log_file
-	}
-	echo $(date "+%F > %T")': primer-generation.py finished.' >> $my_log_file
-	
-	# Run extend-snp-variants-info                                              --project-name $project_name
-	# SDL V2 FIX
-	awk 'FNR>1' $f1/snp-to-varanalyzer-total.txt $f1/indel-to-varanalyzer-total.txt > $f1/variants-to-varanalyzer-total.txt 
-	awk 'FNR>1' $f1/snp-to-varanalyzer.txt $f1/indel-to-varanalyzer.txt > $f1/variants-to-varanalyzer.txt 
-	result_extend_snp_info=`python2 $location/scripts_snp/extend-snp-variants-info.py  --variants $f1/primer_generation_output.txt --snp-info $f1/variants-to-varanalyzer.txt --project-name $project_name --map-info $f1/map_info.txt --output-file $f3/candidate_variants.txt --region CR 2>> $my_log_file`
-	result_extend_snp_info=`python2 $location/scripts_snp/extend-snp-variants-info.py  --variants $f1/primer_generation_output_total.txt --snp-info $f1/variants-to-varanalyzer-total.txt --project-name $project_name --map-info $f1/map_info.txt --output-file $f3/candidate_variants_total.txt --region total 2>> $my_log_file`
-	
-	if [ $result_extend_snp_info == 'success' ]; then
-		echo $(date "+%F > %T")": extend-snp-variants-info.py finished." >> $my_log_file
-	elif [ $result_extend_snp_info == 'error' ]; then
-		echo $(date "+%F > %T")": Error: extend-snp-variants-info.py failed." >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	fi
-	
-	# Filter SNPs to draw
-	{
-		python2 $location/scripts_snp/variants-filter.py -a $f1/$1 -b $f1/F2_control_comparison_drawn.va -step 1 -af_min $2   2>> $my_log_file
-
-	} || {
-		echo $(date "+%F > %T")': Error during third execution of variants-filter.py . ' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': Third VCF filtering step finished.' >> $my_log_file
-
-	# Draw candidates 
-	{
-		python2 $location/graphic_output/graphic-output.py -my_mut af_candidates -asnp $f1/F2_control_comparison.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $project_name  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-		
-	} || {
-		echo $(date "+%F > %T")': Error during execution of graphic-output.py .' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': Graphic output created.' >> $my_log_file
-
-	# python2 ./graphic_output/graphic-output.py -my_mut snp -asnp ./user_projects/project/1_intermediate_files/F2_control_comparison_drawn.va -bsnp ./user_projects/project/1_intermediate_files/gnm_ref_merged/genome.fa -rrl 150 -iva ./user_projects/project/1_intermediate_files/varanalyzer_output.txt -gff ./user_data/complete.gff -pname user_projects/project  -cross bc -snp_analysis_type par  
-	# (6) Create graphic output
-	{
-		python2 $location/graphic_output/graphic-output.py -my_mut $my_mut -interval_width $interval_width -asnp $f1/F2_control_comparison_drawn.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $project_name/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $project_name  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
-		
-	} || {
-		echo $(date "+%F > %T")': Error during execution of graphic-output.py .' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': Graphic output created.' >> $my_log_file
-
-	# (7) Create report
-	#Some arrangements
-
-	{
-		cp $location/fonts/legend.png $f3/legend.png
-		cp $location/fonts/gene_legend_snp.png $f3/gene_legend_snp.png
-		zip $f3/report_images.zip $f3/*.png > $f2/zip.txt
-	} || {
-		echo $(date "+%F > %T")': Error during zip compression of report images. Please check that the zip program is installed in your system. Continuing anyway.' >> $my_log_file
-	}
-
-	{
-		python2 $location/graphic_output/report.py -files_dir $f3 -variants $f3/candidate_variants.txt -log $f2/log.log -output_html $f3/report.html -project $project_name -mut_type $my_mut  2>> $my_log_file
-		
-	} || {
-		echo $(date "+%F > %T")': Error during report generation.' >> $my_log_file
-		exit_code=1
-		echo $exit_code
-		exit
-	}
-	echo $(date "+%F > %T")': Report file created.' >> $my_log_file
-}
-
-
-
-##################################################################################################################################################################################
-#																																												 #
-#																																												 #
 #																			DATA ANALYSIS 																						 #
 #																																												 #
 #																																												 #
@@ -582,11 +435,14 @@ echo $(date "+%F > %T")': Mutation density counter module finished.' >> $my_log_
 
 # (5) Run variant density mapping 
 {
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_dens.va  -out $f1/mapping_max.va  2>> $my_log_file
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_control_comparison_dens.va  -out $f1/mapping_max.va  2>> $my_log_file
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_EMS_dens.va  -out $f1/mapping_max.va  2>> $my_log_file
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_EMS_hz_dens.va  -out $f1/mapping_max.va  2>> $my_log_file
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_hz_dens.va  -out $f1/mapping_max.va  2>> $my_log_file
+	# Step 1
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_dens.va  -out $f1/mapping_max.va -step 1							2>> $my_log_file
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_control_comparison_dens.va  -out $f1/mapping_max.va -step 1				2>> $my_log_file
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_EMS_dens.va  -out $f1/mapping_max.va -step 1						2>> $my_log_file
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_EMS_hz_dens.va  -out $f1/mapping_max.va -step 1 					2>> $my_log_file
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_hz_dens.va  -out $f1/mapping_max.va -step 1  								2>> $my_log_file
+	# Step 2
+	python2 $location/scripts_snp/dens-mapping.py -in $f1/mapping_max.va  -out $f1/candidate_region.txt -step 2 -mut_type $exp_mut_type -pname $project_name	2>> $my_log_file
 
 } || {
 	echo $(date "+%F > %T")': Error during execution of dens-mapping.py .' >> $my_log_file
@@ -596,7 +452,44 @@ echo $(date "+%F > %T")': Mutation density counter module finished.' >> $my_log_
 }
 echo $(date "+%F > %T")': Mutation density mapping module finished.' >> $my_log_file
 
-# (6) Generate graphic output
+# (6) Candidate region filtering
+{
+	python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison.va -b $f1/final_variants.va -step 2 -cand_reg_file $f1/candidate_region.txt -mut_type $exp_mut_type  2>> $my_log_file
+} || {
+	echo $(date "+%F > %T")': Error during determinarion of candidate region .' >> $my_log_file
+	exit_code=1
+	echo $exit_code
+	exit
+}
+echo $(date "+%F > %T")': Candidate region filter finished.' >> $my_log_file
+
+# Create input for varanalyzer and run varanalyzer.py (one file for the candidate region and one for the whole genome)
+{
+	python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/final_variants.va -b $f1/snp-to-varanalyzer.txt  2>> $my_log_file
+	python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/F2_control_comparison.va -b $f1/snp-to-varanalyzer-total.txt  2>> $my_log_file		
+
+} || {
+	echo $(date "+%F > %T")': Error during execution of snp-to-varanalyzer.py .' >> $my_log_file
+	exit_code=1
+	echo $exit_code
+	exit
+}
+echo $(date "+%F > %T")': Input for varanalyzer finished.' >> $my_log_file
+
+# Varanalyzer
+{
+	python2 $location/varanalyzer/varanalyzer.py -itp snp -con $f1/$my_gs -gff $f0/$my_gff -var $f1/snp-to-varanalyzer.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_snp.txt 2>> $my_log_file
+	python2 $location/varanalyzer/varanalyzer.py -itp snp -con $f1/$my_gs -gff $f0/$my_gff -var $f1/snp-to-varanalyzer-total.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_total_temp.txt  2>> $my_log_file
+
+} || {
+	echo $(date "+%F > %T")': Error during execution of varanalyzer.py .' >> $my_log_file
+	exit_code=1
+	echo $exit_code
+	exit
+}
+echo $(date "+%F > %T")': Varanalyzer finished.' >> $my_log_file
+
+# (7) Generate graphic output
 {
 	python2 $location/graphic_output/graphic-output.py -my_mut dens -pname $project_name  -bsnp $f1/$my_gs -1 $f1/F2_filtered_dens.va -2 $f1/F2_control_comparison_dens.va -3 $f1/F2_filtered_EMS_dens.va -4 $f1/F2_filtered_EMS_hz_dens.va -5 $f1/F2_hz_dens.va -mut_type $exp_mut_type 2>> $my_log_file
 
@@ -610,7 +503,9 @@ echo $(date "+%F > %T")': Graphic output generated.' >> $my_log_file
 
 # (7) Generate report
 { 
-	python2 $location/graphic_output/report.py  -log $my_log_file -output_html $f3/report.html -project $project_name -mut_type dens -files_dir $f3   2>> $my_log_file
+	cp $f1/varanalyzer_output_snp.txt $f3/candidate_variants.txt
+	cp $f1/varanalyzer_output_total_temp.txt $f3/candidate_variants_total.txt
+	python2 $location/graphic_output/report.py  -log $my_log_file -output_html $f3/report.html -project $project_name -mut_type dens -files_dir $f3 -cand_reg_file $f1/candidate_region.txt  2>> $my_log_file
 
 } || {
 	echo $(date "+%F > %T")': Error during generation of report file.' >> $my_log_file

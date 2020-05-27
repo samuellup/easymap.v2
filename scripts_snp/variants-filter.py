@@ -3,6 +3,7 @@
 #	STEP = 1: Normal argument-driven filtering
 #	STEP = 2: Candidate region filtering
 #	STEP = 3: Initial filtering + eliminates indels from the first VA files + eliminates variants from contigs shorter than 1 MB
+#	STEP = 3: Filters indels
 
 import argparse
 
