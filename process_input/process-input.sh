@@ -7,29 +7,6 @@
 # At the same time, if any file is incorrect, set exit_code=1. master.sh retrieves this value and
 # stops the workflow. Then, user can see in log stream which file was incorrect.
 #
-# TO DO: Maybe add error checks after the execution of each python program, as in the rest of the
-# workflows.
-#
-#
-
-
-#######################################################################################################
-# This block of code does some steps previous to the analysis
-# 
-# Description:
-# 
-# 
-# 
-#######################################################################################################
-
-#######################################################################################################
-# TO DO:
-# 
-# If mode is SNP and source exp, control fastQ files (parental or F2 control) have to be checked as well.
-# However, wait until SE/PE combinations issue is sorted out.
-# 
-# 
-#######################################################################################################
 
 
 # Set 'exit_code' (flag variable) to it's initial value (0)
@@ -202,7 +179,7 @@ if [ $data_source == 'exp' ]; then
 
 	# If workflow includes control reads, analyze them
 
-	if [ $analysis_type == 'snp' ]; then
+	if [ $analysis_type == 'snp' ] || [ $analysis_type == 'dens' ] ; then
 		if [ $lib_type_ctrl == 'se' ]; then
 			
 			fq=`python2 process_input/verify-input.py -fq $read_s_ctrl 2>> $my_log_file` 

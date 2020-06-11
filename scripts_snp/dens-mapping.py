@@ -65,7 +65,8 @@ if int(args.step) == 2:
                 if n_dens_next/n_dens > steepness and n_dens_next > max_dens_value*0.1:                                                                         
                     f = f+1
                 else: 
-                    end_cr = str(lines_d[f+1].split()[1])
+                    try: end_cr = str(lines_d[f+2].split()[1])
+                    except: end_cr = str(lines_d[f+1].split()[1])
                     stop=True
             except: 
                 end_cr = str(lines_d[f].split()[1])
@@ -81,7 +82,8 @@ if int(args.step) == 2:
                 if n_dens_next/n_dens > steepness and n_dens_next > max_dens_value*0.1:                                                                        
                     f = f-1
                 else: 
-                    start_cr = str(lines_d[f-1].split()[1])
+                    try: start_cr = str(lines_d[f-2].split()[1])
+                    except: start_cr = str(lines_d[f-1].split()[1])
                     stop=True
             except: 
                 end_cr = str(lines_d[f].split()[1])

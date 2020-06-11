@@ -63,7 +63,7 @@ stringency=${20}
 exp_mut_type=${21}
 
 #Set number of maximum CPU for steps compatible with multithreading, default = 1 
-threads=3
+threads=2
 
 # Set internal variables according to the SNP validation stringency chosen by the user
 if [ $stringency == high_stringency ]; then
@@ -491,7 +491,7 @@ echo $(date "+%F > %T")': Varanalyzer finished.' >> $my_log_file
 
 # (7) Generate graphic output
 {
-	python2 $location/graphic_output/graphic-output.py -my_mut dens -pname $project_name  -bsnp $f1/$my_gs -1 $f1/F2_filtered_dens.va -2 $f1/F2_control_comparison_dens.va -3 $f1/F2_filtered_EMS_dens.va -4 $f1/F2_filtered_EMS_hz_dens.va -5 $f1/F2_hz_dens.va -mut_type $exp_mut_type 2>> $my_log_file
+	python2 $location/graphic_output/graphic-output.py -my_mut dens -pname $project_name  -bsnp $f1/$my_gs  -cr_file $f1/candidate_region.txt -1 $f1/F2_filtered_dens.va -2 $f1/F2_control_comparison_dens.va -3 $f1/F2_filtered_EMS_dens.va -4 $f1/F2_filtered_EMS_hz_dens.va -5 $f1/F2_hz_dens.va -mut_type $exp_mut_type 2>> $my_log_file
 
 } || {
 	echo $(date "+%F > %T")': Error during generation of graphic output.' >> $my_log_file
