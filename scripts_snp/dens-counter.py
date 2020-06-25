@@ -36,6 +36,7 @@ max_chr = 0
 for chr in chromosomes: 
 	if int(chr[1]) > max_chr: max_chr = chr[1]
 
+recount = list()
 for ch in chromosomes: 
 	for center_pos in range(width/2, max_chr, step):
 		snp_count = 0 
@@ -46,4 +47,22 @@ for ch in chromosomes:
 				right = center_pos + width/2
 				if str(sp[0]) == str(ch[0]) and int(sp[1]) > left and int(sp[1]) < right: 
 					snp_count = snp_count + 1
-		out.write(str(str(ch[0])) + "\t" + str(center_pos) + "\t" + str(snp_count) + "\n") 
+		recount.append([ch[0], center_pos, snp_count]) 
+
+
+# Weighted averages 
+for i, p in enumerate(recount):
+	if i == 0: 
+		w_dens = 0.6*recount[i][2] + 0.25*recount[i+1][2] + 0.15*recount[i+2][2]
+	elif i == 1: 
+		w_dens =  0.2*recount[i-1][2] + 0.55*recount[i][2] + 0.15*recount[i+1][2] + 0.1*recount[i+2][2]
+	elif i == len(recount)-2:
+		w_dens = 0.1*recount[i-2][2] + 0.15*recount[i-1][2] + 0.55*recount[i][2] + 0.2*recount[i+1][2] 
+	elif i == len(recount)-1:
+		w_dens = 0.15*recount[i-2][2] + 0.25*recount[i-1][2] + 0.6*recount[i][2]
+	else:
+		w_dens = 0.1*recount[i-2][2] + 0.15*recount[i-1][2] + 0.5*recount[i][2] + 0.15*recount[i+1][2] + 0.1*recount[i+2][2]
+	recount[i].append(w_dens)
+	
+for p in recount: 
+	out.write(str(str(p[0])) + "\t" + str(p[1]) + "\t" + str(p[2]) + "\t" + str(p[3]) + "\n") 

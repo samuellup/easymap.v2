@@ -67,5 +67,6 @@ elif args.my_mut == 'dens':
 	#DENS vs POS images
 	dens_graphs()
 	dens_ovw()
+	gene_plot()	
 
 

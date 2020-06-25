@@ -14,13 +14,13 @@ args = parser.parse_args()
 if int(args.step) == 1:
     in_file = args.in_file
     out = open(args.out, "a+")
-    max_dens=[0,0,0]
+    max_dens=[0,0,0,0]
     for line in open(in_file, "r"): 
         sp = line.split()
-        if int(sp[2]) > int(max_dens[2]): 
-            max_dens =[sp[0],sp[1],sp[2]]
+        if float(sp[3]) > float(max_dens[3]): 
+            max_dens =[sp[0],sp[1],sp[2],sp[3]]
 
-    out.write(str(max_dens[0]) + "\t" + str(max_dens[1]) + "\t" + str(max_dens[2]) + "\t" + str((in_file.split(".")[0]).split("/")[-1]) + "\n")
+    out.write(str(max_dens[0]) + "\t" + str(max_dens[1]) + "\t" + str(max_dens[2]) + "\t" + str(max_dens[3]) + "\t" + str((in_file.split(".")[0]).split("/")[-1]) + "\n")
 
 # Selecting center for CR 
 if int(args.step) == 2: 
@@ -29,7 +29,7 @@ if int(args.step) == 2:
         for p in reversed(priorities):
             for line in open(args.in_file, "r"):
                 if str(p) == str(line.split()[-1]): 
-                    if int(line.split()[2]) != 0: 
+                    if float(line.split()[3]) != 0: 
                         selected_pos =  [line.split()[0], line.split()[1], str(p)]                        #str(line.split()[0])+'_-_'+str(line.split()[1])
 
     if args.mut_type == "all": 
@@ -37,8 +37,8 @@ if int(args.step) == 2:
         for p in reversed(priorities):
             for line in open(args.in_file, "r"):
                 if str(p) == str(line.split()[-1]): 
-                    if int(line.split()[2]) != 0: 
-                        selected_pos = selected_pos =  [line.split()[0], line.split()[1], str(p)]
+                    if float(line.split()[3]) != 0: 
+                        selected_pos =  [line.split()[0], line.split()[1], str(p)]
 
     try: 
         selected_chr = str(selected_pos[0])
@@ -46,7 +46,7 @@ if int(args.step) == 2:
         selected_pos = int(selected_pos[1])
         lines_d = {}
         project = args.project
-        for i, line in enumerate(open(project+"/1_intermediate_files/"+selected_data+".va", "r")):                                             
+        for i, line in enumerate(open(project+"/1_intermediate_files/"+selected_data+".txt", "r")):                                             
             if selected_chr.lower() == str(line.split()[0]).lower(): 
                 lines_d[i] = line
                 if selected_pos == int(line.split()[1]):
@@ -54,14 +54,14 @@ if int(args.step) == 2:
 
         # SETTING CR COORDINATES
         steepness = 0.20                                                                                         # ARBITRARY VALUE (0.2), calibrate accordingly
-        max_dens_value = float(lines_d[selected_index].split()[2])
+        max_dens_value = float(lines_d[selected_index].split()[3])
         # Frontwards
         f = selected_index
         stop = False
         while stop == False: 
             try: 
-                n_dens = float(lines_d[f].split()[2])
-                n_dens_next = float(lines_d[f+1].split()[2])
+                n_dens = float(lines_d[f].split()[3])
+                n_dens_next = float(lines_d[f+1].split()[3])
                 if n_dens_next/n_dens > steepness and n_dens_next > max_dens_value*0.1:                                                                         
                     f = f+1
                 else: 
@@ -77,8 +77,8 @@ if int(args.step) == 2:
         stop = False
         while stop == False: 
             try:
-                n_dens = float(lines_d[f].split()[2])
-                n_dens_next = float(lines_d[f-1].split()[2])
+                n_dens = float(lines_d[f].split()[3])
+                n_dens_next = float(lines_d[f-1].split()[3])
                 if n_dens_next/n_dens > steepness and n_dens_next > max_dens_value*0.1:                                                                        
                     f = f-1
                 else: 

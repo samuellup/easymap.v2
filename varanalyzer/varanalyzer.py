@@ -432,7 +432,7 @@ for variant_info in variants_info:
 			# Write info as a comma-separated list to the list 'variants_info2'
 			condensed_info = variant_info[0], variant_info[1], variant_info[2], variant_info[3], variant_info[4], variant_info[5], variant_info[6], variant_info[7], variant_info[8], variant_info[9], intron_result, '-', '-', '-'
 			variants_info2.append(condensed_info)
-	
+
 		# Introns in and lim input type
 		else:
 			# If transcriptional unit is hit but is neither in cds or in intron

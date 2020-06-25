@@ -60,6 +60,16 @@ def red(p):
 
 	elif len(str(p)) == 9:
 		r = str(p)[:3] + ' Mb'
+	
+	elif len(str(p)) == 10:
+		r = str(p)[:4] + ' Mb'
+
+	elif len(str(p)) == 11:
+		r = str(p)[:5] + ' Mb'
+	
+	elif len(str(p)) == 12:
+		r = str(p)[:6] + ' Mb'
+
 	return r; 
 
 #############################################################################################################
@@ -465,7 +475,7 @@ def dens_graphs():
 										if fill_x < base[0]+sub_width:
 											if pos_x_r > cr_start and pos_x_r < cr_end: 
 												fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
-												draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+2), fill=(re_f,g_f,b_f))
+												draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+1), fill=(re_f,g_f,b_f))
 							except: 
 								pass
 
@@ -592,7 +602,7 @@ def dens_graphs():
 											if fill_x < base[0]+sub_width:
 												if pos_x_r > cr_start and pos_x_r < cr_end: 
 													fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
-													draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+2), fill=(re_f,g_f,b_f))
+													draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+1), fill=(re_f,g_f,b_f))
 								except: 
 									pass
 								# Drawing overall line
@@ -668,7 +678,7 @@ def dens_graphs():
 											if fill_x < base[0]+sub_width:
 												if pos_x_r > cr_start and pos_x_r < cr_end: 
 													fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
-													draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+2), fill=(re_f,g_f,b_f))
+													draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+1), fill=(re_f,g_f,b_f))
 								except: 
 									pass
 								# Drawing overall line
@@ -2128,49 +2138,25 @@ def gene_plot():
 				inicio = int((int(e[1]) - gene_min_raw)/gene_scaling_factor)  + int(0.15*wide)
 				fin = int((int(e[2]) - gene_min_raw)/gene_scaling_factor)  + int(0.15*wide) 
 				draw.line((inicio, int(180/350.0*height)) + (fin, int(180/350.0*height)), fill=(59, 119, 214), width=int(0.02*wide))
-				#draw.line((inicio, int(170/350.0*height)) + (fin, int(170/350.0*height)), fill=(0, 4, 71, 0), width=2)	
-				#draw.line((inicio, int(190/350.0*height)) + (fin+1, int(190/350.0*height)), fill=(0, 4, 71, 0), width=2)
-				#draw.line((inicio, int(170/350.0*height)) + (inicio, int(190/350.0*height)), fill=(0, 4, 71, 0), width=2)
-				#draw.line((fin, int(170/350.0*height)) + (fin, int(190/350.0*height)), fill=(0, 4, 71, 0), width=2)
-				#if p[4][5] == '+':
-				#	draw.line((inicio, int(170/350.0*height)) + (inicio, int(190/350.0*height)), fill=(0, 4, 71, 0), width=2)
-				#if p[4][5] == '-':
-				#	draw.line((fin, int(170/350.0*height)) + (fin, int(190/350.0*height)), fill=(0, 4, 71, 0), width=2)
-		
+
 		for e in p[5]:
 			if 'utr' in (e[0].strip()).lower() and 'five' in (e[0].strip()).lower():																		# Backup UTR drawing
 				inicio = int((int(e[1]) - gene_min_raw)/gene_scaling_factor)  + int(0.15*wide) 
 				fin = int((int(e[2]) - gene_min_raw)/gene_scaling_factor)  + int(0.15*wide) 
 				draw.line((inicio, int(180/350.0*height)) + (fin, int(180/350.0*height)), fill=(188, 209, 242), width=int(0.02*wide))
-				#draw.line((inicio, int(170/350.0*height)) + (fin, int(170/350.0*height)), fill=(0, 4, 71, 0), width=2)
-				#draw.line((inicio, int(190/350.0*height)) + (fin, int(190/350.0*height)), fill=(0, 4, 71, 0), width=2)
-				#draw.line((inicio, int(170/350.0*height)) + (inicio, int(190/350.0*height)), fill=(0, 4, 71, 0), width=2)
-				#draw.line((fin, int(170/350.0*height)) + (fin, int(190/350.0*height)), fill=(0, 4, 71, 0), width=2)
 			if 'utr' in (e[0].strip()).lower() and 'three' in (e[0].strip()).lower():																		# Backup UTR drawing
 				inicio = int((int(e[1]) - gene_min_raw)/gene_scaling_factor)  + int(0.15*wide) 
 				fin = int((int(e[2]) - gene_min_raw)/gene_scaling_factor)  + int(0.15*wide) 
 				draw.line((inicio, int(180/350.0*height)) + (fin, int(180/350.0*height)), fill=(188, 209, 242), width=int(0.02*wide))
-				#draw.line((inicio, int(170/350.0*height)) + (fin, int(170/350.0*height)), fill=(0, 4, 71, 0), width=2)
-				#draw.line((inicio, int(190/350.0*height)) + (fin, int(190/350.0*height)), fill=(0, 4, 71, 0), width=2)
-				#if p[4][5] == '+':
-				#	draw.line((inicio, int(170/350.0*height)) + (inicio, int(190/350.0*height)), fill=(0, 4, 71, 0), width=2)
-				#if p[4][5] == '-':
-				#	draw.line((fin, int(170/350.0*height)) + (fin, int(190/350.0*height)), fill=(0, 4, 71, 0), width=2)
-				#	draw.line((inicio, int(170/350.0*height)) + (inicio, int(190/350.0*height)), fill=(0, 4, 71, 0), width=2)
 
 		#Gene direction
 		if p[4][5] == '+':
 			draw.polygon([(int(0.84*wide), int(168/350.0*height)), (int(0.851*wide) , int(168/350.0*height)), (int(0.851*wide), int(181/350.0*height))], fill = (255, 255, 255, 0))
 			draw.polygon([(int(0.84*wide), int(192/350.0*height)), (int(0.851*wide) , int(192/350.0*height)), (int(0.851*wide), int(180/350.0*height))], fill = (255, 255, 255, 0))
-			#draw.line((int(0.841*wide), int(170/350.0*height)) + (int(0.85*wide), int(180/350.0*height)), fill=(0, 4, 71, 0), width=2)
-			#draw.line((int(0.841*wide), int(190/350.0*height)) + (int(0.851*wide), int(180/350.0*height)), fill=(0, 4, 71, 0), width=2)
-
 				
 		if p[4][5] == '-':
 			draw.polygon([(int(0.16*wide), int(168/350.0*height)), (int(0.149*wide) , int(168/350.0*height)), (int(0.149*wide), int(180/350.0*height))], fill = (255, 255, 255, 0))
 			draw.polygon([(int(0.16*wide), int(192/350.0*height)), (int(0.149*wide) , int(192/350.0*height)), (int(0.149*wide), int(180/350.0*height))], fill = (255, 255, 255, 0))
-			#draw.line((int(0.158*wide), int(170.5/350.0*height)) + (int(0.148*wide), int(180.5/350.0*height)), fill=(0, 4, 71, 0), width=2)
-			#draw.line((int(0.159*wide), int(190/350.0*height)) + (int(0.149*wide), int(180/350.0*height)), fill=(0, 4, 71, 0), width=2)
 
 			draw.line((int(0.15*wide), int(169/350.0*height)) + (int(0.16*wide), int(169/350.0*height)), fill=(255, 255, 255, 0), width=1)
 
@@ -2183,17 +2169,13 @@ def gene_plot():
 			scale = 500
 			scale_tag = '500 bp'
 
-		if args.my_mut == 'snp':
-			#scale = 100
-			#scale_tag = '100 bp'
+		if args.my_mut == 'snp' or args.my_mut == 'dens':
 			w, h = draw.textsize(str(scale_tag))
 			px_scale = float(scale/gene_scaling_factor)
 			draw.line((int(0.91*wide) - int(px_scale) - w/2 + px_scale/2, int(110/350.0*height)) + (int(0.91*wide) - w/2 + px_scale/2, int(110/350.0*height)), fill=(0, 0, 0, 0), width=int(0.002*wide))
 			draw.text((int(0.87*wide), int(117.8/350.0*height)), (scale_tag), font=fnt2, fill=(0,0,0,255))
 
 		if args.my_mut == 'lin':
-			#scale = 100
-			#scale_tag = '100 bp'
 			w, h = draw.textsize(str(scale_tag))
 			px_scale = float(scale/gene_scaling_factor)
 			draw.line((int(0.91*wide) - int(px_scale) - w/2 + px_scale/2, int(250/350.0*height)) + (int(0.91*wide) - w/2 + px_scale/2, int(250/350.0*height)), fill=(0, 0, 0, 0), width=int(0.002*wide))
@@ -2208,9 +2190,8 @@ def gene_plot():
 			draw.line((ins_pos - int(0.02*wide), int(170/350.0*height) - int(0.025*wide)) + (ins_pos + int(0.02*wide), int(170/350.0*height) - int(0.025*wide)), fill=(0, 0, 0, 0), width=1)
 			draw.text((ins_pos - int(0.04*wide), int(0.115*wide)), ('Insertion ' + str(p[2])), font=fnt4, fill=(0,0,0,255))
 
-
 		#SNP arrow and info
-		if args.my_mut == 'snp':
+		if args.my_mut == 'snp' or args.my_mut == 'dens':
 			snp_pos = int((int(p[1]) - gene_min_raw)/gene_scaling_factor)  + int(0.15*wide) 
 			draw.line((snp_pos, int(194/350.0*height)) + (snp_pos , int(194/350.0*height) + int(0.03*wide)), fill=(180, 0, 0, 0), width=int(0.005*wide))						
 			draw.polygon([(snp_pos, int(191/350.0*height)), (snp_pos - int(0.01*wide), int(191/350.0*height) + int(0.01*wide)), (snp_pos + int(0.01*wide), int(191/350.0*height) + int(0.01*wide))], fill = (200, 0, 0, 200))
@@ -2233,12 +2214,6 @@ def gene_plot():
 
 			draw.text(((  snp_pos - (w1 + 22)   ),(int(0.67*height))), msg_1, font=fnt4, fill=(0,0,0,255))
                         draw.text(((  snp_pos +       31    ),(int(0.67*height))), msg_2, font=fnt4, fill=(0,0,0,255))
-
-			# Deprecated
-			#draw.text((int(snp_pos - (int(0.036*wide) + 16*(len(str(p[4][3]).strip())-1) )), int(0.67*height)), (
-			#	str(p[4][3]) +   '        '  +
-			#	str(p[4][4])), font=fnt4, fill=(0,0,0,255))   
-
 
 			#Arrows
 			#Base
@@ -2269,6 +2244,10 @@ def gene_plot():
 
 		if args.my_mut == 'snp' and aach == 'no':
 			im.crop((70, 100, w-20, h-70)).save(project + '/3_workflow_output/gene_plot_' + str(args.my_mut) + '_' + str(p[1]) + '_gene_' + str(p[3])+ '.png')
-		
 		if args.my_mut == 'snp' and aach == 'yes':
+			im.crop((70, 100, w-20, h-40)).save(project + '/3_workflow_output/gene_plot_' + str(args.my_mut) + '_' + str(p[1]) + '_gene_' + str(p[3])+ '.png')
+
+		if args.my_mut == 'dens' and aach == 'no':
+			im.crop((70, 100, w-20, h-70)).save(project + '/3_workflow_output/gene_plot_' + str(args.my_mut) + '_' + str(p[1]) + '_gene_' + str(p[3])+ '.png')		
+		if args.my_mut == 'dens' and aach == 'yes':
 			im.crop((70, 100, w-20, h-40)).save(project + '/3_workflow_output/gene_plot_' + str(args.my_mut) + '_' + str(p[1]) + '_gene_' + str(p[3])+ '.png')
