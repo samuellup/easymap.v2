@@ -99,11 +99,12 @@ def dens_ovw():
 	with open(contig_source) as fp:
 		fastalist = list()
 		for name_contig, seq_contig in read_fasta(fp):
-			innerlist = list()
-			innerlist.append(name_contig.strip('>'))
-			innerlist.append(len(seq_contig))
-			fastalist.append(innerlist)
-			contig_lengths.append(len(seq_contig))
+			if len(seq_contig) > 2000000:
+				innerlist = list()
+				innerlist.append(name_contig.strip('>'))
+				innerlist.append(len(seq_contig))
+				fastalist.append(innerlist)
+				contig_lengths.append(len(seq_contig))
 
 	#DENS vs POS overview graphs 	
 	wide=1000					

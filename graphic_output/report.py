@@ -13,6 +13,8 @@ parser.add_argument('-output_html', action="store", dest = 'output_html')
 parser.add_argument('-project', action="store", dest = 'project')
 parser.add_argument('-files_dir', action="store", dest = 'files_dir')
 parser.add_argument('-cand_reg_file', action="store", dest = 'cand_reg_file')
+parser.add_argument('-c_format', action="store", dest = 'c_format', default="fastq")
+
 
 args = parser.parse_args()
 
@@ -25,6 +27,7 @@ output_html = args.output_html
 output = open(output_html, 'w')
 #Others
 mut_type = args.mut_type
+c_format = args.c_format
 
 #______________________________________________List output '+files_dir+'__________________________________________________
 from os import listdir
@@ -297,7 +300,7 @@ if mut_type == 'snp' and data_source == 'exp':
 	if reads_type == 'pe':
 		output.write(
 '		<tr>' + '\n'
-'			<td> <b>Input test read files:</b></td>' + '\n'
+'			<td> <b>Input test files:</b></td>' + '\n'
 '			<td>' + reads_f + ', &nbsp;&nbsp;&nbsp;&nbsp;' + reads_r + '</td>' + '\n'
 '		</tr>' + '\n'
 		)
@@ -305,7 +308,7 @@ if mut_type == 'snp' and data_source == 'exp':
 	elif reads_type == 'se':
 		output.write(
 '		<tr>' + '\n'
-'			<td> <b>Input test read files:</b></td>' + '\n'
+'			<td> <b>Input test files:</b></td>' + '\n'
 '			<td>' + reads_s + '</td>' + '\n'
 '		</tr>' + '\n'
 			)
@@ -313,7 +316,7 @@ if mut_type == 'snp' and data_source == 'exp':
 	if reads_type_control == 'pe':
 		output.write(
 '		<tr>' + '\n'
-'			<td> <b>Input control read files:</b></td>' + '\n'
+'			<td> <b>Input control files:</b></td>' + '\n'
 '			<td>' + reads_f_control + ', &nbsp;&nbsp;&nbsp;&nbsp;' + reads_r_control + '</td>' + '\n'
 '		</tr>' + '\n'
 		)
@@ -321,7 +324,7 @@ if mut_type == 'snp' and data_source == 'exp':
 	elif reads_type_control == 'se':
 		output.write(
 '		<tr>' + '\n'
-'			<td> <b>Input control read files:</b></td>' + '\n'
+'			<td> <b>Input control files:</b></td>' + '\n'
 '			<td>' + reads_s_control + '</td>' + '\n'
 '		</tr>' + '\n'
 			)
@@ -330,7 +333,7 @@ if mut_type == 'dens':
 	if reads_type == 'pe':
 		output.write(
 '		<tr>' + '\n'
-'			<td> <b>Input test read files:</b></td>' + '\n'
+'			<td> <b>Input test files:</b></td>' + '\n'
 '			<td>' + reads_f + ', &nbsp;&nbsp;&nbsp;&nbsp;' + reads_r + '</td>' + '\n'
 '		</tr>' + '\n'
 		)
@@ -338,7 +341,7 @@ if mut_type == 'dens':
 	elif reads_type == 'se':
 		output.write(
 '		<tr>' + '\n'
-'			<td> <b>Input test read files:</b></td>' + '\n'
+'			<td> <b>Input test files:</b></td>' + '\n'
 '			<td>' + reads_s + '</td>' + '\n'
 '		</tr>' + '\n'
 			)
@@ -346,7 +349,7 @@ if mut_type == 'dens':
 	if reads_type_control == 'pe':
 		output.write(
 '		<tr>' + '\n'
-'			<td> <b>Input control read files:</b></td>' + '\n'
+'			<td> <b>Input control files:</b></td>' + '\n'
 '			<td>' + reads_f_control + ', &nbsp;&nbsp;&nbsp;&nbsp;' + reads_r_control + '</td>' + '\n'
 '		</tr>' + '\n'
 		)
@@ -354,7 +357,7 @@ if mut_type == 'dens':
 	elif reads_type_control == 'se':
 		output.write(
 '		<tr>' + '\n'
-'			<td> <b>Input control read files:</b></td>' + '\n'
+'			<td> <b>Input control files:</b></td>' + '\n'
 '			<td>' + reads_s_control + '</td>' + '\n'
 '		</tr>' + '\n'
 			)
@@ -478,25 +481,33 @@ if data_source == 'exp':
 			)
 
 		if reads_type_control == 'se':
-			output.write(
-	'		<b>Control reads quality assessment<br></b>' + '\n'
-	'		<center> <img class="img" src="single-end-control-reads-qual-stats.png" width="500" > </center> ' + '\n'
-			)
+			if c_format == "fastq":
+				output.write(
+		'		<b>Control reads quality assessment<br></b>' + '\n'
+		'		<center> <img class="img" src="single-end-control-reads-qual-stats.png" width="500" > </center> ' + '\n'
+				)
 
 #Read depth distribution graphics
 if mut_type == 'snp' or mut_type == "dens": 
 	output.write(
-	'		<b>Test and control samples read depth distribution<br></b>' + '\n'
+	'		<b>Read depth distribution<br></b>' + '\n'
 	'		<p>Test sample<br></p>' + '\n'
 	'		<center> <img class="img" src="frequence_depth_alignment_distribution_sample.png" > </center> ' + '\n'
-	'		<p>Control sample<br></p>' + '\n'
-	'		<center> <img class="img" src="frequence_depth_alignment_distribution_control.png" > </center> ' + '\n'
-	'		<hr class="easymap">' + '\n'
 		)
+	if c_format == "fastq": 
+		output.write(
+		'		<p>Control sample<br></p>' + '\n'
+		'		<center> <img class="img" src="frequence_depth_alignment_distribution_control.png" > </center> ' + '\n'
+		'		<hr class="easymap">' + '\n'
+			)
+	else: 
+		output.write(
+		'		<hr class="easymap">' + '\n'
+			)
 
 if mut_type == 'lin': 
 	output.write(
-	'		<b>Test sample read depth distribution<br></b>' + '\n'
+	'		<b>Read depth distribution<br></b>' + '\n'
 	'		<center> <img class="img" src="frequence_depth_alignment_distribution_sample.png" > </center> ' + '\n'
 	'		<hr class="easymap">' + '\n'
 		)

@@ -62,9 +62,10 @@ window.onload = function() {
 			mime_types: [
 				{title : "GFF files", extensions : "gff,gff3"},
 				{title : "Gene annotation files", extensions : "txt"},
-				{title : "FASTA files", extensions : "fa"},
+				{title : "FASTA files", extensions : "fa,fasta"},
 				{title : "FASTQ files", extensions : "fq,fastq"},
-				{title : "gzipped files", extensions : "gz"}
+				{title : "gzipped files", extensions : "gz"},
+				{title : "VCF files", extensions : "vcf"}
 			]
 		},
 

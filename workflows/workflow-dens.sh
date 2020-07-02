@@ -63,17 +63,20 @@ stringency=${20}
 exp_mut_type=${21}
 
 #Set number of maximum CPU for steps compatible with multithreading, default = 1 
-threads=3
+threads=1
 
 # Set internal variables according to the SNP validation stringency chosen by the user
 if [ $stringency == high_stringency ]; then
-	problemSample_bowtie_mp="--mp 6,2"
 	problemSample_mpileup_C="-C50"
-	problemSample_snpQualityTheshold="120"
+	problemSample_snpQualityTheshold="100"
+	echo "high stringency gang" >> $my_log_file
+
 else
 	problemSample_bowtie_mp="--mp 3,2"
 	problemSample_mpileup_C=""
-	problemSample_snpQualityTheshold="30"
+	problemSample_snpQualityTheshold="20"
+	echo "low stringency gang" >> $my_log_file
+
 fi
 
 # Define the folders in the easymap directory 
@@ -97,14 +100,14 @@ echo $(date "+%F > %T")': set-interval.py finished, interval set at: '$interval_
 
 # Set variant density mapping window width and step according to genome size
 if [ $interval_width -lt 4000009 ]; then
-	dens_width=500000
-	dens_step=250000
+	dens_width=1000000
+	dens_step=1000000
 elif [ $interval_width -gt 4000009 ] && [ $interval_width -lt 11000000 ]; then
 	dens_width=1000000
 	dens_step=1000000
 elif [ $interval_width -gt 4000009 ]; then
-	dens_width=3000000
-	dens_step=3000000
+	dens_width=1000000
+	dens_step=1000000
 fi
 
 ##################################################################################################################################################################################
@@ -209,8 +212,8 @@ function get_problem_va {
 	if [ $my_cross == bc ]; then mut_type=all ; fi		#SDL V2 Update, prev: then mut_type=EMS
 	if [ $my_cross == oc ]; then mut_type=all ; fi
 
-	if [ $av_rd -gt 25 ]; then dp_min=15 ; fi
-	if [ $av_rd -le 25 ]; then dp_min=10 ; fi
+	if [ $av_rd -gt 25 ]; then dp_min=12 ; fi
+	if [ $av_rd -le 25 ]; then dp_min=6 ; fi
 
 	dp_max=$(($av_rd * 3))
 	if [ $dp_max -le 40 ]; then dp_max=100 ; fi
@@ -229,7 +232,7 @@ function get_problem_va {
 
 	#Intermediate files cleanup
 	rm -f $f1/*.sam
-	rm -f $f1/*.vcf
+	#rm -f $f1/*.vcf
 
 }
 
@@ -243,6 +246,7 @@ function get_problem_va {
 ##################################################################################################################################################################################
 
 function get_control_va { 
+	
 	if [ $my_control_mode == se ] 
 	then
 		#Run hisat2 unpaired to align raw reads to genome 
@@ -317,8 +321,8 @@ function get_control_va {
 
 	#Run vcf filter
 
-	if [ $av_rd -gt 25 ]; then dp_min=15 ; fi
-	if [ $av_rd -le 25 ]; then dp_min=10 ; fi
+	if [ $av_rd -gt 25 ]; then dp_min=12 ; fi
+	if [ $av_rd -le 25 ]; then dp_min=6 ; fi
 
 	dp_max=$(($av_rd * 3))
 	if [ $dp_max -le 40 ]; then dp_max=100 ; fi
@@ -336,7 +340,50 @@ function get_control_va {
 
 	#Intermediate files cleanup
 	rm -f $f1/*.sam
-	rm -f $f1/*.vcf
+	#rm -f $f1/*.vcf
+}
+
+##################################################################################################################################################################################
+#																																												 #
+#																																												 #
+#																	control VCF PROCESSING FUNCTION																				 #
+#																																												 #
+#																																												 #
+##################################################################################################################################################################################
+
+function get_control_va_from_vcf { 
+	
+	#Groom vcf
+	{
+		python2 $location/scripts_snp/vcf-groomer.py -a $my_p_rd -b $f1/control_raw.va -step vcf_raw 2>> $my_log_file
+
+	} || {
+		echo $(date "+%F > %T")': Error during execution of vcf-groomer.py with control data.' >> $my_log_file
+		exit_code=1
+		echo $exit_code
+		exit
+	}
+	echo $(date "+%F > %T")': VCF grooming of control data finished.' >> $my_log_file
+
+	#Run vcf filter
+
+	if [ $av_rd -gt 25 ]; then dp_min=12 ; fi
+	if [ $av_rd -le 25 ]; then dp_min=6 ; fi
+
+	dp_max=$(($av_rd * 3))
+	if [ $dp_max -le 40 ]; then dp_max=100 ; fi
+
+	{
+		python2 $location/scripts_snp/variants-filter.py -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs -dp_min 10 -dp_max $dp_max -qual_min 20  2>> $my_log_file
+
+	} || {
+		echo $(date "+%F > %T")': Error during execution of variants-filter.py with control data.' >> $my_log_file
+		exit_code=1
+		echo $exit_code
+		exit
+	}
+	echo $(date "+%F > %T")': First VCF filtering step of control data finished.' >> $my_log_file
+
 }
 
 
@@ -387,7 +434,13 @@ function depth_alignment {
 
 # Get problem and control VA files
 get_problem_va 
-get_control_va
+if [[ "$my_p_rd" == *".vcf" ]]; then   				# [ $my_p_rd =~ '.vcf' ]
+	control_format="vcf"
+	get_control_va_from_vcf 
+else
+	control_format="fastq"
+	get_control_va
+fi
 
 # Run VA operations: Remove control SNPs from problem file
 {
@@ -549,13 +602,13 @@ echo $(date "+%F > %T")': Graphic output generated.' >> $my_log_file
 # Generate report
 { 
 	zip $f3/report_images.zip $f3/*.png > $f2/zip.txt
-	python2 $location/graphic_output/report.py  -log $my_log_file -output_html $f3/report.html -project $project_name -mut_type dens -files_dir $f3 -cand_reg_file $f1/candidate_region.txt -variants $f3/candidate_variants.txt 2>> $my_log_file
+	python2 $location/graphic_output/report.py  -log $my_log_file -c_format $control_format -output_html $f3/report.html -project $project_name -mut_type dens -files_dir $f3 -cand_reg_file $f1/candidate_region.txt -variants $f3/candidate_variants.txt 2>> $my_log_file
 
 } || {
 	echo $(date "+%F > %T")': Error during generation of report file.' >> $my_log_file
-	#exit_code=1									# REMOVED FOR TESTING
-	#echo $exit_code
-	#exit
+	exit_code=1									
+	echo $exit_code
+	exit
 }
 echo $(date "+%F > %T")': Report file generated.' >> $my_log_file
 

@@ -89,15 +89,23 @@ function listInputFiles() {
 
 			// Create interfaces to select fastq files
 			var fastqFiles = inputFilesresponse[2];
+			var controlFiles = inputFilesresponse[4]; 
 			var readsProblem = document.getElementById('readsProblemSelector');
 			var readsControl = document.getElementById('readsControlSelector');
+			// Test fastq files
 			if (fastqFiles.length < 1) {
 				readsProblem.options[readsProblem.options.length] = new Option('There are no files with .fq extension', 'n/p');
-				readsControl.options[readsControl.options.length] = new Option('There are no files with .fq extension', 'n/p');
 			} else {
 				for (i = 0; i < fastqFiles.length; i++) {
 					readsProblem.options[readsProblem.options.length] = new Option(fastqFiles[i], fastqFiles[i]);
-					readsControl.options[readsControl.options.length] = new Option(fastqFiles[i], fastqFiles[i]);
+				}
+			}
+			// Control fastq files
+			if (controlFiles.length < 1) {
+				readsControl.options[readsControl.options.length] = new Option('There are no files with .fq or .vcf extension', 'n/p');
+			} else {
+				for (i = 0; i < controlFiles.length; i++) {
+					readsControl.options[readsControl.options.length] = new Option(controlFiles[i], controlFiles[i]);
 				}
 			}
 		}
@@ -193,6 +201,8 @@ window.onload = function() {
 			document.getElementById("backgroundCrossCtype").style.display = "none";
 			document.getElementById("simRecselInterface").style.display = "none";
 			document.getElementById("dataSource").style.display = "block";
+			document.getElementById("checkBoxStringency").style.display = "none";
+
 			if (cmdArgs[3] == 'exp') {
 				document.getElementById("expDataInterface").style.display = "block";
 			}
@@ -207,11 +217,14 @@ window.onload = function() {
 			document.getElementById("backgroundCrossCtype").style.display = "block";
 			document.getElementById("simRecselInterface").style.display = "block";
 			document.getElementById("dataSource").style.display = "block";
+			document.getElementById("checkBoxStringency").style.display = "block";
+
 			if (cmdArgs[3] == 'exp') {
 				document.getElementById("expDataInterface").style.display = "block";
 			}
 			if (cmdArgs[3] == 'sim') {
 				document.getElementById("simDataInterface").style.display = "block";
+				document.getElementById("checkBoxStringency").style.display = "none";
 			}
 
 		} else if (checkedOption == 'button40') {
@@ -219,10 +232,12 @@ window.onload = function() {
 			cmdArgs[3] = 'exp'
 			document.getElementById("readsControl").style.display = "block";
 			document.getElementById("expMutType").style.display = "block";
+			document.getElementById("checkBoxStringency").style.display = "block";
 			document.getElementById("backgroundCrossCtype").style.display = "none";
 			document.getElementById("insSeqField").style.display = "none";
 			document.getElementById("expDataInterface").style.display = "none";
 			document.getElementById("dataSource").style.display = "none";
+			document.getElementById("simDataInterface").style.display = "none";
 			if (cmdArgs[3] == 'exp') {
 				document.getElementById("expDataInterface").style.display = "block";
 			}
@@ -790,6 +805,9 @@ window.onload = function() {
 
 		// In snp mode, check argument 23 (stringency). If user did not interact with the switch, select the default value 'high_stringency'
 		if (cmdArgs[2] == 'snp' && cmdArgs[23] == 'n/p') {
+			cmdArgs[23] = 'high_stringency';
+		}
+		if (cmdArgs[2] == 'dens' && cmdArgs[23] == 'n/p') {
 			cmdArgs[23] = 'high_stringency';
 		}
 

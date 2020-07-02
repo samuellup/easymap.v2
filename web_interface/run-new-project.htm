@@ -82,7 +82,7 @@ body {font-size:16px;}
 
 				<div class="mx-button">
 					<input type="radio" class="analysisType" name="mx12" id="button40" />
-					<label for="button40" unselectable>DEV - Variant density mapping</label>					
+					<label for="button40" unselectable>Variant density mapping</label>					
 				</div>
 				<div class="clear-floats"></div>
 			</div>
@@ -195,20 +195,24 @@ body {font-size:16px;}
 
 				<div id="backgroundCrossCtypeWarnMsg" class="warningMessage">Invalid combination. Easymap does not support this experimental design.</div>
 			
+
+			</div>
+
+			<div id="checkBoxStringency" style="display:none;">
 				<hr style="width: 100%; border: 2px solid rgb(150,150,150)" class="w3-round">
 
 				Use low stringency during SNP analysis?
-
-				<div id="checkBoxStringency">
-					<input type="checkbox" class="switch_1" id="stringency">
+				
+				<div>
+				<input type="checkbox" class="switch_1" id="stringency">
 				</div>
 
 				By default, Easymap only considers SNPs that pass certain quality checks. However, in some read datasets that are not optimal, 
 				performing more lenient filtering can help to identify a candidate interval and the causal mutation. If you analyze your reads
 				in the default mode and obtain very few SNPs or believe that the causal mutation could have been discarded, turn on this option
 				and run the program again.
-
 			</div>
+
 
 			<div id="expDataInterface">
 				<div class="formInfo" id="formInfoSim">Experimental reads</div>
