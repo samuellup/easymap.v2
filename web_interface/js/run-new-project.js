@@ -43,7 +43,55 @@ function listInputFiles() {
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-
+			// Empty all containers
+			try {
+				var select = document.getElementById("refFileSelector");
+				var length = select.options.length; 
+				for (i = length-1; i >= 0; i--) {
+					select.options[i] = null;
+				}
+			}
+			catch(err) {}
+			try {
+				var select = document.getElementById("insFileSelector");
+				var length = select.options.length; 
+				for (i = length-1; i >= 0; i--) {
+					select.options[i] = null;
+				}
+			}
+			catch(err) {}
+			try {
+				var select = document.getElementById("gffFileSelector");
+				var length = select.options.length; 
+				for (i = length-1; i >= 0; i--) {
+					select.options[i] = null;
+				}
+			}
+			catch(err) {}
+			try {
+				var select = document.getElementById("annFileSelector");
+				var length = select.options.length; 
+				for (i = length-1; i >= 0; i--) {
+					select.options[i] = null;
+				}
+			}
+			catch(err) {}
+			try {
+				var select = document.getElementById("readsProblemSelector");
+				var length = select.options.length; 
+				for (i = length-1; i >= 0; i--) {
+					select.options[i] = null;
+				}
+			}
+			catch(err) {}
+			try {
+				var select = document.getElementById("readsControlSelector");
+				var length = select.options.length; 
+				for (i = length-1; i >= 0; i--) {
+					select.options[i] = null;
+				}
+			}
+			catch(err) {}
 			// Parse response in JSON format
 			var inputFilesresponse = JSON.parse(this.responseText);
 
@@ -101,11 +149,32 @@ function listInputFiles() {
 				}
 			}
 			// Control fastq files
-			if (controlFiles.length < 1) {
-				readsControl.options[readsControl.options.length] = new Option('There are no files with .fq or .vcf extension', 'n/p');
+			var optionsc = document.getElementsByClassName("contType");
+			for (var i=0; i<optionsc.length; i++) {
+				if (optionsc[i].checked == true) {
+					var checkedOptionc = optionsc[i].id;
+				}
+			}
+			if (checkedOptionc == 'button17') {
+				var controlFormat = 'f2wt';
 			} else {
-				for (i = 0; i < controlFiles.length; i++) {
-					readsControl.options[readsControl.options.length] = new Option(controlFiles[i], controlFiles[i]);
+				var controlFormat = 'par';
+			}
+			if ( controlFormat == 'f2wt' ) {
+				if (fastqFiles.length < 1) {
+					readsControl.options[readsControl.options.length] = new Option('There are no files with .fq extension', 'n/p');
+				} else {
+					for (i = 0; i < fastqFiles.length; i++) {
+						readsControl.options[readsControl.options.length] = new Option(fastqFiles[i], fastqFiles[i]);
+					}
+				}
+			} else {
+				if (controlFiles.length < 1) {
+					readsControl.options[readsControl.options.length] = new Option('There are no files with .fq or .vcf extension', 'n/p');
+				} else {
+					for (i = 0; i < controlFiles.length; i++) {
+						readsControl.options[readsControl.options.length] = new Option(controlFiles[i], controlFiles[i]);
+					}
 				}
 			}
 		}
@@ -958,16 +1027,20 @@ window.onload = function() {
 	document.getElementById("form1").gffFileSelector.onblur = processSingleSelectors;
 	document.getElementById("form1").annFileSelector.onblur = processSingleSelectors;
 	
+	function duo() {
+		buttons_contType();
+		listInputFiles();
+	}
 	// React to interactions with the MbS 2-way selectors
 	document.getElementById("button11").onclick = buttons_mutBackground;
 	document.getElementById("button12").onclick = buttons_mutBackground;
 	document.getElementById("button13").onclick = buttons_crossType;
 	document.getElementById("button14").onclick = buttons_crossType;
-	document.getElementById("button15").onclick = buttons_contType;
-	document.getElementById("button16").onclick = buttons_contType;
-	document.getElementById("button17").onclick = buttons_contType;
+	document.getElementById("button15").onclick = duo;
+	document.getElementById("button16").onclick = duo;
+	document.getElementById("button17").onclick = duo;
 	document.getElementById("button47").onclick = buttons_mutType;
-       	document.getElementById("button48").onclick = buttons_mutType;
+    document.getElementById("button48").onclick = buttons_mutType;
 
 	//React to interactions with reads selectors
 	document.getElementById("form1").readsProblemSelector.onclick = checkProblemReads;

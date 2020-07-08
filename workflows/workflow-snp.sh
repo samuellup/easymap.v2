@@ -66,7 +66,7 @@ stringency=${20}
 exp_mut_type=${21}
 
 #Set number of maximum CPU for steps compatible with multithreading, default = 1 
-threads=3
+threads=1
 
 # Set internal variables according to the SNP validation stringency chosen by the user
 if [ $stringency == high_stringency ]; then
@@ -335,6 +335,49 @@ function get_control_va {
 ##################################################################################################################################################################################
 #																																												 #
 #																																												 #
+#																	control VCF PROCESSING FUNCTION																				 #
+#																																												 #
+#																																												 #
+##################################################################################################################################################################################
+
+function get_control_va_from_vcf { 
+	
+	#Groom vcf
+	{
+		python2 $location/scripts_snp/vcf-groomer.py -a $my_p_rd -b $f1/control_raw.va -step vcf_raw 2>> $my_log_file
+
+	} || {
+		echo $(date "+%F > %T")': Error during execution of vcf-groomer.py with control data.' >> $my_log_file
+		exit_code=1
+		echo $exit_code
+		exit
+	}
+	echo $(date "+%F > %T")': VCF grooming of control data finished.' >> $my_log_file
+
+	#Run vcf filter
+	if [ $av_rd -gt 25 ]; then dp_min=15 ; fi
+	if [ $av_rd -le 25 ]; then dp_min=10 ; fi
+	dp_max=$(($av_rd * 3))
+	if [ $dp_max -le 40 ]; then dp_max=100 ; fi
+
+	{
+		python2 $location/scripts_snp/variants-filter.py -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs -dp_min 10 -dp_max $dp_max -qual_min 20  2>> $my_log_file
+
+	} || {
+		echo $(date "+%F > %T")': Error during execution of variants-filter.py with control data.' >> $my_log_file
+		exit_code=1
+		echo $exit_code
+		exit
+	}
+	echo $(date "+%F > %T")': First VCF filtering step of control data finished.' >> $my_log_file
+
+}
+
+
+
+##################################################################################################################################################################################
+#																																												 #
+#																																												 #
 #																			DEPTH ALIGNMENT ANALYSIS FUNCTION																	 #
 #																																												 #
 #																																												 #
@@ -498,7 +541,7 @@ function cr_analysis {
 	}
 
 	{
-		python2 $location/graphic_output/report.py -files_dir $f3 -variants $f3/candidate_variants.txt -log $f2/log.log -output_html $f3/report.html -project $project_name -mut_type $my_mut  2>> $my_log_file
+		python2 $location/graphic_output/report.py -files_dir $f3 -variants $f3/candidate_variants.txt -c_format $control_format -log $f2/log.log -output_html $f3/report.html -project $project_name -mut_type $my_mut  2>> $my_log_file
 		
 	} || {
 		echo $(date "+%F > %T")': Error during report generation.' >> $my_log_file
@@ -529,7 +572,13 @@ then
 
 	# (1) Get problem and control VA files
 	get_problem_va 
-	get_control_va
+	if [[ "$my_p_rd" == *".vcf" ]]; then 
+		control_format="vcf"
+		get_control_va_from_vcf 
+	else
+		control_format="fastq"
+		get_control_va
+	fi
 
 	#draw snps
 	python2 $location/graphic_output/graphic-output.py -my_mut af_control -asnp $f1/control_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
@@ -682,7 +731,13 @@ then
 
 	# (1) Get problem and control VA files
 	get_problem_va
-	get_control_va
+	if [[ "$my_p_rd" == *".vcf" ]]; then 
+		control_format="vcf"
+		get_control_va_from_vcf 
+	else
+		control_format="fastq"
+		get_control_va
+	fi
 
 	#draw snps
 	python2 $location/graphic_output/graphic-output.py -my_mut af_control -asnp $f1/control_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
@@ -740,7 +795,13 @@ fi
 if [ $my_mutbackgroud == ref ] && [ $my_pseq == nomut ] && [ $my_cross == oc ]  && [ $snp_analysis_type == par ]
 then
 	# (1) Get control VA file
-	get_control_va
+	if [[ "$my_p_rd" == *".vcf" ]]; then 
+		control_format="vcf"
+		get_control_va_from_vcf 
+	else
+		control_format="fastq"
+		get_control_va
+	fi
 
 	# (2) Run vcf filter to get SNPs with af > 0.75
 	{
@@ -844,7 +905,13 @@ then
 
 	# (1) Get problem and control VA files
 	get_problem_va
-	get_control_va
+	if [[ "$my_p_rd" == *".vcf" ]]; then 
+		control_format="vcf"
+		get_control_va_from_vcf 
+	else
+		control_format="fastq"
+		get_control_va
+	fi
 
 	#draw snps
 	python2 $location/graphic_output/graphic-output.py -my_mut af_control -asnp $f1/control_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file

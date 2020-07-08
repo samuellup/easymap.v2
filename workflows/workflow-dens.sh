@@ -69,13 +69,11 @@ threads=1
 if [ $stringency == high_stringency ]; then
 	problemSample_mpileup_C="-C50"
 	problemSample_snpQualityTheshold="100"
-	echo "high stringency gang" >> $my_log_file
 
 else
 	problemSample_bowtie_mp="--mp 3,2"
 	problemSample_mpileup_C=""
 	problemSample_snpQualityTheshold="20"
-	echo "low stringency gang" >> $my_log_file
 
 fi
 
@@ -232,7 +230,7 @@ function get_problem_va {
 
 	#Intermediate files cleanup
 	rm -f $f1/*.sam
-	#rm -f $f1/*.vcf
+	rm -f $f1/*.vcf
 
 }
 
@@ -340,7 +338,7 @@ function get_control_va {
 
 	#Intermediate files cleanup
 	rm -f $f1/*.sam
-	#rm -f $f1/*.vcf
+	rm -f $f1/*.vcf
 }
 
 ##################################################################################################################################################################################

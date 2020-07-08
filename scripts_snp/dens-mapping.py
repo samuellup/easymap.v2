@@ -31,7 +31,6 @@ if int(args.step) == 2:
                 if str(p) == str(line.split()[-1]): 
                     if float(line.split()[3]) != 0: 
                         selected_pos =  [line.split()[0], line.split()[1], str(p)]                        #str(line.split()[0])+'_-_'+str(line.split()[1])
-
     if args.mut_type == "all": 
         priorities = ["F2_hz_dens", "F2_control_comparison_dens"]
         for p in reversed(priorities):
@@ -46,12 +45,11 @@ if int(args.step) == 2:
         selected_pos = int(selected_pos[1])
         lines_d = {}
         project = args.project
-        for i, line in enumerate(open(project+"/1_intermediate_files/"+selected_data+".txt", "r")):                                             
+        for i, line in enumerate(open(project+"/1_intermediate_files/"+selected_data+".txt", "r")):
             if selected_chr.lower() == str(line.split()[0]).lower(): 
                 lines_d[i] = line
                 if selected_pos == int(line.split()[1]):
                     selected_index = i
-
         # SETTING CR COORDINATES
         steepness = 0.20                                                                                         # ARBITRARY VALUE (0.2), calibrate accordingly
         max_dens_value = float(lines_d[selected_index].split()[3])
@@ -71,7 +69,6 @@ if int(args.step) == 2:
             except: 
                 end_cr = str(lines_d[f].split()[1])
                 stop=True
-
         # Backwards
         f = selected_index
         stop = False
@@ -86,7 +83,7 @@ if int(args.step) == 2:
                     except: start_cr = str(lines_d[f-1].split()[1])
                     stop=True
             except: 
-                end_cr = str(lines_d[f].split()[1])
+                start_cr = str(lines_d[f].split()[1])
                 stop=True
                 
         with open(args.out, "w") as out: 
