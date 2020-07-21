@@ -745,8 +745,8 @@ if mut_type == 'dens':
 
 	# Selected chromosome 
 	output.write(
-	'		<h2>Selected genomic region</h2>' + '\n'
-	'		<p>An insight on the contig with a region containing a higher density of polymorphisms. </p>' + '\n'
+	'		<h2>Selected genomic regions</h2>' + '\n'
+	'		<p>An insight on the contigs with regions containing a higher density of polymorphisms. </p>' + '\n'
 		) 
 	with open(args.cand_reg_file, "r") as cr_input: 
 		cr_chr = "none"
@@ -754,22 +754,21 @@ if mut_type == 'dens':
 			if line.startswith("?"): 
 				sp = line.split()
 				cr_chr = str(sp[1])
+				for f in sorted(files):
+					if 'dens_map' in str(f) and cr_chr.lower() in str(f).lower():
+						output.write(
+						'		<left> <img class="img" src="' +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" > </left>' + '\n'
+								)
+			if cr_chr == "none": 
+				output.write('<br><p>No candidate region selected, please manually review the results. </p>' + '\n'	)
 
-	if cr_chr == "none": 
-		output.write('<br><p>No candidate region selected, please manually review the results. </p>' + '\n'	)
-
-	if cr_chr != "none":
-		for f in sorted(files):
-			if 'dens_map' in str(f) and cr_chr.lower() in str(f).lower():
-				output.write(
-				'		<left> <img class="img" src="' +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" > </left>' + '\n'
-				)
 
 	##########################################################################################################################################
 	#Candidates table:
 	output.write(
 	'		<hr class="easymap">' + '\n'
 	'		<h2>Candidate region analysis</h2>' + '\n'
+	'		<p>A list of SNP located in genes within the candidate region with a high alternative allele frequency and absent from the control sample. </p>' + '\n'
 	)
 
 	#first we check that there are candidates 
@@ -779,7 +778,7 @@ if mut_type == 'dens':
 		for line in candidates:
 			if not line.startswith('@'):
 				sp = line.split()
-				if sp[10].strip() != "nh":
+				if sp[10].strip() != "nh" and float(sp[8]) >= 0.7:
 					n_candidates = n_candidates + 1
 
 	#then if the number of candidates is > 0, we write the candidates in a table
@@ -835,26 +834,26 @@ if mut_type == 'dens':
 					else:
 						annotation = ' Functional annotation not available'
 
-					variants_list.append([str(i), contig, position, AF, DTP, nucleotide, gene, aminoacid, primer_f, primer_r, upstream, downstream, annotation, alt_nt])
+					if gene != "-" and float(AF) >= 0.7:
+						variants_list.append([str(i), contig, position, AF, DTP, nucleotide, gene, aminoacid, primer_f, primer_r, upstream, downstream, annotation, alt_nt])
 
-					output.write(
-					'		  <tr>' + '\n'
-					'		    <td>'+str(i)+'</th>' + '\n'
-					'		    <td>'+contig+'</th>' + '\n'
-					'		    <td>'+position+'</th>' + '\n'
-					'		    <td>'+AF+'</th>' + '\n'
-					'		    <td>'+DTP+'</th>' + '\n'
-					'		    <td>'+nucleotide+'</th>' + '\n'
-					'		    <td>'+gene+'</th>' + '\n'
-					'		    <td>'+aminoacid+'</th>' + '\n'
-					'		  </tr>' + '\n'
-						)
-
-					i=i+1
+						output.write(
+						'		  <tr>' + '\n'
+						'		    <td>'+str(i)+'</th>' + '\n'
+						'		    <td>'+contig+'</th>' + '\n'
+						'		    <td>'+position+'</th>' + '\n'
+						'		    <td>'+AF+'</th>' + '\n'
+						'		    <td>'+DTP+'</th>' + '\n'
+						'		    <td>'+nucleotide+'</th>' + '\n'
+						'		    <td>'+gene+'</th>' + '\n'
+						'		    <td>'+aminoacid+'</th>' + '\n'
+						'		  </tr>' + '\n'
+							)
+						i=i+1
 
 			output.write(
 				'	</table>' + '\n'
-				'	<br><p>Click to see <a href="candidate_variants.txt" target="_blank">extended information</a>  or  <a href="candidate_variants_total.txt" target="_blank"> all variants</a>. </p>' + '\n'
+				'	<br><p>For extended information, click to see <a href="candidate_variants.txt" target="_blank">a list of all variants in the selected region</a>  or  <a href="candidate_variants_total.txt" target="_blank"> all variants in the genome</a>. </p>' + '\n'
 				)
 
 	output.write(

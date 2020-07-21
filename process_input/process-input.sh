@@ -196,17 +196,13 @@ if [ $data_source == 'exp' ]; then
 			{
 				if [[ "$read_s_ctrl" == *".fq" ]]; then
 					fq_qual=`python2 ./graphic_output/fastq-stats.py -fasq $read_s_ctrl -out $project_name/$f3/single-end-control-reads-qual-stats.png 2>> $my_log_file` 
-					echo "stuff" >> $my_log_file
 				else
 					fq_qual=0
-					echo "stuff2" >> $my_log_file
 				fi
 				
 				if [ $fq_qual == 0 ]; then
-					echo "stuff3" >> $my_log_file
 					echo $(date "+%F > %T")": Single-end fastq quality (control reads) encoding is Phred +33. Passed." >> $my_log_file
 				else
-					echo "stuff4" >> $my_log_file
 					echo $(date "+%F > %T")": Single-end fastq quality (control reads) encoding is not Phred +33. See documentatation to learn how to fix this issue." >> $my_log_file
 					exit_code=1
 				fi

@@ -63,7 +63,7 @@ stringency=${20}
 exp_mut_type=${21}
 
 #Set number of maximum CPU for steps compatible with multithreading, default = 1 
-threads=1
+threads=2
 
 # Set internal variables according to the SNP validation stringency chosen by the user
 if [ $stringency == high_stringency ]; then
@@ -91,19 +91,19 @@ echo 'pid workflow '$$ >> $my_status_file
 {
 	interval_width=`python2 $location/scripts_snp/set-interval.py -a $f1/$my_gs`
 } || {
-	interval_width=4000007
+	interval_width=4000000
 	echo $(date "+%F > %T")': set-interval.py failed.' >> $my_log_file
 }
 echo $(date "+%F > %T")': set-interval.py finished, interval set at: '$interval_width   >> $my_log_file
 
 # Set variant density mapping window width and step according to genome size
-if [ $interval_width -lt 4000009 ]; then
+if [ $interval_width -lt 4000000 ]; then
 	dens_width=1000000
 	dens_step=1000000
-elif [ $interval_width -gt 4000009 ] && [ $interval_width -lt 11000000 ]; then
+elif [ $interval_width -ge 4000000 ] && [ $interval_width -lt 11000000 ]; then
 	dens_width=1000000
 	dens_step=1000000
-elif [ $interval_width -gt 4000009 ]; then
+elif [ $interval_width -ge 11000000 ]; then
 	dens_width=1000000
 	dens_step=1000000
 fi
