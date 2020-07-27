@@ -15,7 +15,6 @@ if int(args.step) == 1:
     in_file = args.in_file
     out = open(args.out, "a+")
     max_dens=[0,0,0,0]
-    threshold=0.9
 
     for line in open(in_file, "r"): 
         sp = line.split()
@@ -24,19 +23,21 @@ if int(args.step) == 1:
 
     for line in open(in_file, "r"): 
         sp = line.split()
-        if float(sp[3]) > threshold*float(max_dens[3]) :
-            out.write(str(sp[0]) + "\t" + str(sp[1]) + "\t" + str(sp[2]) + "\t" + str(sp[3]) + "\t" + str((in_file.split(".")[-2]).split("/")[-1]) + "\n")
+        if float(sp[3]) > 0.95*float(max_dens[3]) :
+            out.write(str(sp[0]) + "\t" + str(sp[1]) + "\t" + str(sp[2]) + "\t" + str(sp[3]) + "\t" + str((in_file.split(".")[0]).split("/")[-1]) + "\n")
+    
+
 # Selecting center for CR 
 if int(args.step) == 2: 
     regs = list()
-    if args.mut_type == "EMS": priorities = ["F2_filtered_EMS_hz_dens", "F2_filtered_EMS_dens"]
+    if args.mut_type == "EMS": priorities = ["F2_filtered_EMS_hz_dens", "F2_filtered_EMS_dens", "F2_control_comparison_dens"]
     if args.mut_type == "all": priorities = ["F2_hz_dens", "F2_control_comparison_dens"]
 
     for p in reversed(priorities):
         for line in open(args.in_file, "r"):
             if str(p) == str(line.split()[-1]): 
                 if float(line.split()[3]) != 0.0: 
-                    selected_pos =  [line.split()[0], line.split()[1], str(p)]                                                    
+                    selected_pos =  [line.split()[0], line.split()[1], str(p)]                        #str(line.split()[0])+'_-_'+str(line.split()[1])                            
                     try: 
                         chrs=list()
                         for reg in regs: 
@@ -46,10 +47,11 @@ if int(args.step) == 2:
                         else:
                             for reg in regs: 
                                 if str(reg[0]) == str(selected_pos[0]):
-                                    if abs(int(selected_pos[1]) - int(reg[1])) > 2000000: 
+                                    if abs(int(selected_pos[1]) - int(reg[1])) > 10000000: 
                                         regs.append(selected_pos)
                     except:
                         regs.append(selected_pos)
+
     # CR limits 
     for reg in regs: 
         try: 
@@ -58,7 +60,6 @@ if int(args.step) == 2:
             selected_pos = int(reg[1])
             lines_d = {}
             project = args.project
-            #for i, line in enumerate(open("./44/"+selected_data+".txt", "r")):   # TESTING
             for i, line in enumerate(open(project+"/1_intermediate_files/"+selected_data+".txt", "r")):                          
                 if selected_chr.lower() == str(line.split()[0]).lower(): 
                     lines_d[i] = line
@@ -66,7 +67,7 @@ if int(args.step) == 2:
                         selected_index = i
 
             # SETTING CR COORDINATES
-            steepness = 0.5                                                                                        
+            steepness = 0.20                                                                                         # ARBITRARY VALUE (0.2), calibrate accordingly
             max_dens_value = float(lines_d[selected_index].split()[3])
             # Frontwards
             f = selected_index

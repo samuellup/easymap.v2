@@ -187,9 +187,9 @@ if [ $data_source == 'exp' ]; then
 				fq=0
 			fi
 			if [ $fq == 0 ]; then
-				echo $(date "+%F > %T")": Single-end fastq input (control reads) passed." >> $my_log_file
+				echo $(date "+%F > %T")": Control sample file passed." >> $my_log_file
 			else
-				echo $(date "+%F > %T")": Single-end fastq input (control reads) failed. File is empty or has an incorrect format. Please provide a new file." >> $my_log_file
+				echo $(date "+%F > %T")": Control sample file failed. File is empty or has an incorrect format. Please provide a new file." >> $my_log_file
 				exit_code=1
 			fi
 

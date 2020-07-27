@@ -214,10 +214,10 @@ def dens_ovw():
 
 				# Data plotting
 				# Color scheme																					
-				if c == 1: re,g,b,re_f,g_f,b_f = 245, 120, 44, 247, 170, 124
-				if c == 2: re,g,b,re_f,g_f,b_f = 31, 120, 180, 122, 192, 240
-				if c == 3: re,g,b,re_f,g_f,b_f = 255, 0, 255, 249, 222, 252
-				if c == 4: re,g,b,re_f,g_f,b_f = 209, 56, 56, 250, 150, 150
+				if c == 1: re,g,b,re_f,g_f,b_f = 209, 56, 56, 240, 137, 137
+				if c == 2: re,g,b,re_f,g_f,b_f = 56, 127, 209, 135, 182, 237
+				if c == 3: re,g,b,re_f,g_f,b_f = 56, 209, 71, 154, 252, 164
+				if c == 4: re,g,b,re_f,g_f,b_f = 209, 56, 158, 247, 161, 218
 				prev_pos_x = prev_pos_start
 				prev_pos_y = base[1]+sub_height
 				for line in open(dens_data, "r"):
@@ -226,23 +226,22 @@ def dens_ovw():
 						pos_y_r = int(line.split()[2])
 						pos_x_gr = (pos_x_r / scaling_factor_x) + prev_pos_start
 						pos_y_gr =  base[1] + sub_height - (pos_y_r / sclf) 
-						if c == 3 or c == 4: 
-							# Drawing CR filled area
-							try:
-								for candidate_region in regs:
-									if str(chr[0]).lower() == str(candidate_region[0]).lower():
-										cr_start = int(candidate_region[1])
-										cr_end = int(candidate_region[2])
-										#print prev_pos_x, pos_x_gr
-										for fill_x in range(int(prev_pos_x), int(pos_x_gr), 1):
-											if pos_x_r > cr_start and pos_x_r < cr_end: 
-												fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
-												draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+1), fill=(re_f,g_f,b_f))
-							except: 
-								pass
-						# Drawing overall line
 						if pos_x_gr < pos_start: 
-							draw.line((prev_pos_x, prev_pos_y)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				
+							draw.line((prev_pos_x, prev_pos_y)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				# Drawing overall line
+
+						# Drawing CR filled area
+						try:
+							for candidate_region in regs:
+								if str(chr[0]).lower() == str(candidate_region[0]).lower():
+									cr_start = int(candidate_region[1])
+									cr_end = int(candidate_region[2])
+									#print prev_pos_x, pos_x_gr
+									for fill_x in range(int(prev_pos_x), int(pos_x_gr), 1):
+										if pos_x_r > cr_start and pos_x_r < cr_end: 
+											fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
+											draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+1), fill=(re_f,g_f,b_f))
+						except: 
+							pass
 
 						prev_pos_x, prev_pos_y = pos_x_gr, pos_y_gr
 
@@ -323,9 +322,9 @@ def dens_ovw():
 
 				# Data plotting
 				# Color scheme																					
-				if c == 1: re,g,b,re_f,g_f,b_f = 245, 120, 44, 247, 170, 124
-				if c == 2: re,g,b,re_f,g_f,b_f = 31, 120, 180, 122, 192, 240
-				if c == 3: re,g,b,re_f,g_f,b_f = 255, 0, 255, 249, 222, 252
+				if c == 1: re,g,b,re_f,g_f,b_f = 209, 56, 56, 240, 137, 137
+				if c == 2: re,g,b,re_f,g_f,b_f = 56, 127, 209, 135, 182, 237
+				if c == 3: re,g,b,re_f,g_f,b_f = 56, 209, 71, 154, 252, 164
 				prev_pos_x = prev_pos_start
 				prev_pos_y = base[1]+sub_height
 				for line in open(dens_data, "r"):
@@ -334,23 +333,22 @@ def dens_ovw():
 						pos_y_r = int(line.split()[2])
 						pos_x_gr = (pos_x_r / scaling_factor_x) + prev_pos_start
 						pos_y_gr =  base[1] + sub_height - (pos_y_r / sclf) 
-						if c == 2 or c == 3:
-							# Drawing CR filled area
-							try:
-								for candidate_region in regs:
-									if str(chr[0]).lower() == str(candidate_region[0]).lower():
-										cr_start = int(candidate_region[1])
-										cr_end = int(candidate_region[2])
-										#print prev_pos_x, pos_x_gr
-										for fill_x in range(int(prev_pos_x), int(pos_x_gr), 1):
-											if pos_x_r > cr_start and pos_x_r < cr_end: 
-												fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
-												draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+1), fill=(re_f,g_f,b_f))
-							except: 
-								pass
-						# Drawing overall line
 						if pos_x_gr < pos_start: 
-							draw.line((prev_pos_x, prev_pos_y)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				
+							draw.line((prev_pos_x, prev_pos_y)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				# Drawing overall line
+
+						# Drawing CR filled area
+						try:
+							for candidate_region in regs:
+								if str(chr[0]).lower() == str(candidate_region[0]).lower():
+									cr_start = int(candidate_region[1])
+									cr_end = int(candidate_region[2])
+									#print prev_pos_x, pos_x_gr
+									for fill_x in range(int(prev_pos_x), int(pos_x_gr), 1):
+										if pos_x_r > cr_start and pos_x_r < cr_end: 
+											fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
+											draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+1), fill=(re_f,g_f,b_f))
+						except: 
+							pass
 
 						prev_pos_x, prev_pos_y = pos_x_gr, pos_y_gr						
 
@@ -498,10 +496,10 @@ def dens_graphs():
 						draw.text((base[0]-19, base[1]+10-6), str(tag_y) , font=fnt2, fill=(0,0,0))
 
 					# Color scheme																					
-					if c == 1: re,g,b,re_f,g_f,b_f = 245, 120, 44, 247, 170, 124
-					if c == 2: re,g,b,re_f,g_f,b_f = 31, 120, 180, 122, 192, 240
-					if c == 3: re,g,b,re_f,g_f,b_f = 255, 0, 255, 249, 222, 252
-					if c == 4: re,g,b,re_f,g_f,b_f = 209, 56, 56, 250, 150, 150
+					if c == 1: re,g,b,re_f,g_f,b_f = 209, 56, 56, 240, 137, 137
+					if c == 2: re,g,b,re_f,g_f,b_f = 56, 127, 209, 135, 182, 237
+					if c == 3: re,g,b,re_f,g_f,b_f = 56, 209, 71, 154, 252, 164
+					if c == 4: re,g,b,re_f,g_f,b_f = 209, 56, 158, 247, 161, 218
 
 					# Data plotting
 					prev_pos_x = base[0]
@@ -630,9 +628,8 @@ def dens_graphs():
 
 						# Data plotting
 						# Color scheme																					#_CR_
-						if c == 1: re,g,b,re_f,g_f,b_f = 245, 120, 44, 247, 170, 124
-						if c == 2: re,g,b,re_f,g_f,b_f = 31, 120, 180, 122, 192, 240
-						
+						if c == 1: re,g,b,re_f,g_f,b_f = 209, 56, 56, 240, 137, 137
+						if c == 2: re,g,b,re_f,g_f,b_f = 56, 127, 209, 135, 182, 237
 						prev_pos_x = base[0]
 						prev_pos_y = base[1]+sub_height
 						for line in open(dens_data, "r"):
@@ -709,7 +706,7 @@ def dens_graphs():
 						# Data plotting
 						if c == 1: re,g,b,re_f,g_f,b_f = 209, 56, 56, 240, 137, 137
 						if c == 2: re,g,b,re_f,g_f,b_f = 56, 127, 209, 135, 182, 237
-						if c == 3: re,g,b,re_f,g_f,b_f = 255, 0, 255, 249, 222, 252
+						if c == 3: re,g,b,re_f,g_f,b_f = 56, 209, 71, 154, 252, 164
 						prev_pos_x = base[0]
 						prev_pos_y = base[1]+sub_height
 						for line in open(dens_data, "r"):
@@ -914,12 +911,12 @@ def fa_vs_pos():
 						fa = float(sp[8])/(float(sp[8])+float(sp[7]))
 						fa_img = int(80/100.0*height) - int(fa/scaling_factor_y)
 						pos_img = int(int(sp[1])/scaling_factor_x) + int(70)
-						draw.ellipse((pos_img-2, fa_img-2, pos_img+2, fa_img+2), fill=(247, 170, 124)) 
+						draw.ellipse((pos_img-2, fa_img-2, pos_img+2, fa_img+2), fill=(237, 194, 168)) 
 						#f2wt snps
 						fa = float(sp[6])/(float(sp[6])+float(sp[5]))
 						fa_img = int(80/100.0*height) - int(fa/scaling_factor_y) - 1
 						pos_img = int(int(sp[1])/scaling_factor_x) + 70
-						draw.ellipse((pos_img-2, fa_img-2, pos_img+2, fa_img+2), fill=(122, 192, 240))
+						draw.ellipse((pos_img-2, fa_img-2, pos_img+2, fa_img+2), fill=(167, 190, 206))
 
 				#Mapping variants
 				for l, line in enumerate(lines):
