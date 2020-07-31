@@ -575,6 +575,10 @@ then
 	if [[ "$my_p_rd" == *".vcf" ]]; then 
 		control_format="vcf"
 		get_control_va_from_vcf 
+	elif [[ "$my_p_rd" == *"None" ]]; then
+		control_format="vcf"
+		touch $f1/control_filtered.va ; echo $'none \t 1 \t - \t - \t -' >> $f1/control_filtered.va
+		touch $f1/control_raw.va ; echo $'none \t 1 \t - \t - \t -' >> $f1/control_raw.va
 	else
 		control_format="fastq"
 		get_control_va
@@ -734,6 +738,10 @@ then
 	if [[ "$my_p_rd" == *".vcf" ]]; then 
 		control_format="vcf"
 		get_control_va_from_vcf 
+	elif [[ "$my_p_rd" == *"None" ]]; then
+		control_format="vcf"
+		touch $f1/control_filtered.va ; echo $'none \t 1 \t - \t - \t -' >> $f1/control_filtered.va
+		touch $f1/control_raw.va ; echo $'none \t 1 \t - \t - \t -' >> $f1/control_raw.va
 	else
 		control_format="fastq"
 		get_control_va
@@ -798,6 +806,10 @@ then
 	if [[ "$my_p_rd" == *".vcf" ]]; then 
 		control_format="vcf"
 		get_control_va_from_vcf 
+	elif [[ "$my_p_rd" == *"None" ]]; then
+		control_format="vcf"
+		touch $f1/control_filtered.va ; echo $'none \t 1 \t - \t - \t -' >> $f1/control_filtered.va
+		touch $f1/control_raw.va ; echo $'none \t 1 \t - \t - \t -' >> $f1/control_raw.va
 	else
 		control_format="fastq"
 		get_control_va
@@ -908,6 +920,10 @@ then
 	if [[ "$my_p_rd" == *".vcf" ]]; then 
 		control_format="vcf"
 		get_control_va_from_vcf 
+	elif [[ "$my_p_rd" == *"None" ]]; then
+		control_format="vcf"
+		touch $f1/control_filtered.va ; echo $'none \t 1 \t - \t - \t -' >> $f1/control_filtered.va
+		touch $f1/control_raw.va ; echo $'none \t 1 \t - \t - \t -' >> $f1/control_raw.va
 	else
 		control_format="fastq"
 		get_control_va

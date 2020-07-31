@@ -735,14 +735,14 @@ if mut_type == 'dens':
 	#Chromosomes DENS vs POS overview
 	output.write(
 	'		<h2>Density analysis overview</h2>' + '\n'
-	'		<p>All input contigs are displayed, variant density mapping is plotted for each chromosome. </p>' + '\n'
+	'		<p>All input contigs are displayed, variant density mapping is plotted for each chromosome and the candidate regions are highlighted. </p>' + '\n'
 		) 
 	for f in sorted(files):
 		if 'dens-overview' in str(f):
 			output.write(
 			'		<left> <img class="img" src="' +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" > </left>' + '\n'
 			)
-
+	'''
 	# Selected chromosome 
 	output.write(
 	'		<h2>Selected genomic regions</h2>' + '\n'
@@ -761,7 +761,7 @@ if mut_type == 'dens':
 								)
 			if cr_chr == "none": 
 				output.write('<br><p>No candidate region selected, please manually review the results. </p>' + '\n'	)
-
+	'''
 
 	##########################################################################################################################################
 	#Candidates table:

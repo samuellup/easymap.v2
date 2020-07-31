@@ -63,7 +63,7 @@ stringency=${20}
 exp_mut_type=${21}
 
 #Set number of maximum CPU for steps compatible with multithreading, default = 1 
-threads=2
+threads=1
 
 # Set internal variables according to the SNP validation stringency chosen by the user
 if [ $stringency == high_stringency ]; then
@@ -207,7 +207,7 @@ function get_problem_va {
 	depth_alignment $f1/alignment1.bam $f3/frequence_depth_alignment_distribution_sample.png
 
 	#Run vcf filter
-	if [ $my_cross == bc ]; then mut_type=all ; fi		#SDL V2 Update, prev: then mut_type=EMS
+	if [ $my_cross == bc ]; then mut_type=all ; fi
 	if [ $my_cross == oc ]; then mut_type=all ; fi
 
 	if [ $av_rd -gt 25 ]; then dp_min=12 ; fi
@@ -432,9 +432,13 @@ function depth_alignment {
 
 # Get problem and control VA files
 get_problem_va 
-if [[ "$my_p_rd" == *".vcf" ]]; then   				# [ $my_p_rd =~ '.vcf' ]
+if [[ "$my_p_rd" == *".vcf" ]]; then   				
 	control_format="vcf"
 	get_control_va_from_vcf 
+elif [[ "$my_p_rd" == *"None" ]]; then
+	control_format="vcf"
+	touch $f1/control_filtered.va ; echo $'none \t 1 \t - \t - \t -' >> $f1/control_filtered.va
+	touch $f1/control_raw.va ; echo $'none \t 1 \t - \t - \t -' >> $f1/control_raw.va
 else
 	control_format="fastq"
 	get_control_va
@@ -545,9 +549,8 @@ echo $(date "+%F > %T")': Input for varanalyzer finished.' >> $my_log_file
 {
 	python2 $location/varanalyzer/varanalyzer.py -itp snp -con $f1/$my_gs -gff $f0/$my_gff -var $f1/snp-to-varanalyzer.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_snp.txt 2>> $my_log_file
 	python2 $location/varanalyzer/varanalyzer.py -itp snp -con $f1/$my_gs -gff $f0/$my_gff -var $f1/snp-to-varanalyzer-total.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_total_temp.txt  2>> $my_log_file
-	touch $f1/varanalyzer_output_indel.txt ;       python2 $location/varanalyzer/varanalyzer.py -itp lim -con $f1/$my_gs -gff $f0/$my_gff -var $f1/indel-to-varanalyzer.txt       -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_indel.txt  2>> $my_log_file
+	touch $f1/varanalyzer_output_indel.txt ; python2 $location/varanalyzer/varanalyzer.py -itp lim -con $f1/$my_gs -gff $f0/$my_gff -var $f1/indel-to-varanalyzer.txt       -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_indel.txt  2>> $my_log_file
 	touch $f1/varanalyzer_output_indel_total.txt ; python2 $location/varanalyzer/varanalyzer.py -itp lim -con $f1/$my_gs -gff $f0/$my_gff -var $f1/indel-to-varanalyzer-total.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_indel_total.txt  2>> $my_log_file
-
 } || {
 	echo $(date "+%F > %T")': Error during execution of varanalyzer.py .' >> $my_log_file
 	exit_code=1

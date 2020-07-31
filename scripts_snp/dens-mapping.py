@@ -28,7 +28,7 @@ if int(args.step) == 1:
             out.write(str(sp[0]) + "\t" + str(sp[1]) + "\t" + str(sp[2]) + "\t" + str(sp[3]) + "\t" + str((in_file.split(".")[-2]).split("/")[-1]) + "\n")
 # Selecting center for CR 
 if int(args.step) == 2: 
-    regs = list()
+    peaks = list()
     if args.mut_type == "EMS": priorities = ["F2_filtered_EMS_hz_dens", "F2_filtered_EMS_dens"]
     if args.mut_type == "all": priorities = ["F2_hz_dens", "F2_control_comparison_dens"]
 
@@ -39,26 +39,27 @@ if int(args.step) == 2:
                     selected_pos =  [line.split()[0], line.split()[1], str(p)]                                                    
                     try: 
                         chrs=list()
-                        for reg in regs: 
-                            chrs.append(str(reg[0]))
+                        for peak in peaks: 
+                            chrs.append(str(peak[0]))
                         if str(selected_pos[0]) not in chrs:
-                            regs.append(selected_pos)
+                            peaks.append(selected_pos)
                         else:
-                            for reg in regs: 
-                                if str(reg[0]) == str(selected_pos[0]):
-                                    if abs(int(selected_pos[1]) - int(reg[1])) > 2000000: 
-                                        regs.append(selected_pos)
+                            for peak in peaks: 
+                                if str(peak[0]) == str(selected_pos[0]):
+                                    if abs(int(selected_pos[1]) - int(peak[1])) > 2000000: 
+                                        peaks.append(selected_pos)
                     except:
-                        regs.append(selected_pos)
+                        peaks.append(selected_pos)
     # CR limits 
-    for reg in regs: 
+    regs = list()
+    for peak in peaks: 
         try: 
-            selected_chr = str(reg[0])
-            selected_data = str(reg[2])
-            selected_pos = int(reg[1])
+            selected_chr = str(peak[0])
+            selected_data = str(peak[2])
+            selected_pos = int(peak[1])
             lines_d = {}
             project = args.project
-            #for i, line in enumerate(open("./44/"+selected_data+".txt", "r")):   # TESTING
+            #for i, line in enumerate(open("./dups/"+selected_data+".txt", "r")):   # TESTING
             for i, line in enumerate(open(project+"/1_intermediate_files/"+selected_data+".txt", "r")):                          
                 if selected_chr.lower() == str(line.split()[0]).lower(): 
                     lines_d[i] = line
@@ -100,9 +101,29 @@ if int(args.step) == 2:
                 except: 
                     start_cr = str(lines_d[f].split()[1])
                     stop=True
-                    
-            with open(args.out, "a+") as out: 
-                out.write('?'+"\t" + selected_chr +  "\t" + start_cr +"\t" + end_cr + "\n")
+            
+            regs.append([selected_chr, start_cr, end_cr])       
+            #with open(args.out, "a+") as out: 
+            #    out.write('?'+"\t" + selected_chr +  "\t" + start_cr +"\t" + end_cr + "\n")
 
         except: 
             selected_pos = 'none'
+
+    # Fix overlapping CRs 
+    for r, reg in enumerate(regs): 
+        chrm, x, y = reg[0], reg[1], reg[2]
+        try: 
+            if chrm == regs[r+1][0]:
+                j, k = regs[r+1][1], regs[r+1][2]
+                if int(y) > int(j) and int(k) > int(x): 
+                    if int(x) < int(j):    
+                        reg[2] = j
+                    if int(x) > int(j): 
+                        reg[1] = k 
+        except: 
+            pass
+
+    # Write to output
+    with open(args.out, "a+") as out: 
+        for reg in regs: 
+            out.write('?'+"\t" + reg[0] +  "\t" + reg[1] +"\t" + reg[2] + "\n")

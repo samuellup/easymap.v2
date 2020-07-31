@@ -39,33 +39,22 @@ project = args.project_name
 
 
 if args.my_mut == 'af_control' or args.my_mut == 'af_sample' or args.my_mut == 'af_candidates' :
-	#FA vs POS image
 	fa_vs_pos()
 
 if args.my_mut == 'snp':
-	#FA vs POS image
 	fa_vs_pos()
-
-	#Candidates
 	candidates_zoom()	
-
-	#Gene gene_plot
 	gene_plot()	
-	#Legend
 	#legend()
 
 
 elif args.my_mut == 'lin':
-	#Insertions overview and histogram
 	insertions_overview_and_histograms()
-
-	#Gene gene_plot
 	gene_plot()
 
 
 elif args.my_mut == 'dens':
-	#DENS vs POS images
-	dens_graphs()
+	#dens_graphs()
 	dens_ovw()
 	gene_plot()	
 
