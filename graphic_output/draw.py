@@ -236,7 +236,8 @@ def dens_ovw():
 										#print prev_pos_x, pos_x_gr
 										for fill_x in range(int(prev_pos_x), int(pos_x_gr), 1):
 											if pos_x_r > cr_start and pos_x_r < cr_end: 
-												fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
+												fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr
+												if fill_y > base[1]+sub_height -1 : fill_y = base[1]+sub_height-1			
 												draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+1), fill=(re_f,g_f,b_f))
 							except: 
 								pass
@@ -343,7 +344,7 @@ def dens_ovw():
 										cr_end = int(candidate_region[2])
 										#print prev_pos_x, pos_x_gr
 										for fill_x in range(int(prev_pos_x), int(pos_x_gr), 1):
-											if pos_x_r > cr_start and pos_x_r < cr_end: 
+											if pos_x_r >= cr_start and pos_x_r <= cr_end and fill_x < pos_start:
 												fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
 												draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+1), fill=(re_f,g_f,b_f))
 							except: 

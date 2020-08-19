@@ -207,15 +207,11 @@ function get_problem_va {
 	depth_alignment $f1/alignment1.bam $f3/frequence_depth_alignment_distribution_sample.png
 
 	#Run vcf filter
-	if [ $my_cross == bc ]; then mut_type=all ; fi
-	if [ $my_cross == oc ]; then mut_type=all ; fi
-
 	if [ $av_rd -gt 25 ]; then dp_min=12 ; fi
 	if [ $av_rd -le 25 ]; then dp_min=6 ; fi
 
 	dp_max=$(($av_rd * 3))
 	if [ $dp_max -le 40 ]; then dp_max=100 ; fi
-
 
 	{
 		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_raw.va -b $f1/F2_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -dp_max $dp_max -qual_min $problemSample_snpQualityTheshold -mut_type all  2>> $my_log_file

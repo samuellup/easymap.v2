@@ -345,8 +345,8 @@ for variant_info in variants_info:
 										cds_seq_list_mt.append(reverse_complementary(cds_seq))					
 				
 				# Reconstruct the coding sequence of the mutant gene
-				full_cds_seq_wt = ''.join(cds_seq_list_wt)
-				full_cds_seq_mt = ''.join(cds_seq_list_mt)
+				full_cds_seq_wt = (''.join(cds_seq_list_wt)).upper()
+				full_cds_seq_mt = (''.join(cds_seq_list_mt)).upper()
 					
 				if input_type == 'snp':	
 					# Translate the coding sequences of the wild type and mutant genes

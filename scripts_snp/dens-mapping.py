@@ -59,7 +59,6 @@ if int(args.step) == 2:
             selected_pos = int(peak[1])
             lines_d = {}
             project = args.project
-            #for i, line in enumerate(open("./dups/"+selected_data+".txt", "r")):   # TESTING
             for i, line in enumerate(open(project+"/1_intermediate_files/"+selected_data+".txt", "r")):                          
                 if selected_chr.lower() == str(line.split()[0]).lower(): 
                     lines_d[i] = line
@@ -114,16 +113,32 @@ if int(args.step) == 2:
         chrm, x, y = reg[0], reg[1], reg[2]
         try: 
             if chrm == regs[r+1][0]:
-                j, k = regs[r+1][1], regs[r+1][2]
-                if int(y) > int(j) and int(k) > int(x): 
-                    if int(x) < int(j):    
-                        reg[2] = j
-                    if int(x) > int(j): 
-                        reg[1] = k 
+                j, k = regs[r+1][1], regs[r+1][2]              
+                if j == x and k ==  y:
+                    reg[1], reg[2] = "-", "-"
+
+                elif j == x and y != k: 
+                    if y > k :  regs[r+1][2] = y
+                    else: reg[2] = y
+                elif y == k and x != j:
+                    if x > j : reg[1] = j  
+                    else: regs[r+1][1] = x
+                else:
+                    if int(y) >= int(j) and int(k) >= int(x): 
+                        if int(x) < int(j):    
+                            reg[2] = j
+                        if int(x) > int(j): 
+                            reg[1] = k 
         except: 
             pass
+    regs_s = []
+    for reg in regs: 
+        if reg not in regs_s: 
+            regs_s.append(reg)
+    regs = regs_s
 
     # Write to output
     with open(args.out, "a+") as out: 
         for reg in regs: 
-            out.write('?'+"\t" + reg[0] +  "\t" + reg[1] +"\t" + reg[2] + "\n")
+            if reg[1] != "-" and reg[2] != "-":
+                out.write('?'+"\t" + reg[0] +  "\t" + reg[1] +"\t" + reg[2] + "\n")
