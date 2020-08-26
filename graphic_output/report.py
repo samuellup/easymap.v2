@@ -1161,31 +1161,6 @@ if mut_type == 'snp':
 	output.write('</div>')
 	output.close()
 
-'''
-
-
-'		<tr>' + '\n'
-'			<td> <b>Upstream sequence:</b></td>' + '\n'
-'			<td style="font-family:Lucida Console, monospace">' + var[10] + '</td>' + '\n'
-'		</tr>' + '\n'
-
-'		<tr>' + '\n'
-'			<td> <b>Downstream sequence:</b></td>' + '\n'
-'			<td style="font-family:Lucida Console, monospace">' + var[11] + '</td>' + '\n'
-'		</tr>' + '\n'
-
-'		<tr>' + '\n'
-'			<td> <b>Upstream sequence:</b></td>' + '\n'
-'			<td style="font-family:Lucida Console, monospace">' +  str(i[9]) + '</td>' + '\n'
-'		</tr>' + '\n'
-
-'		<tr>' + '\n'
-'			<td> <b>Downstream sequence:</b></td>' + '\n'
-'			<td style="font-family:Lucida Console, monospace">' +  str(i[10]) + '</td>' + '\n'
-'		</tr>' + '\n'
-'''
-
-
 
 
 

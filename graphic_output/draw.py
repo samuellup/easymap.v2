@@ -202,7 +202,9 @@ def dens_ovw():
 				pos_start = int(float(chr[1])/float(scaling_factor_x)) +prev_pos_start
 
 				# x axis marks and labels
-				mb_step=5
+				if len_gnm < 400000000: mb_step=5
+				if len_gnm > 400000000 and len_gnm < 1000000000 : mb_step = 50
+				if len_gnm > 1000000000: mb_step = 80
 				sep = int(mb_step*1000000/float(scaling_factor_x))
 				tag = 0
 				for ma in range(prev_pos_start, pos_start-10, sep): 
@@ -235,25 +237,27 @@ def dens_ovw():
 										cr_end = int(candidate_region[2])
 										#print prev_pos_x, pos_x_gr
 										for fill_x in range(int(prev_pos_x), int(pos_x_gr), 1):
-											if pos_x_r > cr_start and pos_x_r < cr_end: 
+											if pos_x_r >= cr_start and pos_x_r <= cr_end and fill_x < pos_start: 
 												fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr
-												if fill_y > base[1]+sub_height -1 : fill_y = base[1]+sub_height-1			
-												draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+1), fill=(re_f,g_f,b_f))
+												# fixes:
+												if fill_y < base[1] : fill_y = base[1] 		
+												if fill_y > base[1]+sub_height -1 : fill_y = base[1]+sub_height -1		
+												draw.line ((fill_x, base[1]+sub_height -1)+(fill_x, fill_y+1), fill=(re_f,g_f,b_f))
 							except: 
 								pass
 						# Drawing overall line
 						if pos_x_gr < pos_start: 
 							draw.line((prev_pos_x, prev_pos_y)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				
 
-						prev_pos_x, prev_pos_y = pos_x_gr, pos_y_gr
+						prev_pos_x, prev_pos_y = pos_x_gr, pos_y_gr 
 
 				# Sub-plot areas
 				draw.rectangle([(prev_pos_start, base[1]), (pos_start, base[1]+sub_height)], outline=(0,0,0), width=(1))
 				
 				# Chromosome titles
 				if c==4:
-					w, h = draw.textsize(str(chr[0]))
-					draw.text((prev_pos_start + (pos_start - prev_pos_start)/2-w/2-5, base[1]+sub_height+30), str(chr[0]), font=fnt2, fill=(0,0,0))
+					w, h = draw.textsize(str(chr[0]).split('.')[-2])
+					draw.text((prev_pos_start + (pos_start - prev_pos_start)/2-w/2-10, base[1]+sub_height+30), str(chr[0]).split('.')[-2], font=fnt2, fill=(0,0,0))
 
 				prev_pos_start = pos_start + 10
 
@@ -312,7 +316,9 @@ def dens_ovw():
 				pos_start = int(float(chr[1])/float(scaling_factor_x)) +prev_pos_start
 
 				# x axis marks and labels
-				mb_step=5
+				if len_gnm < 400000000: mb_step=5
+				if len_gnm > 400000000 and len_gnm < 1000000000 : mb_step = 50
+				if len_gnm > 1000000000: mb_step = 80
 				sep = int(mb_step*1000000/float(scaling_factor_x))
 				tag = 0
 				for ma in range(prev_pos_start, pos_start-10, sep): 
@@ -344,8 +350,11 @@ def dens_ovw():
 										cr_end = int(candidate_region[2])
 										#print prev_pos_x, pos_x_gr
 										for fill_x in range(int(prev_pos_x), int(pos_x_gr), 1):
-											if pos_x_r >= cr_start and pos_x_r <= cr_end and fill_x < pos_start:
-												fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr			
+											if pos_x_r > cr_start and pos_x_r < cr_end: 
+												fill_y = ((pos_y_gr-prev_pos_y)/(pos_x_gr-prev_pos_x))*(fill_x - pos_x_gr) + pos_y_gr
+												# fixes:
+												if fill_y < base[1] : fill_y = base[1] 		
+												if fill_y > base[1]+sub_height -1 : fill_y = base[1]+sub_height -1					
 												draw.line ((fill_x, base[1]+sub_height-1)+(fill_x, fill_y+1), fill=(re_f,g_f,b_f))
 							except: 
 								pass
@@ -447,7 +456,7 @@ def dens_graphs():
 				sub_height=int(0.2*wide)		
 
 				#Scaling factor x
-				scaling_factor_x = (max_graph_x)/(sub_width) 								#nts/pixel        
+				scaling_factor_x = float(max_graph_x)/float(sub_width) 								#nts/pixel        
 				for c in range(1,5):
 					# Set base point for sub-graph
 					if c == 1: base = [int(0.06*wide), int(0.05*wide)]
@@ -531,7 +540,16 @@ def dens_graphs():
 							if pos_x_gr < base[0]+sub_width+5: 
 								draw.line((prev_pos_x, prev_pos_y-1)+(pos_x_gr, pos_y_gr-1), fill=(re, g, b), width=1) 				
 							prev_pos_x, prev_pos_y = pos_x_gr, pos_y_gr
-			
+
+
+						
+					#Calibration
+					pos_x_r_c = 10000000
+					pos_x_gr_c = (pos_x_r_c / scaling_factor_x) + base[0]
+					draw.line((pos_x_gr_c, 670)+(pos_x_gr_c, 1), fill=(255, 0, 0), width=1) 
+
+
+
 					# Draws sub-plot area  
 					draw.rectangle([(base[0], base[1]), (base[0] +sub_width, base[1]+sub_height)], outline=(0,0,0), width=(1))
 					#draw.ellipse([(base[0], base[1]), (base[0] +4, base[1]+4)], fill=(255, 0, 0))						#for testing 
