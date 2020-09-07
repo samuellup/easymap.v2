@@ -256,8 +256,12 @@ def dens_ovw():
 				
 				# Chromosome titles
 				if c==4:
-					w, h = draw.textsize(str(chr[0]).split('.')[-2])
-					draw.text((prev_pos_start + (pos_start - prev_pos_start)/2-w/2-10, base[1]+sub_height+30), str(chr[0]).split('.')[-2], font=fnt2, fill=(0,0,0))
+					try:
+						w, h = draw.textsize(str(chr[0]).split('.')[-2])
+						draw.text((prev_pos_start + (pos_start - prev_pos_start)/2-w/2-10, base[1]+sub_height+30), str(chr[0]).split('.')[-2], font=fnt2, fill=(0,0,0))
+					except: 
+						w, h = draw.textsize(str(chr[0]))
+						draw.text((prev_pos_start + (pos_start - prev_pos_start)/2-w/2-10, base[1]+sub_height+30), str(chr[0]), font=fnt2, fill=(0,0,0))
 
 				prev_pos_start = pos_start + 10
 
