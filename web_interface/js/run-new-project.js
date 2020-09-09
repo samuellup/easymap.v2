@@ -271,6 +271,8 @@ window.onload = function() {
 			document.getElementById("simRecselInterface").style.display = "none";
 			document.getElementById("dataSource").style.display = "block";
 			document.getElementById("checkBoxStringency").style.display = "none";
+			document.getElementById("checkBoxMultithread").style.display = "none";
+			document.getElementById("numberThreads").style.display = "none";
 
 			if (cmdArgs[3] == 'exp') {
 				document.getElementById("expDataInterface").style.display = "block";
@@ -287,13 +289,20 @@ window.onload = function() {
 			document.getElementById("simRecselInterface").style.display = "block";
 			document.getElementById("dataSource").style.display = "block";
 			document.getElementById("checkBoxStringency").style.display = "block";
+			document.getElementById("checkBoxMultithread").style.display = "block";
 
+		
 			if (cmdArgs[3] == 'exp') {
 				document.getElementById("expDataInterface").style.display = "block";
+				document.getElementById("checkBoxStringency").style.display = "block";
+				document.getElementById("checkBoxMultithread").style.display = "block";
 			}
 			if (cmdArgs[3] == 'sim') {
 				document.getElementById("simDataInterface").style.display = "block";
-				document.getElementById("checkBoxStringency").style.display = "none";
+				document.getElementById("checkBoxStringency").style.display = "block";
+				document.getElementById("checkBoxMultithread").style.display = "block";
+				//document.getElementById("numberThreads").style.display = "none";
+
 			}
 
 		} else if (checkedOption == 'button40') {
@@ -302,6 +311,8 @@ window.onload = function() {
 			document.getElementById("readsControl").style.display = "block";
 			document.getElementById("expMutType").style.display = "block";
 			document.getElementById("checkBoxStringency").style.display = "block";
+			document.getElementById("checkBoxMultithread").style.display = "block";
+			//document.getElementById("numberThreads").style.display = "block";
 			document.getElementById("backgroundCrossCtype").style.display = "none";
 			document.getElementById("insSeqField").style.display = "none";
 			document.getElementById("expDataInterface").style.display = "none";
@@ -465,6 +476,7 @@ window.onload = function() {
 	}
 
 
+
 	// Check if combination of mutant background, cross performed, and origin of control reads, is supported
 	function checkBackgroundCrossCtypeIntermediateCheck() {
 		HideCheckoutBoxes();
@@ -562,6 +574,46 @@ window.onload = function() {
 			cmdArgs[23] = 'high_stringency';
 		}
 	}
+
+
+	// Check if the number of threads is properly defined
+	function verifyMultithreading(){
+		HideCheckoutBoxes();
+
+		var text = document.getElementById("form1").nThreads.value;
+		if(/[^0-9]/.test( text) ) {
+			cmdArgs[25] = '1';
+			threadsValidationInfoMessage = 'Input is not numeric';
+			document.getElementById("threadsValidationInfo").innerHTML = threadsValidationInfoMessage;
+			document.getElementById("threadsValidationInfo").style.display = "block";
+		} else if (text == '') {
+			cmdArgs[25] = '1';
+		} else {
+			cmdArgs[25] = document.getElementById("form1").nThreads.value;
+			document.getElementById("threadsValidationInfo").style.display = "none";
+		}
+		//updateCmd();
+	}
+
+
+
+
+	function checkMultithreading() {
+		if (this.checked) {
+			document.getElementById("numberThreads").style.display = "block";
+			cmdArgs[25] = document.getElementById("form1").nThreads.value;
+
+		} else {
+			document.getElementById("numberThreads").style.display = "none";
+			cmdArgs[25] = '1';
+
+		}
+	}
+
+	function setNThreads() {
+		cmdArgs[25] = document.getElementById("form1").nThreads.value;
+	}
+
 
 	function verifySimMut() {
 		HideCheckoutBoxes();
@@ -926,7 +978,7 @@ window.onload = function() {
 							   "&sim_mut=" + cmdArgs[20] +
 							   "&sim_recsel=" + cmdArgs[21] +
 							   "&sim_seq=" + cmdArgs[22] + 
-							   "&stringency=" + cmdArgs[23] + "&exp_mut_type=" + cmdArgs[24];
+							   "&stringency=" + cmdArgs[23] + "&exp_mut_type=" + cmdArgs[24] + "&n_threads=" + cmdArgs[25];
 
 
 		//console.log('argsStringToPost: ' + argsStringToPost);
@@ -1002,7 +1054,8 @@ window.onload = function() {
 					'n/p','n/p','n/p','n/p',
 					'n/p','n/p','n/p','n/p',
 					'n/p','n/p','n/p','n/p',
-					'n/p','n/p','n/p','n/p','n/p'];
+					'n/p','n/p','n/p','n/p','n/p','n/p'];
+
 
 	// Create the command string for the first time (for development purposes only)
 	//updateCmd();
@@ -1013,7 +1066,9 @@ window.onload = function() {
 	
 	// Verify input of text fields
 	document.getElementById("form1").projectName.onblur = verifyProjectName;
-	
+	document.getElementById("form1").nThreads.onblur = setNThreads;
+	document.getElementById("form1").nThreads.onblur = verifyMultithreading;
+
 	// React to interactions with the main 2-way selectors
 	document.getElementById("button1").onclick = buttons_analysisType;
 	document.getElementById("button2").onclick = buttons_analysisType;
@@ -1057,6 +1112,9 @@ window.onload = function() {
 
 	// React to interactions with stringency button
 	document.getElementById("stringency").onclick = checkStringency;
+
+	// React to interactions with multithreading button
+	document.getElementById("multithreading").onclick = checkMultithreading;
 
 	// React to interactions with button to check input and go to the gateway to run a new project
 	document.getElementById("checkFormButton").onclick = commandFinalCheck;

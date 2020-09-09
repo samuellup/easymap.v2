@@ -64,9 +64,9 @@ my_pseq=${17}													#mut / nomut : sequenced parental provided is the muta
 snp_analysis_type=${18}
 stringency=${20}
 exp_mut_type=${21}
+n_threads=${22}
 
-#Set number of maximum CPU for steps compatible with multithreading, default = 1 
-threads=1
+
 
 # Set internal variables according to the SNP validation stringency chosen by the user
 if [ $stringency == high_stringency ]; then
@@ -124,7 +124,7 @@ function get_problem_va {
 	then
 		#Run hisat2 unpaired to align raw reads to genome 
 		{
-			$location/hisat2/hisat2 -p $threads -x $f1/$my_ix -U $my_rd -S $f1/alignment1.sam 2> $f2/hisat2_problem-sample_std2.txt
+			$location/hisat2/hisat2 -p $n_threads -x $f1/$my_ix -U $my_rd -S $f1/alignment1.sam 2> $f2/hisat2_problem-sample_std2.txt
 
 		} || {
 			echo $(date "+%F > %T")': HISAT2 returned an error during the aligment of F2 reads. See log files.' >> $my_log_file
@@ -139,7 +139,7 @@ function get_problem_va {
 	then
 		#Run hisat2 paired to align raw reads to genome 
 		{
-			$location/hisat2/hisat2  -p $threads  -x $f1/$my_ix -1 $my_rf -2 $my_rr -S $f1/alignment1.sam 2> $f2/hisat2_problem-sample_std2.txt
+			$location/hisat2/hisat2  -p $n_threads  -x $f1/$my_ix -1 $my_rf -2 $my_rr -S $f1/alignment1.sam 2> $f2/hisat2_problem-sample_std2.txt
 
 		} || {
 			echo $(date "+%F > %T")': HISAT2 returned an error during the aligment of F2 reads. See log files.' >> $my_log_file
@@ -152,7 +152,7 @@ function get_problem_va {
 
 	#SAM to BAM
 	{
-		$location/samtools1/samtools sort  -@ $threads  $f1/alignment1.sam > $f1/alignment1.bam 2> $f2/sam-to-bam_problem-sample_std2.txt
+		$location/samtools1/samtools sort  -@ $n_threads  $f1/alignment1.sam > $f1/alignment1.bam 2> $f2/sam-to-bam_problem-sample_std2.txt
 		rm -rf ./user_projects/$project_name/1_intermediate_files/alignment1.sam
 
 	} || {
@@ -239,7 +239,7 @@ function get_control_va {
 	then
 		#Run hisat2 unpaired to align raw reads to genome 
 		{
-			$location/hisat2/hisat2  -p $threads  -x $f1/$my_ix -U $my_p_rd -S $f1/alignment1P.sam 2> $f2/hisat2_control-sample_std2.txt
+			$location/hisat2/hisat2  -p $n_threads  -x $f1/$my_ix -U $my_p_rd -S $f1/alignment1P.sam 2> $f2/hisat2_control-sample_std2.txt
 
 		} || {
 			echo $(date "+%F > %T")': HISAT2 returned an error during the aligment of control reads. See log files.' >> $my_log_file
@@ -254,7 +254,7 @@ function get_control_va {
 	then
 		#Run hisat2 paired to align raw reads to genome 
 		{
-			$location/hisat2/hisat2  -p $threads -x $f1/$my_ix -1 $my_p_rf -2 $my_p_rr -S $f1/alignment1P.sam 2> $f2/hisat2_control-sample_std2.txt
+			$location/hisat2/hisat2  -p $n_threads -x $f1/$my_ix -1 $my_p_rf -2 $my_p_rr -S $f1/alignment1P.sam 2> $f2/hisat2_control-sample_std2.txt
 
 		} || {
 			echo $(date "+%F > %T")': HISAT2 returned an error during the aligment of control reads. See log files.' >> $my_log_file
@@ -267,7 +267,7 @@ function get_control_va {
 
 	#SAM to BAM
 	{
-		$location/samtools1/samtools sort  -@ $threads $f1/alignment1P.sam > $f1/alignment1P.bam 2> $f2/sam-to-bam_control-sample_std2.txt
+		$location/samtools1/samtools sort  -@ $n_threads $f1/alignment1P.sam > $f1/alignment1P.bam 2> $f2/sam-to-bam_control-sample_std2.txt
 
 		rm -rf ./user_projects/$project_name/1_intermediate_files/alignment1P.sam
 

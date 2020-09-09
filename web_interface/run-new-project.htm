@@ -104,8 +104,7 @@ body {font-size:16px;}
 			</div>
 
 			<div id="dataSourceValidationInfo" class="warningMessage"></div>
-
-			<hr style="width: 100%; border: 2px solid rgb(150,150,150)" class="w3-round">
+			<div class="formInfo" id="formInfoSim">Input files</div>
 			
 			Reference sequence:<br>
 			<select id="refFileSelector" style="display:block; margin-bottom:22px;"></select>
@@ -126,8 +125,26 @@ body {font-size:16px;}
 			<div id="annFileValidationInfo" class="warningMessage"></div>
 			
 
+			<div id="expDataInterface">
+
+				Test reads (if your reads are paired-end, select both files while holding the Ctrl/Cmd key):<br>
+				<select multiple id="readsProblemSelector" style="display:block; margin-bottom:22px;"></select>
+				<div id="readsProblemWarnMsg" class="warningMessage">Please select one file for single-end reads and two files for paired-end reads.</div>
+				<div id="readsProblemWarnMsg2" class="warningMessage">The test and control read files must be different.</div>
+				
+				<div id="readsControl">
+					Control data (if your reads are paired-end, select both files while holding the Ctrl/Cmd key):<br>
+					<select multiple id="readsControlSelector" style="display:block; margin-bottom:22px;"></select>
+					<div id="readsControlWarnMsg" class="warningMessage">Please select one file for single-end reads and two files for paired-end reads.</div>
+					<div id="readsControlWarnMsg2" class="warningMessage">The test and control read files must be different.</div>
+				</div>
+			</div>
+
+
 			<div class="buttons-wrap" id="expMutType" style="display:none">
-				<hr style="width: 100%; border: 2px solid rgb(150,150,150)" class="w3-round">
+
+				<div class="formInfo" id="formInfoSim">Analysis parameters</div>
+
 				Expected mutation type:<br>
 				<div class="mx-button" style="margin-top:12px" >
 					<input type="radio" class="mutType" name="mxMT" id="button47" />
@@ -199,7 +216,6 @@ body {font-size:16px;}
 			</div>
 
 			<div id="checkBoxStringency" style="display:none;">
-				<hr style="width: 100%; border: 2px solid rgb(150,150,150)" class="w3-round">
 
 				Use low stringency during SNP analysis?
 				
@@ -207,28 +223,33 @@ body {font-size:16px;}
 				<input type="checkbox" class="switch_1" id="stringency">
 				</div>
 
-				By default, Easymap only considers SNPs that pass certain quality checks. However, in some read datasets that are not optimal, 
+				<i>By default, Easymap only considers SNPs that pass high quality thresholds. However, in sub-optimal read datasets, 
 				performing more lenient filtering can help to identify a candidate interval and the causal mutation. If you analyze your reads
 				in the default mode and obtain very few SNPs or believe that the causal mutation could have been discarded, turn on this option
-				and run the program again.
+				and run the program again. </i>
 			</div>
 
+			
+			<div id="checkBoxMultithread" style="display:none;">
 
-			<div id="expDataInterface">
-				<div class="formInfo" id="formInfoSim">Experimental reads</div>
-
-				Test reads (if your reads are paired-end, select both files while holding the Ctrl/Cmd key):<br>
-				<select multiple id="readsProblemSelector" style="display:block; margin-bottom:22px;"></select>
-				<div id="readsProblemWarnMsg" class="warningMessage">Please select one file for single-end reads and two files for paired-end reads.</div>
-				<div id="readsProblemWarnMsg2" class="warningMessage">The test and control read files must be different.</div>
+				Use multiple CPU cores during analysis? 
 				
-				<div id="readsControl">
-					Control data (if your reads are paired-end, select both files while holding the Ctrl/Cmd key):<br>
-					<select multiple id="readsControlSelector" style="display:block; margin-bottom:22px;"></select>
-					<div id="readsControlWarnMsg" class="warningMessage">Please select one file for single-end reads and two files for paired-end reads.</div>
-					<div id="readsControlWarnMsg2" class="warningMessage">The test and control read files must be different.</div>
+				<div>
+				<input type="checkbox" class="switch_1" id="multithreading">
 				</div>
+
+				<i>Using multiple cores will notably accelerate certain parts of the analysis. If you dont know how many cores your computer can spare,
+				 leave this option unchecked, otherwise please indicate how many cores Easymap can use. </i>
 			</div>
+
+			<div id="numberThreads" style="display:none;">
+
+				Number of cores: 
+				<input type="text" name="nThreads" value="1" style="width: 6%" /> <br>
+				<b>Warning: </b>Overloading the CPU can lead to lagging or system failure. 
+				<div id="threadsValidationInfo" class="warningMessage"></div>
+			</div>
+
 		
 			<div id="simDataInterface">
 				<div class="formInfo" id="formInfoSim">Simulation parameters</div>
