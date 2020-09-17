@@ -130,13 +130,15 @@ with open(snp_info_input, 'r') as in2:
 			in2_array.append(fields2)
 
 # Calculate distance to predicted position of mutation according to map_info.txt (created with map-mutation.py)
-with open(map_info_input) as map_info:
-	for map_info_line in map_info:
-		map_fields = map_info_line.split('\t')
-		if map_fields[0] == '?': # This line stores the information I am retrieving
-			# 'selected_position' is the center of the candidate interval calculated by map-mutation.py
-			selected_position = (int(map_fields[2]) + int(map_fields[3])) / 2 # map_fields[2] and map_fields[3] are the left and right boundaries of the candidate interval
-
+try:
+	with open(map_info_input) as map_info:
+		for map_info_line in map_info:
+			map_fields = map_info_line.split('\t')
+			if map_fields[0] == '?': # This line stores the information I am retrieving
+				# 'selected_position' is the center of the candidate interval calculated by map-mutation.py
+				selected_position = (int(map_fields[2]) + int(map_fields[3])) / 2 # map_fields[2] and map_fields[3] are the left and right boundaries of the candidate interval
+except: 
+	selected_position = 'none'
 # Iterate over in1_array and fo reach record:
 # 	-iterate over in2_array to grab quality, counts and af (from snp-to-varanalyzer.txt)
 #	-calculte distance to predicted position (from map-info.txt)
@@ -156,10 +158,10 @@ for line1 in in1_array:
 			allele_frequency = line2[8].strip()
 			break
 		
-	# If, for some reason, the script fails to assign its original quality, counts and freq to a variant,
+	# If, for some reason, the script fails to assign its original quality,
 	# something wrong is happening (every variant should always be in both input files).
 	# In this event, stop the workflow by sending 'error' to the workflow
-	if quality == '-' or ref_count == '-' or alt_count == '-' or allele_frequency == '-':
+	if quality == '-' :
 			print 'error'
 			quit()
 	

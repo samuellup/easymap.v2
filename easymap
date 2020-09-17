@@ -20,7 +20,7 @@ import argparse, os, fnmatch, subprocess, json
 parser = argparse.ArgumentParser()
 parser.add_argument('--usage', '-u', action = 'store_true', dest = 'usage')
 parser.add_argument('--project-name', '-n', action = 'store', default = 'n/p', dest = 'project_name')
-parser.add_argument('--workflow', '-w', action = 'store', default = 'n/p', dest = 'workflow', choices = set(('snp','ins','dens')))
+parser.add_argument('--workflow', '-w', action = 'store', default = 'n/p', dest = 'workflow', choices = set(('snp','ins','dens', 'vars')))
 parser.add_argument('--simulate-data', '-sim', action = 'store_true', dest = 'simulate')
 parser.add_argument('--reference-sequence', '-r', action = 'store', default = 'n/p', dest = 'ref_seq')
 parser.add_argument('--insertion-sequence', '-i', action = 'store', default = 'n/p', dest = 'ins_seq')
@@ -31,6 +31,7 @@ parser.add_argument('--reads-control','-c', action = 'store', default = 'n/p', d
 parser.add_argument('--low-stringency', '-ls', action = 'store_true', dest = 'stringency')
 parser.add_argument('--exp-design', '-ed', action = 'store', default = 'n/p', dest = 'exp_design')
 parser.add_argument('--exp-mut-type', '-emt', action = 'store', default = 'EMS', dest = 'exp_mut_type')
+parser.add_argument('--threads', '-tr', action = 'store', default = '1', dest = 'threads')
 
 args = parser.parse_args()
 
@@ -485,7 +486,7 @@ if data_source == "exp":
 				problems.append("Argument -p/--reads-test: the two names provided are identical.")
 
 	# If snp mode, check control reads
-	if workflow == "snp" or workflow == "dens":
+	if workflow == "snp" or workflow == "dens" or workflow == "vars":
 		
 		if reads_control == "n/p":
 			error = 1
@@ -536,6 +537,12 @@ if args.exp_mut_type:
 else: 
 	exp_mut_type = "EMS"
 
+# Deal with the threads parameter
+if args.threads: 
+	threads = args.threads
+else: 
+	threads = "1"
+
 # This code checks the configuration of the program. It calls allow-new-project.py and checks its result.
 proc = subprocess.Popen("../src/Python-2.7.18/.localpython/bin/python2 allow-new-project.py", cwd=r'./config', shell=True, stdout=subprocess.PIPE)
 script_response = proc.stdout.read()
@@ -563,8 +570,8 @@ if error == 1:
 
 
 # Run easymap.sh
-                     # 1                    2                3                   4               5               6                7                8              9              10             11                      12                     13                     14                     15                       16                    17                 18                        19                       20              21                 22              23					24
-master_program_input = project_name + " " + workflow + " " + data_source + " " + ref_seq + " " + ins_seq + " " + gff_file + " " + ann_file + " " + read_s + " " + read_f + " " + read_r + " " + lib_type_sample + " " + read_s_control + " " + read_f_control + " " + read_r_control + " " + lib_type_control + " " + is_ref_strain + " " + cross_type + " " + snp_analysis_type + " " + control_parental + " " + sim_mut + " " + sim_recsel + " " + sim_seq + " " + stringency + " " + exp_mut_type
+                     # 1                    2                3                   4               5               6                7                8              9              10             11                      12                     13                     14                     15                       16                    17                 18                        19                       20              21                 22              23					24					  25
+master_program_input = project_name + " " + workflow + " " + data_source + " " + ref_seq + " " + ins_seq + " " + gff_file + " " + ann_file + " " + read_s + " " + read_f + " " + read_r + " " + lib_type_sample + " " + read_s_control + " " + read_f_control + " " + read_r_control + " " + lib_type_control + " " + is_ref_strain + " " + cross_type + " " + snp_analysis_type + " " + control_parental + " " + sim_mut + " " + sim_recsel + " " + sim_seq + " " + stringency + " " + exp_mut_type  + " " + threads 
 
 #print master_program_input
 

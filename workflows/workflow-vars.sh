@@ -5,12 +5,7 @@
 #
 # This command is always the same, regardless of the workflow
 #
-# Fields that can be equal to 'n/p' (= not provided) are the following: $ins_seq, $read_s, $read_f, $read_r, $ann_file
-# If $ins_seq = n/p, that is because $workflow = snp. Therefore, no insertion seq is needed and $ins_seq is ignored by hte program.
-# If $read_s = n/p, that is because $lib_type = pe, so it is ignored by the program.
-# If $read_f and $read_r = n/p, that is because $lib_type = se, so it is ignored by the program.
-# If $ann_file = n/p, this is because user did no have it. This program has the deal with this: if data not provided, simply do not
-# include gene annotated info to the report.
+
 # 
 # my_log_file		>	$1
 # project_name		>	$2
@@ -68,17 +63,9 @@ exp_mut_type=${21}
 n_threads=${22}
 
 
-# Set internal variables according to the SNP validation stringency chosen by the user
-if [ $stringency == high_stringency ]; then
-	problemSample_mpileup_C="-C50"
-	problemSample_snpQualityTheshold="100"
-
-else
-	problemSample_bowtie_mp="--mp 3,2"
-	problemSample_mpileup_C=""
-	problemSample_snpQualityTheshold="20"
-
-fi
+# Set internal variables for very low stringency 
+problemSample_bowtie_mp="--mp 3,2"
+problemSample_snpQualityTheshold="10"
 
 # Define the folders in the easymap directory 
 f0=user_data
@@ -90,26 +77,6 @@ f3=$project_name/3_workflow_output
 my_status_file=$f2/status
 echo 'pid workflow '$$ >> $my_status_file
 
-# Check genome size to set interval_width
-{
-	interval_width=`python2 $location/scripts_snp/set-interval.py -a $f1/$my_gs`
-} || {
-	interval_width=4000000
-	echo $(date "+%F > %T")': set-interval.py failed.' >> $my_log_file
-}
-echo $(date "+%F > %T")': set-interval.py finished, interval set at: '$interval_width   >> $my_log_file
-
-# Set variant density mapping window width and step according to genome size
-if [ $interval_width -lt 4000000 ]; then
-	dens_width=1000000
-	dens_step=1000000
-elif [ $interval_width -ge 4000000 ] && [ $interval_width -lt 11000000 ]; then
-	dens_width=1000000
-	dens_step=1000000
-elif [ $interval_width -ge 11000000 ]; then
-	dens_width=1000000
-	dens_step=1000000
-fi
 
 ##################################################################################################################################################################################
 #																																												 #
@@ -210,14 +177,10 @@ function get_problem_va {
 	depth_alignment $f1/alignment1.bam $f3/frequence_depth_alignment_distribution_sample.png
 
 	#Run vcf filter
-	if [ $av_rd -gt 25 ]; then dp_min=12 ; fi
-	if [ $av_rd -le 25 ]; then dp_min=6 ; fi
-
-	dp_max=$(($av_rd * 3))
-	if [ $dp_max -le 40 ]; then dp_max=100 ; fi
+	dp_min=4 
 
 	{
-		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_raw.va -b $f1/F2_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -dp_max $dp_max -qual_min $problemSample_snpQualityTheshold -mut_type all  2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_raw.va -b $f1/F2_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -qual_min $problemSample_snpQualityTheshold -mut_type $exp_mut_type  2>> $my_log_file
 
 	} || {
 		echo 'Error during execution of variants-filter.py with F2 data.' >> $my_log_file
@@ -317,15 +280,10 @@ function get_control_va {
 	depth_alignment $f1/alignment1P.bam $f3/frequence_depth_alignment_distribution_control.png
 
 	#Run vcf filter
-
-	if [ $av_rd -gt 25 ]; then dp_min=12 ; fi
-	if [ $av_rd -le 25 ]; then dp_min=6 ; fi
-
-	dp_max=$(($av_rd * 3))
-	if [ $dp_max -le 40 ]; then dp_max=100 ; fi
+	dp_min=4 
 
 	{
-		python2 $location/scripts_snp/variants-filter.py -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -dp_max $dp_max -qual_min 20  2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -mut_type $exp_mut_type -qual_min $problemSample_snpQualityTheshold  2>> $my_log_file
 
 	} || {
 		echo $(date "+%F > %T")': Error during execution of variants-filter.py with control data.' >> $my_log_file
@@ -363,15 +321,10 @@ function get_control_va_from_vcf {
 	echo $(date "+%F > %T")': VCF grooming of control data finished.' >> $my_log_file
 
 	#Run vcf filter
-
-	if [ $av_rd -gt 25 ]; then dp_min=12 ; fi
-	if [ $av_rd -le 25 ]; then dp_min=6 ; fi
-
-	dp_max=$(($av_rd * 3))
-	if [ $dp_max -le 40 ]; then dp_max=100 ; fi
+	dp_min=4 
 
 	{
-		python2 $location/scripts_snp/variants-filter.py -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -dp_max $dp_max -qual_min 20  2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -in_format "vcf" -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs  -mut_type $exp_mut_type -qual_min $problemSample_snpQualityTheshold  2>> $my_log_file
 
 	} || {
 		echo $(date "+%F > %T")': Error during execution of variants-filter.py with control data.' >> $my_log_file
@@ -382,6 +335,44 @@ function get_control_va_from_vcf {
 	echo $(date "+%F > %T")': First VCF filtering step of control data finished.' >> $my_log_file
 
 }
+
+##################################################################################################################################################################################
+#																																												 #
+#																																												 #
+#																	test VCF PROCESSING FUNCTION																				 #
+#																																												 #
+#																																												 #
+##################################################################################################################################################################################
+
+function get_problem_va_from_vcf { 
+	#Groom vcf
+	{
+		python2 $location/scripts_snp/vcf-groomer.py -a $my_rd -b $f1/F2_raw.va -step vcf_raw 2>> $my_log_file
+
+	} || {
+		echo $(date "+%F > %T")': Error during execution of vcf-groomer.py with problem data.' >> $my_log_file
+		exit_code=1
+		echo $exit_code
+		exit
+	}
+	echo $(date "+%F > %T")': VCF grooming of control data finished.' >> $my_log_file
+
+	#Run vcf filter
+	dp_min=4 
+
+	{
+		python2 $location/scripts_snp/variants-filter.py -in_format "vcf" -a $f1/F2_raw.va -b $f1/F2_filtered.va -step 3 -fasta $f1/$my_gs  -qual_min $problemSample_snpQualityTheshold -mut_type $exp_mut_type 2>> $my_log_file
+
+	} || {
+		echo $(date "+%F > %T")': Error during execution of variants-filter.py with control data.' >> $my_log_file
+		exit_code=1
+		echo $exit_code
+		exit
+	}
+	echo $(date "+%F > %T")': First VCF filtering step of control data finished.' >> $my_log_file
+
+}
+
 
 
 ##################################################################################################################################################################################
@@ -429,8 +420,16 @@ function depth_alignment {
 #_________________________________________________________________________________________________________________________________________________________________________________
 
 
-# Get problem and control VA files
-get_problem_va 
+# Get problem VA file
+if [[ "$my_rd" == *".vcf" ]]; then
+	problem_format="vcf"
+	get_problem_va_from_vcf 
+else
+	problem_format="fastq"
+	get_problem_va
+fi
+
+# Get control VA file
 if [[ "$my_p_rd" == *".vcf" ]]; then   				
 	control_format="vcf"
 	get_control_va_from_vcf 
@@ -441,6 +440,12 @@ elif [[ "$my_p_rd" == *"None" ]]; then
 else
 	control_format="fastq"
 	get_control_va
+fi
+
+if [ "$problem_format" == "vcf" ] || [ "$control_format" == "vcf" ] ; then 	
+	in_format="vcf"
+else
+	in_format="fastq"	
 fi
 
 # Run VA operations: Remove control SNPs from problem file
@@ -455,71 +460,11 @@ fi
 }
 echo $(date "+%F > %T")': VCF operations finished.' >> $my_log_file
 
-# Generate files for variant density analysis
-{
-	python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison.va -b $f1/F2_filtered_EMS.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -dp_max $dp_max -qual_min $problemSample_snpQualityTheshold -mut_type EMS  2>> $my_log_file
-	python2 $location/scripts_snp/variants-filter.py -a $f1/F2_filtered_EMS.va -b $f1/F2_filtered_EMS_hz.va -step 3 -fasta $f1/$my_gs -af_min 0.98 -dp_min $dp_min -dp_max $dp_max -qual_min $problemSample_snpQualityTheshold -mut_type EMS  2>> $my_log_file
-	python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison.va -b $f1/F2_hz.va -step 3 -fasta $f1/$my_gs -af_min 0.98 -dp_min $dp_min -dp_max $dp_max -qual_min $problemSample_snpQualityTheshold   2>> $my_log_file
-
-} || {
-	echo 'Error during execution of variants-filter.py with F2 data.' >> $my_log_file
-	exit_code=1
-	echo $exit_code
-	exit
-}
-echo $(date "+%F > %T")': First VCF filtering step of F2 data finished.' >> $my_log_file
-
-# Run variant density analysis on the files
-{
-	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_filtered.va  -out $f1/F2_filtered_dens.txt -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
-	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_control_comparison.va  -out $f1/F2_control_comparison_dens.txt -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
-	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_filtered_EMS.va  -out $f1/F2_filtered_EMS_dens.txt -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
-	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_filtered_EMS_hz.va  -out $f1/F2_filtered_EMS_hz_dens.txt -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
-	python2 $location/scripts_snp/dens-counter.py -in $f1/F2_hz.va  -out $f1/F2_hz_dens.txt -width $dens_width -step $dens_step -f_input $f1/$my_gs 2>> $my_log_file
-
-} || {
-	echo $(date "+%F > %T")': Error during execution of dens-counter.py .' >> $my_log_file
-	exit_code=1
-	echo $exit_code
-	exit
-}
-echo $(date "+%F > %T")': Mutation density counter module finished.' >> $my_log_file
-
-# Run variant density mapping 
-{
-	# Step 1
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_dens.txt  -out $f1/mapping_max.txt -step 1							2>> $my_log_file
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_control_comparison_dens.txt  -out $f1/mapping_max.txt -step 1				2>> $my_log_file
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_EMS_dens.txt  -out $f1/mapping_max.txt -step 1						2>> $my_log_file
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_filtered_EMS_hz_dens.txt  -out $f1/mapping_max.txt -step 1 					2>> $my_log_file
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/F2_hz_dens.txt  -out $f1/mapping_max.txt -step 1  								2>> $my_log_file
-	# Step 2
-	python2 $location/scripts_snp/dens-mapping.py -in $f1/mapping_max.txt  -out $f1/candidate_region.txt -step 2 -mut_type $exp_mut_type -pname $project_name	2>> $my_log_file
-
-} || {
-	echo $(date "+%F > %T")': Error during execution of dens-mapping.py .' >> $my_log_file
-	exit_code=1
-	echo $exit_code
-	exit
-}
-echo $(date "+%F > %T")': Mutation density mapping module finished.' >> $my_log_file
-
-# Candidate region filtering
-{
-	python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison.va -b $f1/final_variants.va -step 2 -cand_reg_file $f1/candidate_region.txt -mut_type $exp_mut_type  2>> $my_log_file
-} || {
-	echo $(date "+%F > %T")': Error during determinarion of candidate region .' >> $my_log_file
-	exit_code=1
-	echo $exit_code
-	exit
-}
-echo $(date "+%F > %T")': Candidate region filter finished.' >> $my_log_file
 
 # Get INDEL lists
 {
 	python2 $location/scripts_snp/variants-operations.py -a $f1/F2_raw.va -b $f1/control_raw.va -c $f1/F2_control_comparison_raw.va -mode A -primary 1  2>> $my_log_file
-	python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison_raw.va -b $f1/indels.va -step 4 -cand_reg_file $f1/candidate_region.txt -af_min 0.8 -mut_type $exp_mut_type  2>> $my_log_file
-	python2 $location/scripts_snp/variants-filter.py -a $f1/F2_control_comparison_raw.va -b $f1/indels_total.va -step 5 -cand_reg_file $f1/candidate_region.txt -af_min 0.8 -mut_type all  2>> $my_log_file
+	python2 $location/scripts_snp/variants-filter.py -in_format $in_format -a $f1/F2_control_comparison_raw.va -b $f1/indels_total.va -step 5 -cand_reg_file $f1/candidate_region.txt -af_min 0.8 -mut_type $exp_mut_type  2>> $my_log_file
 
 } || {
 	echo $(date "+%F > %T")': Error during first execution of variants-filter.py for indel filtering.' >> $my_log_file
@@ -531,9 +476,7 @@ echo $(date "+%F > %T")': Variant filtering finished.' >> $my_log_file
 
 # Create input for varanalyzer and run varanalyzer.py (one file for the candidate region and one for the whole genome)
 {
-	python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/final_variants.va -b $f1/snp-to-varanalyzer.txt  2>> $my_log_file
-	python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/F2_control_comparison.va -b $f1/snp-to-varanalyzer-total.txt  2>> $my_log_file		
-	python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/indels.va -b $f1/indel-to-varanalyzer.txt  2>> $my_log_file
+	python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/F2_control_comparison.va -b $f1/snp-to-varanalyzer.txt  2>> $my_log_file
 	python2 $location/scripts_snp/snp-to-varanalyzer.py -a $f1/indels_total.va -b $f1/indel-to-varanalyzer-total.txt  2>> $my_log_file
 
 } || {
@@ -547,8 +490,6 @@ echo $(date "+%F > %T")': Input for varanalyzer finished.' >> $my_log_file
 # Varanalyzer
 {
 	python2 $location/varanalyzer/varanalyzer.py -itp snp -con $f1/$my_gs -gff $f0/$my_gff -var $f1/snp-to-varanalyzer.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_snp.txt 2>> $my_log_file
-	python2 $location/varanalyzer/varanalyzer.py -itp snp -con $f1/$my_gs -gff $f0/$my_gff -var $f1/snp-to-varanalyzer-total.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_total_temp.txt  2>> $my_log_file
-	touch $f1/varanalyzer_output_indel.txt ; python2 $location/varanalyzer/varanalyzer.py -itp lim -con $f1/$my_gs -gff $f0/$my_gff -var $f1/indel-to-varanalyzer.txt       -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_indel.txt  2>> $my_log_file
 	touch $f1/varanalyzer_output_indel_total.txt ; python2 $location/varanalyzer/varanalyzer.py -itp lim -con $f1/$my_gs -gff $f0/$my_gff -var $f1/indel-to-varanalyzer-total.txt -rrl $my_rrl -pname $project_name -ann $f0/$my_ann -out $f1/varanalyzer_output_indel_total.txt  2>> $my_log_file
 } || {
 	echo $(date "+%F > %T")': Error during execution of varanalyzer.py .' >> $my_log_file
@@ -559,37 +500,33 @@ echo $(date "+%F > %T")': Input for varanalyzer finished.' >> $my_log_file
 echo $(date "+%F > %T")': Varanalyzer finished.' >> $my_log_file
 
 #SDL V2 update
-awk 'FNR>1' $f1/varanalyzer_output_snp.txt $f1/varanalyzer_output_indel.txt > $f1/varanalyzer_output.txt
-awk 'FNR>1' $f1/varanalyzer_output_total_temp.txt $f1/varanalyzer_output_indel_total.txt > $f1/varanalyzer_output_total.txt
+awk 'FNR>1' $f1/varanalyzer_output_snp.txt $f1/varanalyzer_output_indel_total.txt > $f1/varanalyzer_output.txt
 
 # Run primer generation script
 {
-	python2 $location/primers/primer-generation.py -file $f1/varanalyzer_output_snp.txt -fasta $f1/$my_gs -out $f1/primer_generation_output.txt  -mode 2   2>> $my_log_file
-	python2 $location/primers/primer-generation.py -file $f1/varanalyzer_output_total.txt -fasta $f1/$my_gs -out $f1/primer_generation_output_total.txt  -mode 2   2>> $my_log_file
+	python2 $location/primers/primer-generation.py -file $f1/varanalyzer_output.txt -fasta $f1/$my_gs -out $f1/primer_generation_output.txt  -mode 2   2>> $my_log_file
+	echo $(date "+%F > %T")': primer-generation.py finished.' >> $my_log_file
 
 }|| {
 	echo $(date "+%F > %T")': primer-generation.py failed.'>> $my_log_file
 }
-echo $(date "+%F > %T")': primer-generation.py finished.' >> $my_log_file
 
 # Run extend-snp-variants-info
-awk 'FNR>1' $f1/snp-to-varanalyzer-total.txt $f1/indel-to-varanalyzer-total.txt > $f1/variants-to-varanalyzer-total.txt 
-awk 'FNR>1' $f1/snp-to-varanalyzer.txt $f1/indel-to-varanalyzer.txt > $f1/variants-to-varanalyzer.txt 
-result_extend_snp_info=`python2 $location/scripts_snp/extend-snp-variants-info.py  --variants $f1/primer_generation_output_total.txt --snp-info $f1/variants-to-varanalyzer-total.txt --project-name $project_name --map-info $f1/candidate_region.txt --output-file $f3/candidate_variants_total.txt --region total 2>> $my_log_file`
-result_extend_snp_info=`python2 $location/scripts_snp/extend-snp-variants-info.py  --variants $f1/primer_generation_output.txt --snp-info $f1/variants-to-varanalyzer.txt  --project-name $project_name --map-info $f1/candidate_region.txt --output-file $f3/candidate_variants.txt --region total 2>> $my_log_file`
+awk 'FNR>1' $f1/snp-to-varanalyzer.txt $f1/indel-to-varanalyzer-total.txt > $f1/variants-to-varanalyzer.txt 
+result_extend_snp_info=`python2 $location/scripts_snp/extend-snp-variants-info.py  --variants $f1/primer_generation_output.txt --snp-info $f1/variants-to-varanalyzer.txt --project-name $project_name --map-info $f1/candidate_region.txt --output-file $f3/candidate_variants.txt --region total 2>> $my_log_file`
 
 if [ $result_extend_snp_info == 'success' ]; then
 	echo $(date "+%F > %T")": extend-snp-variants-info.py finished." >> $my_log_file
 elif [ $result_extend_snp_info == 'error' ]; then
 	echo $(date "+%F > %T")": Error: extend-snp-variants-info.py failed." >> $my_log_file
-	#exit_code=1
-	#echo $exit_code
-	#exit
+	exit_code=1
+	echo $exit_code
+	exit
 fi
 
 # Generate graphic output
 {
-	python2 $location/graphic_output/graphic-output.py -my_mut dens  -gff $f0/$my_gff  -iva $f1/varanalyzer_output_snp.txt -rrl $my_rrl -pname $project_name  -bsnp $f1/$my_gs  -cr_file $f1/candidate_region.txt -1 $f1/F2_filtered_dens.txt -2 $f1/F2_control_comparison_dens.txt -3 $f1/F2_filtered_EMS_dens.txt -4 $f1/F2_filtered_EMS_hz_dens.txt -5 $f1/F2_hz_dens.txt -mut_type $exp_mut_type 2>> $my_log_file
+	python2 $location/graphic_output/graphic-output.py -my_mut vars  -gff $f0/$my_gff  -iva $f1/varanalyzer_output_snp.txt -rrl $my_rrl -pname $project_name  -bsnp $f1/$my_gs  -cr_file $f1/candidate_region.txt -1 $f1/F2_filtered_dens.txt -2 $f1/F2_control_comparison_dens.txt -3 $f1/F2_filtered_EMS_dens.txt -4 $f1/F2_filtered_EMS_hz_dens.txt -5 $f1/F2_hz_dens.txt -mut_type $exp_mut_type 2>> $my_log_file
 
 } || {
 	echo $(date "+%F > %T")': Error during generation of graphic output.' >> $my_log_file
@@ -602,7 +539,7 @@ echo $(date "+%F > %T")': Graphic output generated.' >> $my_log_file
 # Generate report
 { 
 	zip $f3/report_images.zip $f3/*.png > $f2/zip.txt
-	python2 $location/graphic_output/report.py  -log $my_log_file -c_format $control_format -output_html $f3/report.html -project $project_name -mut_type dens -files_dir $f3 -cand_reg_file $f1/candidate_region.txt -variants $f3/candidate_variants.txt 2>> $my_log_file
+	python2 $location/graphic_output/report.py  -log $my_log_file -t_format $problem_format -c_format $control_format -output_html $f3/report.html -project $project_name -mut_type vars -files_dir $f3 -cand_reg_file $f1/candidate_region.txt -variants $f3/candidate_variants.txt 2>> $my_log_file
 
 } || {
 	echo $(date "+%F > %T")': Error during generation of report file.' >> $my_log_file

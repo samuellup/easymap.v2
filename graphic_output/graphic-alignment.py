@@ -142,6 +142,9 @@ def draw(dic,sort_positions,out):
 
 cov = args.cov
 file_data = read_file(cov)
-draw(file_data[0],file_data[1],args.out)
 
+try: 
+	draw(file_data[0],file_data[1],args.out)
+except:
+	pass
  

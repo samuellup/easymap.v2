@@ -59,3 +59,9 @@ elif args.my_mut == 'dens':
 	gene_plot()	
 
 
+elif args.my_mut == 'vars':
+
+	gene_plot()	
+
+
+

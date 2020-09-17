@@ -22,6 +22,7 @@ parser.add_argument('-pos_min', action="store", dest = 'pos_min', default = 0)
 parser.add_argument('-pos_max', action="store", dest = 'pos_max', default = 1000000000)
 parser.add_argument('-step', action="store", dest = 'step')
 parser.add_argument('-cand_reg_file', action="store", dest = 'cand_reg_file')
+parser.add_argument('-in_format', action="store", dest = 'in_format', default="fastq")
 
 args = parser.parse_args()
 
@@ -52,25 +53,33 @@ elif step == '2' or step == '4':
 			regs.append([args.chr, args.pos_min, args.pos_max])
 			
 #__________________________________________________________________________________________________________________________________________
-
-def limits():
-	global selector
-
-	selector = 0
-	
-	if (
-			(int(args.pos_min) < int(sp[1].strip()) < int(args.pos_max))
-			and float(sp[4].strip()) > float(args.qual_min) 
-			and int(args.dp_min) < (int(sp[6].strip()) + int(sp[5].strip())) < int(args.dp_max)
-			and float(args.af_min) < ((float(sp[6].strip())/ ((float(sp[6].strip())) + (float(sp[5].strip()))))) < float(args.af_max)
-		
-	   ):
-	   		selector = 1
-	   		
-	else:
+if args.in_format == "fastq":
+	def limits():
+		global selector
 		selector = 0
-	
-	return [selector]
+		if (
+				(int(args.pos_min) < int(sp[1].strip()) < int(args.pos_max))
+				and float(sp[4].strip()) > float(args.qual_min) 
+				and int(args.dp_min) < (int(sp[6].strip()) + int(sp[5].strip())) < int(args.dp_max)
+				and float(args.af_min) < ((float(sp[6].strip())/ ((float(sp[6].strip())) + (float(sp[5].strip()))))) < float(args.af_max)
+		):
+				selector = 1
+		else:
+			selector = 0
+		return [selector]
+
+if args.in_format == "vcf":
+	def limits():
+		global selector
+		selector = 0
+		if (
+				(int(args.pos_min) < int(sp[1].strip()) < int(args.pos_max))
+				and float(sp[4].strip()) > float(args.qual_min) 
+		):
+				selector = 1
+		else:
+			selector = 0
+		return [selector]
 
 
 #__________________________________________________________________________________________________________________________________________
@@ -162,6 +171,5 @@ for reg in regs:
 							limits()
 							if selector == 1: 
 								f2.write(line)	
-
 
 f2.close()

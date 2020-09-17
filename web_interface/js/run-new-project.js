@@ -138,16 +138,35 @@ function listInputFiles() {
 			// Create interfaces to select fastq files
 			var fastqFiles = inputFilesresponse[2];
 			var controlFiles = inputFilesresponse[4]; 
+			var problemVarsFiles = inputFilesresponse[5]; 
 			var readsProblem = document.getElementById('readsProblemSelector');
 			var readsControl = document.getElementById('readsControlSelector');
+
 			// Test fastq files
-			if (fastqFiles.length < 1) {
-				readsProblem.options[readsProblem.options.length] = new Option('There are no files with .fq extension', 'n/p');
-			} else {
-				for (i = 0; i < fastqFiles.length; i++) {
-					readsProblem.options[readsProblem.options.length] = new Option(fastqFiles[i], fastqFiles[i]);
+			var optionsP = document.getElementsByClassName("analysisType");
+			for (var i=0; i<optionsP.length; i++) {
+				if (optionsP[i].checked == true) {
+					var checkedOptionP = optionsP[i].id;
 				}
 			}
+			if (checkedOptionP == 'button41') {
+				if (problemVarsFiles.length < 1) {
+					readsProblem.options[readsProblem.options.length] = new Option('There are no files with .fq extension', 'n/p');
+				} else {
+					for (i = 0; i < problemVarsFiles.length; i++) {
+						readsProblem.options[readsProblem.options.length] = new Option(problemVarsFiles[i], problemVarsFiles[i]);
+					}
+				}
+			} else {
+				if (fastqFiles.length < 1) {
+					readsProblem.options[readsProblem.options.length] = new Option('There are no files with .fq extension', 'n/p');
+				} else {
+					for (i = 0; i < fastqFiles.length; i++) {
+						readsProblem.options[readsProblem.options.length] = new Option(fastqFiles[i], fastqFiles[i]);
+					}
+				}
+			}
+
 			// Control fastq files
 			var optionsc = document.getElementsByClassName("contType");
 			for (var i=0; i<optionsc.length; i++) {
@@ -273,6 +292,12 @@ window.onload = function() {
 			document.getElementById("checkBoxStringency").style.display = "none";
 			document.getElementById("checkBoxMultithread").style.display = "none";
 			document.getElementById("numberThreads").style.display = "none";
+			// Help messages
+			document.getElementById("insMessage").style.display = "block";
+			document.getElementById("snpMessage").style.display = "none";
+			document.getElementById("densMessage").style.display = "none";
+			document.getElementById("varsMessage").style.display = "none";
+
 
 			if (cmdArgs[3] == 'exp') {
 				document.getElementById("expDataInterface").style.display = "block";
@@ -290,6 +315,11 @@ window.onload = function() {
 			document.getElementById("dataSource").style.display = "block";
 			document.getElementById("checkBoxStringency").style.display = "block";
 			document.getElementById("checkBoxMultithread").style.display = "block";
+			// Help messages
+			document.getElementById("insMessage").style.display = "none";
+			document.getElementById("snpMessage").style.display = "block";
+			document.getElementById("densMessage").style.display = "none";
+			document.getElementById("varsMessage").style.display = "none";
 
 		
 			if (cmdArgs[3] == 'exp') {
@@ -318,9 +348,34 @@ window.onload = function() {
 			document.getElementById("expDataInterface").style.display = "none";
 			document.getElementById("dataSource").style.display = "none";
 			document.getElementById("simDataInterface").style.display = "none";
+			// Help messages
+			document.getElementById("insMessage").style.display = "none";
+			document.getElementById("snpMessage").style.display = "none";
+			document.getElementById("densMessage").style.display = "block";
+			document.getElementById("varsMessage").style.display = "none";
+
 			if (cmdArgs[3] == 'exp') {
 				document.getElementById("expDataInterface").style.display = "block";
 			}
+		} else if (checkedOption == 'button41') {
+			cmdArgs[2] = 'vars';
+			cmdArgs[3] = 'exp'
+			document.getElementById("readsControl").style.display = "block";
+			document.getElementById("expMutType").style.display = "block";
+			document.getElementById("checkBoxStringency").style.display = "none";
+			document.getElementById("checkBoxMultithread").style.display = "block";
+			document.getElementById("backgroundCrossCtype").style.display = "none";
+			document.getElementById("insSeqField").style.display = "none";
+			document.getElementById("expDataInterface").style.display = "block";
+			document.getElementById("dataSource").style.display = "none";
+			document.getElementById("simDataInterface").style.display = "none";
+			// Help messages
+			document.getElementById("insMessage").style.display = "none";
+			document.getElementById("snpMessage").style.display = "none";
+			document.getElementById("densMessage").style.display = "none";
+			document.getElementById("varsMessage").style.display = "block";
+
+	
 		}
 
 		//updateCmd();
@@ -1069,10 +1124,16 @@ window.onload = function() {
 	document.getElementById("form1").nThreads.onblur = setNThreads;
 	document.getElementById("form1").nThreads.onblur = verifyMultithreading;
 
+
 	// React to interactions with the main 2-way selectors
-	document.getElementById("button1").onclick = buttons_analysisType;
-	document.getElementById("button2").onclick = buttons_analysisType;
-	document.getElementById("button40").onclick = buttons_analysisType;
+	function qLoad() {
+		buttons_analysisType();
+		listInputFiles();
+	}
+	document.getElementById("button1").onclick = qLoad;
+	document.getElementById("button2").onclick = qLoad;
+	document.getElementById("button40").onclick = qLoad;
+	document.getElementById("button41").onclick = qLoad;
 	document.getElementById("button3").onclick = buttons_dataSource;
 	document.getElementById("button4").onclick = buttons_dataSource;
 	
@@ -1082,18 +1143,19 @@ window.onload = function() {
 	document.getElementById("form1").gffFileSelector.onblur = processSingleSelectors;
 	document.getElementById("form1").annFileSelector.onblur = processSingleSelectors;
 	
-	function duo() {
+
+	// React to interactions with the MbS 2-way selectors
+	function cLoad() {
 		buttons_contType();
 		listInputFiles();
 	}
-	// React to interactions with the MbS 2-way selectors
 	document.getElementById("button11").onclick = buttons_mutBackground;
 	document.getElementById("button12").onclick = buttons_mutBackground;
 	document.getElementById("button13").onclick = buttons_crossType;
 	document.getElementById("button14").onclick = buttons_crossType;
-	document.getElementById("button15").onclick = duo;
-	document.getElementById("button16").onclick = duo;
-	document.getElementById("button17").onclick = duo;
+	document.getElementById("button15").onclick = cLoad;
+	document.getElementById("button16").onclick = cLoad;
+	document.getElementById("button17").onclick = cLoad;
 	document.getElementById("button47").onclick = buttons_mutType;
     document.getElementById("button48").onclick = buttons_mutType;
 

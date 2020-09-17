@@ -2242,7 +2242,7 @@ def gene_plot():
 			scale = 500
 			scale_tag = '500 bp'
 
-		if args.my_mut == 'snp' or args.my_mut == 'dens':
+		if args.my_mut == 'snp' or args.my_mut == 'dens' or args.my_mut == 'vars':
 			w, h = draw.textsize(str(scale_tag))
 			px_scale = float(scale/gene_scaling_factor)
 			draw.line((int(0.91*wide) - int(px_scale) - w/2 + px_scale/2, int(110/350.0*height)) + (int(0.91*wide) - w/2 + px_scale/2, int(110/350.0*height)), fill=(0, 0, 0, 0), width=int(0.002*wide))
@@ -2264,7 +2264,7 @@ def gene_plot():
 			draw.text((ins_pos - int(0.04*wide), int(0.115*wide)), ('Insertion ' + str(p[2])), font=fnt4, fill=(0,0,0,255))
 
 		#SNP arrow and info
-		if args.my_mut == 'snp' or args.my_mut == 'dens':
+		if args.my_mut == 'snp' or args.my_mut == 'dens' or args.my_mut == 'vars':
 			snp_pos = int((int(p[1]) - gene_min_raw)/gene_scaling_factor)  + int(0.15*wide) 
 			draw.line((snp_pos, int(194/350.0*height)) + (snp_pos , int(194/350.0*height) + int(0.03*wide)), fill=(180, 0, 0, 0), width=int(0.005*wide))						
 			draw.polygon([(snp_pos, int(191/350.0*height)), (snp_pos - int(0.01*wide), int(191/350.0*height) + int(0.01*wide)), (snp_pos + int(0.01*wide), int(191/350.0*height) + int(0.01*wide))], fill = (200, 0, 0, 200))
@@ -2323,4 +2323,9 @@ def gene_plot():
 		if args.my_mut == 'dens' and aach == 'no':
 			im.crop((70, 100, w-20, h-70)).save(project + '/3_workflow_output/gene_plot_' + str(args.my_mut) + '_' + str(p[1]) + '_gene_' + str(p[3])+ '.png')		
 		if args.my_mut == 'dens' and aach == 'yes':
+			im.crop((70, 100, w-20, h-40)).save(project + '/3_workflow_output/gene_plot_' + str(args.my_mut) + '_' + str(p[1]) + '_gene_' + str(p[3])+ '.png')
+
+		if args.my_mut == 'vars' and aach == 'no':
+			im.crop((70, 100, w-20, h-70)).save(project + '/3_workflow_output/gene_plot_' + str(args.my_mut) + '_' + str(p[1]) + '_gene_' + str(p[3])+ '.png')		
+		if args.my_mut == 'vars' and aach == 'yes':
 			im.crop((70, 100, w-20, h-40)).save(project + '/3_workflow_output/gene_plot_' + str(args.my_mut) + '_' + str(p[1]) + '_gene_' + str(p[3])+ '.png')

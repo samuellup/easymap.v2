@@ -65,7 +65,6 @@ ref_seqs_merged_file=$project_name/$f1/gnm_ref_merged/genome.fa
 
 
 # Check fasta input(s)
-
 fa=`python2 process_input/verify-input.py -gnm $ref_seq  2>> $my_log_file`
 
 if [ $fa == 0 ]; then
@@ -120,23 +119,35 @@ fi
 if [ $data_source == 'exp' ]; then
 	if [ $lib_type_sample == 'se' ]; then
 		
-		fq=`python2 process_input/verify-input.py -fq $read_s 2>> $my_log_file` 
-		
-		if [ $fq == 0 ]; then
-			echo $(date "+%F > %T")": Single-end fastq input (problem reads) passed." >> $my_log_file
+		if [[ "$read_s" == *".fq" ]] ; then			
+			fq=`python2 process_input/verify-input.py -fq $read_s 2>> $my_log_file` 
 		else
-			echo $(date "+%F > %T")": Single-end fastq input (problem reads) failed. File is empty or has an incorrect format. Please provide a new file." >> $my_log_file
+			fq=0
+		fi
+		if [ $fq == 0 ]; then
+			echo $(date "+%F > %T")": Problem sample file passed checks." >> $my_log_file
+		else
+			echo $(date "+%F > %T")": Problem sample file failed. File is empty or has an incorrect format. Please provide a new file." >> $my_log_file
 			exit_code=1
 		fi
 
-		fq_qual=`python2 ./graphic_output/fastq-stats.py -fasq $read_s -out $project_name/$f3/single-end-problem-reads-qual-stats.png 2>> $my_log_file` 
-		
-		if [ $fq_qual == 0 ]; then
-			echo $(date "+%F > %T")": Single-end fastq quality (problem reads) encoding is Phred +33. Passed." >> $my_log_file
-		else
-			echo $(date "+%F > %T")": Single-end fastq quality (problem reads) encoding is not Phred +33. See documentatation to learn how to fix this issue." >> $my_log_file
+		{
+			if [[ "$read_s" == *".fq" ]]; then
+				fq_qual=`python2 ./graphic_output/fastq-stats.py -fasq $read_s -out $project_name/$f3/single-end-problem-reads-qual-stats.png 2>> $my_log_file` 
+			else
+				fq_qual=0
+			fi
+			
+			if [ $fq_qual == 0 ]; then
+				echo $(date "+%F > %T")": Single-end fastq quality (problem reads) encoding is Phred +33. Passed." >> $my_log_file
+			else
+				echo $(date "+%F > %T")": Single-end fastq quality (problem reads) encoding is not Phred +33. See documentatation to learn how to fix this issue." >> $my_log_file
+				exit_code=1
+			fi
+		} || {
+			echo $(date "+%F > %T")': fastq-stats.py failed on single-end problem reads.' >> $my_log_file
 			exit_code=1
-		fi
+		}
 	fi
 
 	if [ $lib_type_sample == 'pe' ]; then
@@ -179,7 +190,7 @@ if [ $data_source == 'exp' ]; then
 
 	# If workflow includes control reads, analyze them
 
-	if [ $analysis_type == 'snp' ] || [ $analysis_type == 'dens' ] ; then
+	if [ $analysis_type == 'snp' ] || [ $analysis_type == 'dens' ] || [ $analysis_type == 'vars' ] ; then
 		if [ $lib_type_ctrl == 'se' ]; then
 			if [[ "$read_s_ctrl" == *".fq" ]] ; then			
 				fq=`python2 process_input/verify-input.py -fq $read_s_ctrl 2>> $my_log_file` 
@@ -187,7 +198,7 @@ if [ $data_source == 'exp' ]; then
 				fq=0
 			fi
 			if [ $fq == 0 ]; then
-				echo $(date "+%F > %T")": Control sample file passed." >> $my_log_file
+				echo $(date "+%F > %T")": Control sample file passed checks." >> $my_log_file
 			else
 				echo $(date "+%F > %T")": Control sample file failed. File is empty or has an incorrect format. Please provide a new file." >> $my_log_file
 				exit_code=1

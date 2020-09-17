@@ -11,6 +11,7 @@ files_fasta = list()
 files_fastq = list()
 files_otherFiles = list()
 files_control = list()
+files_problem_vars = list()
 all_files = list()
 
 # List all files in user_data:
@@ -33,8 +34,10 @@ for file_name in user_input_files:
 	elif extension == 'fq':
 		files_fastq.append(file_name)
 		files_control.append(file_name)
+		files_problem_vars.append(file_name)
 	elif extension == 'vcf': 
 		files_control.append(file_name)
+		files_problem_vars.append(file_name)
 	else:
 		files_otherFiles.append(file_name)
 
@@ -44,10 +47,10 @@ files_fasta = sorted(files_fasta)
 files_fastq = sorted(files_fastq)
 files_otherFiles = sorted(files_otherFiles)
 files_control = sorted(files_control)
-
+files_problem_vars = sorted(files_problem_vars)
 files_control.insert(0, "None")
 
-all_files = [files_fasta_basenames, files_fasta, files_fastq, files_otherFiles, files_control]
+all_files = [files_fasta_basenames, files_fasta, files_fastq, files_otherFiles, files_control, files_problem_vars]
 
 print json.dumps(all_files)
 

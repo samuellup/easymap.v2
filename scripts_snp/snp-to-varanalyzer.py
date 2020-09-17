@@ -17,5 +17,10 @@ f2.write('#data\tcontig\tpos\tref\talt\tqual\tref_count\talt_count\taf\n')
 for line in lines:
 	sp = line.split()
 
-	allele_frequency = float(sp[6].strip()) / ( float(sp[5].strip()) + float(sp[6].strip()) )
-	f2.write('snp' + '\t' + sp[0].strip() + '\t' + sp[1].strip() + '\t' + sp[2].strip() + '\t' + sp[3].strip() + '\t' + sp[4].strip() + '\t' + sp[5].strip() + '\t' + sp[6].strip() + '\t' + "{0:.2f}".format(allele_frequency) + '\n')
+	try: 
+		allele_frequency = float(sp[6].strip()) / ( float(sp[5].strip()) + float(sp[6].strip()) )
+		f2.write('snp' + '\t' + sp[0].strip() + '\t' + sp[1].strip() + '\t' + sp[2].strip() + '\t' + sp[3].strip() + '\t' + sp[4].strip() + '\t' + sp[5].strip() + '\t' + sp[6].strip() + '\t' + "{0:.2f}".format(allele_frequency) + '\n')
+
+	except: 
+		allele_frequency = "-"
+		f2.write('snp' + '\t' + sp[0].strip() + '\t' + sp[1].strip() + '\t' + sp[2].strip() + '\t' + sp[3].strip() + '\t' + sp[4].strip() + '\t' + sp[5].strip() + '\t' + sp[6].strip() + '\t' + allele_frequency + '\n')

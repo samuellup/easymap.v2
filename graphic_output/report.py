@@ -14,6 +14,7 @@ parser.add_argument('-project', action="store", dest = 'project')
 parser.add_argument('-files_dir', action="store", dest = 'files_dir')
 parser.add_argument('-cand_reg_file', action="store", dest = 'cand_reg_file')
 parser.add_argument('-c_format', action="store", dest = 'c_format', default="fastq")
+parser.add_argument('-t_format', action="store", dest = 't_format', default="fastq")
 
 
 args = parser.parse_args()
@@ -28,6 +29,7 @@ output = open(output_html, 'w')
 #Others
 mut_type = args.mut_type
 c_format = args.c_format
+t_format = args.t_format
 
 #______________________________________________List output '+files_dir+'__________________________________________________
 from os import listdir
@@ -329,7 +331,7 @@ if mut_type == 'snp' and data_source == 'exp':
 '		</tr>' + '\n'
 			)
 
-if mut_type == 'dens': 
+if mut_type == 'dens' or mut_type == "vars": 
 	if reads_type == 'pe':
 		output.write(
 '		<tr>' + '\n'
@@ -428,89 +430,91 @@ output.write(
 '		<br>' + '\n'
 '		<a href="../2_logs/log.log" target="_blank">Click to see log file</a>' + '\n'
 '		<br><br>' + '\n'
-'		<hr class="easymap">' + '\n'
 )
 
 
 #Input data quality assessment
-output.write(
-'		<h2>Input data quality assessment</h2>' + '\n'
-	)
-if data_source == 'exp':
+if t_format == "fastq":
+	output.write(
+	'		<hr class="easymap">' + '\n'
+	'		<h2>Input data quality assessment</h2>' + '\n'
+		)
+	if data_source == 'exp':
 
-	if mut_type == 'lin': 
-		if reads_type == 'pe':
-			output.write(
-	'		<b>Paired end reads quality assessment<br></b>' + '\n'
-	'		<p>Forward reads<br></p>' + '\n'
-	'		<center> <img class="img" src="paired-end-problem-forward-reads-qual-stats.png"></center> ' + '\n'
-	'		<p>Reverse reads<br></p>' + '\n'
-	'		<center><img class="img" src="paired-end-problem-reverse-reads-qual-stats.png"></center> ' + '\n'
-			)
-
-		if reads_type == 'se':
-			output.write(
-	'		<b>Single end reads quality assessment<br></b>' + '\n'
-	'		<center><img class="img" src="single-end-problem-reads-qual-stats.png" width="500"></center> ' + '\n'
-			)
-
-
-	if mut_type == 'snp' or mut_type == "dens": 
-		if reads_type == 'pe':
-			output.write(
-	'		<b>Test reads quality assessment<br></b>' + '\n'
-	'		<p>Forward reads<br></p>' + '\n'
-	'		<center> <img class="img" src="'+'paired-end-problem-forward-reads-qual-stats.png" > </center> ' + '\n'
-	'		<p>Reverse reads<br></p>' + '\n'
-	'		<center> <img class="img" src="paired-end-problem-reverse-reads-qual-stats.png"  > </center> ' + '\n'
-			)
-
-		if reads_type == 'se':
-			output.write(
-	'		<b>Test reads quality assessment<br></b>' + '\n'
-	'		<center> <img class="img" src="single-end-problem-reads-qual-stats.png" width="500" > </center> ' + '\n'
-			)
-
-		if reads_type_control == 'pe':
-			output.write(
-	'		<b>Control reads quality assessment<br></b>' + '\n'
-	'		<p>Forward reads<br></p>' + '\n'
-	'		<center> <img class="img" src="'+'paired-end-control-forward-reads-qual-stats.png" > </center> ' + '\n'
-	'		<p>Reverse reads<br></p>' + '\n'
-	'		<center> <img class="img" src="paired-end-control-reverse-reads-qual-stats.png"  > </center> ' + '\n'
-			)
-
-		if reads_type_control == 'se':
-			if c_format == "fastq":
+		if mut_type == 'lin': 
+			if reads_type == 'pe':
 				output.write(
-		'		<b>Control reads quality assessment<br></b>' + '\n'
-		'		<center> <img class="img" src="single-end-control-reads-qual-stats.png" width="500" > </center> ' + '\n'
+		'		<b>Paired end reads quality assessment<br></b>' + '\n'
+		'		<p>Forward reads<br></p>' + '\n'
+		'		<center> <img class="img" src="paired-end-problem-forward-reads-qual-stats.png"></center> ' + '\n'
+		'		<p>Reverse reads<br></p>' + '\n'
+		'		<center><img class="img" src="paired-end-problem-reverse-reads-qual-stats.png"></center> ' + '\n'
 				)
 
-#Read depth distribution graphics
-if mut_type == 'snp' or mut_type == "dens": 
-	output.write(
-	'		<b>Read depth distribution<br></b>' + '\n'
-	'		<p>Test sample<br></p>' + '\n'
-	'		<center> <img class="img" src="frequence_depth_alignment_distribution_sample.png" > </center> ' + '\n'
-		)
-	if c_format == "fastq": 
-		output.write(
-		'		<p>Control sample<br></p>' + '\n'
-		'		<center> <img class="img" src="frequence_depth_alignment_distribution_control.png" > </center> ' + '\n'
-		'		<hr class="easymap">' + '\n'
-			)
-	else: 
-		output.write(
-		'		<hr class="easymap">' + '\n'
-			)
+			if reads_type == 'se':
+				output.write(
+		'		<b>Single end reads quality assessment<br></b>' + '\n'
+		'		<center><img class="img" src="single-end-problem-reads-qual-stats.png" width="500"></center> ' + '\n'
+				)
 
-if mut_type == 'lin': 
-	output.write(
-	'		<b>Read depth distribution<br></b>' + '\n'
-	'		<center> <img class="img" src="frequence_depth_alignment_distribution_sample.png" > </center> ' + '\n'
-	'		<hr class="easymap">' + '\n'
-		)
+
+		if mut_type == 'snp' or mut_type == "dens"  or mut_type == "vars": 
+			if reads_type == 'pe':
+				output.write(
+		'		<b>Test reads quality assessment<br></b>' + '\n'
+		'		<p>Forward reads<br></p>' + '\n'
+		'		<center> <img class="img" src="'+'paired-end-problem-forward-reads-qual-stats.png" > </center> ' + '\n'
+		'		<p>Reverse reads<br></p>' + '\n'
+		'		<center> <img class="img" src="paired-end-problem-reverse-reads-qual-stats.png"  > </center> ' + '\n'
+				)
+
+			if reads_type == 'se':
+				output.write(
+		'		<b>Test reads quality assessment<br></b>' + '\n'
+		'		<center> <img class="img" src="single-end-problem-reads-qual-stats.png" width="500" > </center> ' + '\n'
+				)
+
+			if reads_type_control == 'pe':
+				output.write(
+		'		<b>Control reads quality assessment<br></b>' + '\n'
+		'		<p>Forward reads<br></p>' + '\n'
+		'		<center> <img class="img" src="'+'paired-end-control-forward-reads-qual-stats.png" > </center> ' + '\n'
+		'		<p>Reverse reads<br></p>' + '\n'
+		'		<center> <img class="img" src="paired-end-control-reverse-reads-qual-stats.png"  > </center> ' + '\n'
+				)
+
+			if reads_type_control == 'se':
+				if c_format == "fastq":
+					output.write(
+			'		<b>Control reads quality assessment<br></b>' + '\n'
+			'		<center> <img class="img" src="single-end-control-reads-qual-stats.png" width="500" > </center> ' + '\n'
+					)
+
+#Read depth distribution graphics
+if t_format == "fastq":
+	if mut_type == 'snp' or mut_type == "dens"  or mut_type == "vars": 
+		output.write(
+		'		<b>Read depth distribution<br></b>' + '\n'
+		'		<p>Test sample<br></p>' + '\n'
+		'		<center> <img class="img" src="frequence_depth_alignment_distribution_sample.png" > </center> ' + '\n'
+			)
+		if c_format == "fastq": 
+			output.write(
+			'		<p>Control sample<br></p>' + '\n'
+			'		<center> <img class="img" src="frequence_depth_alignment_distribution_control.png" > </center> ' + '\n'
+			'		<hr class="easymap">' + '\n'
+				)
+		else: 
+			output.write(
+			'		<hr class="easymap">' + '\n'
+				)
+
+	if mut_type == 'lin': 
+		output.write(
+		'		<b>Read depth distribution<br></b>' + '\n'
+		'		<center> <img class="img" src="frequence_depth_alignment_distribution_sample.png" > </center> ' + '\n'
+		'		<hr class="easymap">' + '\n'
+			)
 
 
 #__________________________________LIN cartographic report________________________________________________________________
@@ -933,6 +937,251 @@ if mut_type == 'dens':
 	output.close()
 
 ##########################################################################################################################################
+
+
+
+#__________________________________Variant analysis report________________________________________________________________
+if mut_type == 'vars':
+
+	##########################################################################################################################################
+	if t_format != "fastq":
+		output.write(
+		'		<hr class="easymap">' + '\n'
+
+		)
+
+
+	#Candidates table:
+	output.write(
+	'		<h2>Variants analysis</h2>' + '\n'
+	'		<p>SNP located in genes absent from the control sample. </p>' + '\n'
+	)
+
+	#first we check that there are candidates 
+	n_candidates = 0
+	input_var = args.variants
+	with open(input_var) as candidates:
+		for line in candidates:
+			if not line.startswith('@'):
+				sp = line.split()
+				if sp[10].strip() != "nh" :
+					n_candidates = n_candidates + 1
+
+	#then if the number of candidates is > 0, we write the candidates in a table
+	if n_candidates == 0:
+		output.write(
+		'		<center> <p>No variants selected</p> <center/>' + '\n'
+		'		<p>Click to see a list of <a href="candidate_variants_total.txt" target="_blank">all variants</a>. </p>' + '\n'
+		
+		)
+
+	if n_candidates > 0 and t_format =="fastq": 
+		output.write(
+			#Table
+			'		<table id="candidates" border="0" align="center" cellpadding="10">' + '\n'
+			'		  <tr>' + '\n'
+			'		    <th>ID</th>' + '\n'
+			'		    <th>Contig</th>' + '\n'
+			'		    <th>Position</th>' + '\n'
+			'		    <th>AF</th>' + '\n'
+			'		    <th>DTP</th>' + '\n'
+			'		    <th>Nucleotide (Ref/Alt)</th>' + '\n'
+			'		    <th>Gene (gene element)</th>' + '\n'
+			'		    <th>Amino acid (Ref/Alt)</th>' + '\n'
+			'		  </tr>' + '\n'
+			)
+
+		with open(input_var) as candidates:
+			i=1
+			variants_list=list()
+			for line in candidates:
+				if not line.startswith('@'):
+					sp = line.split('\t')
+					contig = str(sp[1]).strip()
+					position = str(sp[2]).strip()
+					AF = str(sp[8]).strip()
+					DTP = str(sp[9]).strip()
+					nucleotide = str(sp[3]).strip() + ' &rarr; ' + str(sp[4]).strip()
+					alt_nt = str(sp[4]).strip()
+					aminoacid = str(sp[17]).strip() + ' &rarr; ' + str(sp[18]).strip()
+					if aminoacid == '- &rarr; -': aminoacid = '-'
+					primer_f = str(sp[20]).strip()
+					primer_r = str(sp[22]).strip()
+					upstream = str(sp[24]).strip()
+					downstream = str(sp[25]).strip()
+					if str(sp[14]).strip() != '-':
+						gene = str(sp[14]).strip() + ' (' + str(sp[15]).strip() + ')'
+					else:
+						gene = '-'
+					if str(sp[19]).strip() != '-':
+						annotation = str(sp[19]).strip() 
+					else:
+						annotation = ' Functional annotation not available'
+
+					if gene != "-" :
+						variants_list.append([str(i), contig, position, AF, DTP, nucleotide, gene, aminoacid, primer_f, primer_r, upstream, downstream, annotation, alt_nt])
+
+						output.write(
+						'		  <tr>' + '\n'
+						'		    <td>'+str(i)+'</th>' + '\n'
+						'		    <td>'+contig+'</th>' + '\n'
+						'		    <td>'+position+'</th>' + '\n'
+						'		    <td>'+AF+'</th>' + '\n'
+						'		    <td>'+DTP+'</th>' + '\n'
+						'		    <td>'+nucleotide+'</th>' + '\n'
+						'		    <td>'+gene+'</th>' + '\n'
+						'		    <td>'+aminoacid+'</th>' + '\n'
+						'		  </tr>' + '\n'
+							)
+						i=i+1
+
+			output.write(
+				'	</table>' + '\n'
+				'	<br><p>For extended information, click to see <a href="candidate_variants.txt" target="_blank">a list of all variants in the selected region</a>  or  <a href="candidate_variants_total.txt" target="_blank"> all variants in the genome</a>. </p>' + '\n'
+				)
+
+	if n_candidates > 0 and t_format !="fastq": 
+		output.write(
+			#Table
+			'		<table id="candidates" border="0" align="center" cellpadding="10">' + '\n'
+			'		  <tr>' + '\n'
+			'		    <th>ID</th>' + '\n'
+			'		    <th>Contig</th>' + '\n'
+			'		    <th>Position</th>' + '\n'
+			'		    <th>DTP</th>' + '\n'
+			'		    <th>Nucleotide (Ref/Alt)</th>' + '\n'
+			'		    <th>Gene (gene element)</th>' + '\n'
+			'		    <th>Amino acid (Ref/Alt)</th>' + '\n'
+			'		  </tr>' + '\n'
+			)
+
+		with open(input_var) as candidates:
+			i=1
+			variants_list=list()
+			for line in candidates:
+				if not line.startswith('@'):
+					sp = line.split('\t')
+					contig = str(sp[1]).strip()
+					position = str(sp[2]).strip()
+					DTP = str(sp[9]).strip()
+					nucleotide = str(sp[3]).strip() + ' &rarr; ' + str(sp[4]).strip()
+					alt_nt = str(sp[4]).strip()
+					aminoacid = str(sp[17]).strip() + ' &rarr; ' + str(sp[18]).strip()
+					if aminoacid == '- &rarr; -': aminoacid = '-'
+					primer_f = str(sp[20]).strip()
+					primer_r = str(sp[22]).strip()
+					upstream = str(sp[24]).strip()
+					downstream = str(sp[25]).strip()
+					if str(sp[14]).strip() != '-':
+						gene = str(sp[14]).strip() + ' (' + str(sp[15]).strip() + ')'
+					else:
+						gene = '-'
+					if str(sp[19]).strip() != '-':
+						annotation = str(sp[19]).strip() 
+					else:
+						annotation = ' Functional annotation not available'
+
+					if gene != "-":
+						variants_list.append([str(i), contig, position, "-", DTP, nucleotide, gene, aminoacid, primer_f, primer_r, upstream, downstream, annotation, alt_nt])
+
+						output.write(
+						'		  <tr>' + '\n'
+						'		    <td>'+str(i)+'</th>' + '\n'
+						'		    <td>'+contig+'</th>' + '\n'
+						'		    <td>'+position+'</th>' + '\n'
+						'		    <td>'+DTP+'</th>' + '\n'
+						'		    <td>'+nucleotide+'</th>' + '\n'
+						'		    <td>'+gene+'</th>' + '\n'
+						'		    <td>'+aminoacid+'</th>' + '\n'
+						'		  </tr>' + '\n'
+							)
+						i=i+1
+
+			output.write(
+				'	</table>' + '\n'
+				'	<br><p>For extended information, click to see <a href="candidate_variants.txt" target="_blank">a list of all variants in the selected region</a>  or  <a href="candidate_variants_total.txt" target="_blank"> all variants in the genome</a>. </p>' + '\n'
+				)
+
+	output.write(
+	'		<hr class="easymap">' + '\n'
+	)
+
+	#Candidate SNPs
+	if n_candidates > 0:
+		output.write(
+		'		<h2>Candidate variants</h2>' + '\n'
+		'		<p>This section contains a list of the candidate mutations affecting gene open reading frames.</p>' + '\n'
+			) 
+		for var in variants_list:
+			gene_name = var[6].split(' (')[0]
+			for f in sorted(files):
+				if 'gene_plot_' in str(f) and gene_name in str(f) and var[2] in str(f):
+					output.write(
+					'		<h3>ID ' + str(var[0]) + ': ' + gene_name + '</h3>' + '\n'
+					'		<center> <img class="img" src="'  +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" >  </center>' + '\n'
+					'		<table id="t">' + '\n'
+					'		<col width="300">' + '\n'
+					'		<col width="700">' + '\n'
+					)
+
+					output.write(
+					'		<tr>' + '\n'
+					'			<td> <b>Position:</b></td>' + '\n'
+					'			<td style="font-family:Lucida Console, monospace">' + var[2] + ', '+ var[1] + '</td>' + '\n'
+					'		</tr>' + '\n'
+
+					'		<tr>' + '\n'
+					'			<td> <b>Allelic frequence:</b></td>' + '\n'
+					'			<td style="font-family:Lucida Console, monospace">' + var[3] + '</td>' + '\n'
+					'		</tr>' + '\n'
+
+					'		<tr>' + '\n'
+					'			<td> <b>Distance to peak (DTP):</b></td>' + '\n'
+					'			<td style="font-family:Lucida Console, monospace">' + var[4] + '</td>' + '\n'
+					'		</tr>' + '\n'
+					)
+
+					if ann_file != "Not provided":
+						output.write(
+						'		<tr>' + '\n'
+						'			<td> <b>Functional annotation:</b></td>' + '\n'
+						'			<td>' + var[12] + '</td>' + '\n'
+						'		</tr>' + '\n'
+						)
+
+					output.write(
+					'		<tr>' + '\n'
+					'			<td> <b>Forward primer:</b></td>' + '\n'
+					'			<td style="font-family:Lucida Console, monospace">' + var[8] + '</td>' + '\n'
+					'		</tr>' + '\n'
+
+					'		<tr>' + '\n'
+					'			<td> <b>Reverse primer:</b></td>' + '\n'
+					'			<td style="font-family:Lucida Console, monospace">' + var[9] + '</td>' + '\n'
+					'		</tr>' + '\n'
+
+					'		<tr>' + '\n'
+					'			<td> <b>Flanking sequences:</b></td>' + '\n'
+					'			<td style="font-family:Lucida Console, monospace">' + var[10][10:] + '<font style="font-family:Lucida Console, monospace" color="red">' + var[13] + '</font>' + var[11][0:40] + '</td>' + '\n'
+					'		</tr>' + '\n'
+
+					'		</table>' + '\n'
+					'		<br>' + '\n'
+					'		<br>' + '\n'
+
+					)
+
+	#Link to images 
+	output.write(
+	'		<br><a href="report_images.zip" target="_blank">Click to download all image files</a>' + '\n'
+	)
+	output.write('</div>')
+	output.close()
+
+##########################################################################################################################################
+
+
+
 
 
 
