@@ -122,7 +122,23 @@ if [ $data_source == 'exp' ]; then
 		if [[ "$read_s" == *".fq" ]] ; then			
 			fq=`python2 process_input/verify-input.py -fq $read_s 2>> $my_log_file` 
 		else
-			fq=0
+
+			# Check contigs match between VCF and gff3 files
+			match_vcf=`python2 process_input/verify-input.py -vcf_match $read_s -gff_match $gff_file 2>> $my_log_file` 
+
+			if [ $match_vcf == 0 ]; then
+					echo $(date "+%F > %T")": Contigs match check between the test VCF and GFF3 inputs passed." >> $my_log_file
+					fq=0
+			elif [ $match_vcf == 1 ]; then
+					echo $(date "+%F > %T")": Contigs match check between the test VCF and GFF3 inputs failed. VCF input, GFF3 input, or both are empty. Please provide new files." >> $my_log_file
+					exit_code=1
+			elif [ $match_vcf == 2 ]; then
+					echo $(date "+%F > %T")": Contigs match check between the test VCF and GFF3 inputs failed. One or more contig names in the VCF file are not in the GFF3 file. Please provide new files." >> $my_log_file
+					exit_code=1
+			elif [ $match_vcf == 3 ]; then
+					echo $(date "+%F > %T")": Contigs match check between the test VCF and GFF3 inputs. Warning: some contig names in the GFF3 file are not in the VCF file. The execution will continue. Please provide new files if considered necessary." >> $my_log_file	
+					fq=0
+			fi
 		fi
 		if [ $fq == 0 ]; then
 			echo $(date "+%F > %T")": Problem sample file passed checks." >> $my_log_file
@@ -135,11 +151,13 @@ if [ $data_source == 'exp' ]; then
 			if [[ "$read_s" == *".fq" ]]; then
 				fq_qual=`python2 ./graphic_output/fastq-stats.py -fasq $read_s -out $project_name/$f3/single-end-problem-reads-qual-stats.png 2>> $my_log_file` 
 			else
-				fq_qual=0
+				fq_qual=4
 			fi
 			
 			if [ $fq_qual == 0 ]; then
 				echo $(date "+%F > %T")": Single-end fastq quality (problem reads) encoding is Phred +33. Passed." >> $my_log_file
+			elif [ $fq_qual == 4 ]; then
+				: 
 			else
 				echo $(date "+%F > %T")": Single-end fastq quality (problem reads) encoding is not Phred +33. See documentatation to learn how to fix this issue." >> $my_log_file
 				exit_code=1
@@ -195,7 +213,22 @@ if [ $data_source == 'exp' ]; then
 			if [[ "$read_s_ctrl" == *".fq" ]] ; then			
 				fq=`python2 process_input/verify-input.py -fq $read_s_ctrl 2>> $my_log_file` 
 			else
-				fq=0
+				# Check contigs match between VCF and gff3 files
+				match_vcf=`python2 process_input/verify-input.py -vcf_match $read_s_ctrl -gff_match $gff_file 2>> $my_log_file` 
+
+				if [ $match_vcf == 0 ]; then
+						echo $(date "+%F > %T")": Contigs match check between the control VCF and GFF3 inputs passed." >> $my_log_file
+						fq=0
+				elif [ $match_vcf == 1 ]; then
+						echo $(date "+%F > %T")": Contigs match check between the control VCF and GFF3 inputs failed. VCF input, GFF3 input, or both are empty. Please provide new files." >> $my_log_file
+						exit_code=1
+				elif [ $match_vcf == 2 ]; then
+						echo $(date "+%F > %T")": Contigs match check between the control VCF and GFF3 inputs failed. One or more contig names in the VCF file are not in the GFF3 file. Please provide new files." >> $my_log_file
+						exit_code=1
+				elif [ $match_vcf == 3 ]; then
+						echo $(date "+%F > %T")": Contigs match check between the control VCF and GFF3 inputs. Warning: some contig names in the GFF3 file are not in the VCF file. The execution will continue. Please provide new files if considered necessary." >> $my_log_file	
+						fq=0
+				fi
 			fi
 			if [ $fq == 0 ]; then
 				echo $(date "+%F > %T")": Control sample file passed checks." >> $my_log_file
@@ -208,11 +241,13 @@ if [ $data_source == 'exp' ]; then
 				if [[ "$read_s_ctrl" == *".fq" ]]; then
 					fq_qual=`python2 ./graphic_output/fastq-stats.py -fasq $read_s_ctrl -out $project_name/$f3/single-end-control-reads-qual-stats.png 2>> $my_log_file` 
 				else
-					fq_qual=0
+					fq_qual=4
 				fi
 				
 				if [ $fq_qual == 0 ]; then
 					echo $(date "+%F > %T")": Single-end fastq quality (control reads) encoding is Phred +33. Passed." >> $my_log_file
+				elif [ $fq_qual == 4 ]; then
+					: 
 				else
 					echo $(date "+%F > %T")": Single-end fastq quality (control reads) encoding is not Phred +33. See documentatation to learn how to fix this issue." >> $my_log_file
 					exit_code=1

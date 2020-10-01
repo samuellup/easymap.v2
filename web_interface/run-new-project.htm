@@ -70,37 +70,57 @@ body {font-size:16px;}
 			
 			Mapping-by-sequencing strategy (workflow):
 			<div class="buttons-wrap" id="analysisTypeWrap">
-				<div class="mx-button">
+				<div class="mx-button" style="padding:12px">
 					<input type="radio" class="analysisType" name="mx12" id="button1" />
 					<label for="button1" unselectable>Tagged sequence mapping</label>
 				</div>
 
-				<div class="mx-button">
+				<div class="mx-button" style="padding:12px">
 					<input type="radio" class="analysisType" name="mx12" id="button2" />
 					<label for="button2" unselectable>Linkage analysis mapping</label>
 				</div>
 
-				<div class="mx-button">
+				<div class="mx-button" style="padding:12px">
 					<input type="radio" class="analysisType" name="mx12" id="button40" />
 					<label for="button40" unselectable>Variant density mapping</label>					
+				</div>
+
+				<div class="mx-button" style="padding:12px">
+					<input type="radio" class="analysisType" name="mx12" id="button41" />
+					<label for="button41" unselectable>Variant analyzer</label>					
 				</div>
 				<div class="clear-floats"></div>
 			</div>
 
+			<!-- beginning of page content -->
+			<div id="insMessage" style="display:none; margin-bottom: 22px;">
+				<i>Mapping of large DNA insertions of known sequence. </i>
+			</div>
+			<div id="snpMessage" style="display:none; margin-bottom: 22px;">
+				<i>Mapping of point mutations in bulked segregant populations. </i>
+			</div>
+			<div id="densMessage" style="display:none; margin-bottom: 22px;">
+				<i>Mapping of point mutations through variant density analyses. </i>
+			</div>
+			<div id="varsMessage" style="display:none; margin-bottom: 22px;">
+				<i>Analyses the effect of a set of reads or polymorphisms on coding sequences. </i>
+			</div>
+
 			<div id="analysisTypeValidationInfo" class="warningMessage"></div>
 			
-			
 			<div id="dataSource" class="buttons-wrap" style="display:none; margin-bottom:22px";>
-				Data source:<br>
-				<div class="mx-button" style="margin-top:12px">
-					<input type="radio" class="dataSource" name="mx34" id="button3" />
-					<label for="button3" unselectable>Use my own reads</label>
+				Data source:
+				<div class="buttons-wrap">
+					<div class="mx-button" style="padding:12px">
+						<input type="radio" class="dataSource" name="mx34" id="button3" />
+						<label for="button3" unselectable>Use my own reads</label>
+					</div>
+					<div class="mx-button" style="padding:12px">
+						<input type="radio" class="dataSource" name="mx34" id="button4" />
+						<label for="button4" unselectable>Simulate data</label>
+					</div>
+					<div class="clear-floats"></div>
 				</div>
-				<div class="mx-button" style="margin-top:12px">
-					<input type="radio" class="dataSource" name="mx34" id="button4" />
-					<label for="button4" unselectable>Simulate data</label>
-				</div>
-				<div class="clear-floats"></div>
 			</div>
 
 			<div id="dataSourceValidationInfo" class="warningMessage"></div>
@@ -145,16 +165,18 @@ body {font-size:16px;}
 
 				<div class="formInfo" id="formInfoSim">Analysis parameters</div>
 
-				Expected mutation type:<br>
-				<div class="mx-button" style="margin-top:12px" >
-					<input type="radio" class="mutType" name="mxMT" id="button47" />
-					<label for="button47" unselectable>EMS mutation </label>
+				Expected mutation type:
+				<div class="buttons-wrap">
+					<div class="mx-button" style="padding:12px" >
+						<input type="radio" class="mutType" name="mxMT" id="button47" />
+						<label for="button47" unselectable>EMS mutation </label>
+					</div>
+					<div class="mx-button" style="padding:12px">
+						<input type="radio" class="mutType" name="mxMT" id="button48" />
+						<label for="button48" unselectable>All mutations</label>
+					</div>
+					<div class="clear-floats"></div>
 				</div>
-				<div class="mx-button" style="margin-top:12px">
-					<input type="radio" class="mutType" name="mxMT" id="button48" />
-					<label for="button48" unselectable>All mutations</label>
-				</div>
-				<div class="clear-floats"></div>
 			</div>
 			<div id="mutTypeValidationInfo" class="warningMessage"></div>
 
@@ -163,11 +185,11 @@ body {font-size:16px;}
 					
 				Mutant background:
 				<div class="buttons-wrap">
-					<div class="mx-button">
+					<div class="mx-button" style="padding:12px">
 						<input type="radio" class="mutBackground" name="mxMB" id="button11" />
 						<label for="button11" unselectable>Reference</label>
 					</div>
-					<div class="mx-button">
+					<div class="mx-button" style="padding:12px">
 						<input type="radio" class="mutBackground" name="mxMB" id="button12" />
 						<label for="button12" unselectable>Non-reference</label>
 					</div>
@@ -178,11 +200,11 @@ body {font-size:16px;}
 
 				Mapping cross performed:
 				<div class="buttons-wrap">
-					<div class="mx-button">
+					<div class="mx-button" style="padding:12px">
 						<input type="radio" class="crossType" name="mxCR" id="button13" />
 						<label for="button13" unselectable>Backcross</label>
 					</div>
-					<div class="mx-button">
+					<div class="mx-button" style="padding:12px">
 						<input type="radio" class="crossType" name="mxCR" id="button14" />
 						<label for="button14" unselectable>Outcross</label>
 					</div>
@@ -193,15 +215,15 @@ body {font-size:16px;}
 
 				Origin of the control reads:
 				<div class="buttons-wrap">
-					<div class="mx-button">
+					<div class="mx-button" style="padding:12px">
 						<input type="radio" class="contType" name="mxCO" id="button15" />
 						<label for="button15" unselectable>Mutant parental</label>
 					</div>
-					<div class="mx-button">
+					<div class="mx-button" style="padding:12px">
 						<input type="radio" class="contType" name="mxCO" id="button16" />
 						<label for="button16" unselectable>Polymorphic parental</label>
 					</div>
-					<div class="mx-button">
+					<div class="mx-button" style="padding:12px">
 						<input type="radio" class="contType" name="mxCO" id="button17" />
 						<label for="button17" unselectable>F2 wild-types</label>
 					</div>

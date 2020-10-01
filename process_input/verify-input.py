@@ -17,6 +17,8 @@ parser.add_argument('-gff', action="store", dest='gff_source')
 parser.add_argument('-ann', action="store", dest='ann_source')
 parser.add_argument('-fa_match', action="store", dest='fa_match')
 parser.add_argument('-gff_match', action="store", dest='gff_match')
+parser.add_argument('-vcf_match', action="store", dest='vcf_match')
+
 args = parser.parse_args()
 
 gnm_basename = args.gnm
@@ -26,6 +28,7 @@ gff_source = args.gff_source
 ann_source = args.ann_source
 fa_match = args.fa_match
 gff_match = args.gff_match
+vcf_match = args.vcf_match
 
 
 # If gnm argument provided, check fasta file
@@ -209,6 +212,65 @@ if fa_match != None and gff_match != None:
 	# 3: GFF3 file has contigs not present in FASTA file. In this case, just warn the user
 	#	  about the presence of extra contigs in the GFF3 file. The analysis will keep going.		 	
 	
+
+
+# If vcf_match and gff_match arguments provided, check contigs match
+if vcf_match != None and gff_match != None and vcf_match != "user_data/None":
+	
+	match_result = 0 
+	
+	# First, verify that the files are not empty	
+	if os.stat(vcf_match).st_size == 0 or os.stat(gff_match).st_size == 0:
+		match_result = 1
+
+	# If files are not empty...
+	
+	else:
+		# Retrieve the name of the contigs in the vcf file and store them in a list
+		vcf_match_contents = open(vcf_match, 'r')
+		vcf_contigs = []
+		
+		for vcf_line in vcf_match_contents:
+			if not vcf_line.startswith('#'):
+				vcf_fields = vcf_line.strip().split('\t')
+				if str(vcf_fields[0]).lower() not in vcf_contigs and str(vcf_fields[0]).lower().strip() != "":
+					vcf_contigs.append(str(vcf_fields[0]).lower())
+		
+		vcf_match_contents.close()
+		
+		# Retrieve the name of the contigs (unique) in the gff file and store them in a list
+		gff_match_contents = open(gff_match, 'r')
+		gff_contigs = []
+		
+		for gff_line in gff_match_contents:
+			gff_fields = gff_line.strip().split('\t')
+			contig_name = gff_fields[0].lower().strip()
+			if contig_name not in gff_contigs and contig_name != "":
+				gff_contigs.append(contig_name)
+		
+		gff_match_contents.close()
+
+		# Check if all the contigs in vcf file are also in gff file
+		for vcf_contig in vcf_contigs:
+			if vcf_contig not in gff_contigs:
+				match_result = 2
+
+		# Check if all the contigs in vcf file are also in gff file
+		if match_result != 2:
+			for gff_contig in gff_contigs:
+				if gff_contig not in vcf_contigs:
+					match_result = 3
+	
+	print match_result
+
+
+
+
+
+
+
+
+
 
 # Every 'if block' returns only one variable with a numeric value. This numeric value
 # is read by the bash wrapper, which decides what to do accordingly
