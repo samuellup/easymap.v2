@@ -70,22 +70,22 @@ body {font-size:16px;}
 			
 			Mapping-by-sequencing strategy (workflow):
 			<div class="buttons-wrap" id="analysisTypeWrap">
-				<div class="mx-button" style="padding:12px">
+				<div class="mx-button" style="padding:12px; padding-bottom:20px;">
 					<input type="radio" class="analysisType" name="mx12" id="button1" />
 					<label for="button1" unselectable>Tagged sequence mapping</label>
 				</div>
 
-				<div class="mx-button" style="padding:12px">
+				<div class="mx-button" style="padding:12px; padding-bottom:20px;">
 					<input type="radio" class="analysisType" name="mx12" id="button2" />
 					<label for="button2" unselectable>Linkage analysis mapping</label>
 				</div>
 
-				<div class="mx-button" style="padding:12px">
+				<div class="mx-button" style="padding:12px; padding-bottom:20px;">
 					<input type="radio" class="analysisType" name="mx12" id="button40" />
 					<label for="button40" unselectable>Variant density mapping</label>					
 				</div>
 
-				<div class="mx-button" style="padding:12px">
+				<div class="mx-button" style="padding:12px; padding-bottom:20px;">
 					<input type="radio" class="analysisType" name="mx12" id="button41" />
 					<label for="button41" unselectable>Variant analyzer</label>					
 				</div>
@@ -93,17 +93,17 @@ body {font-size:16px;}
 			</div>
 
 			<!-- beginning of page content -->
-			<div id="insMessage" style="display:none; margin-bottom: 22px;">
+			<div id="insMessage" style="display:none; margin-bottom: 25px;">
 				<i>Mapping of large DNA insertions of known sequence. </i>
 			</div>
-			<div id="snpMessage" style="display:none; margin-bottom: 22px;">
+			<div id="snpMessage" style="display:none; margin-bottom: 25px;">
 				<i>Mapping of point mutations in bulked segregant populations. </i>
 			</div>
-			<div id="densMessage" style="display:none; margin-bottom: 22px;">
+			<div id="densMessage" style="display:none; margin-bottom: 25px;">
 				<i>Mapping of point mutations through variant density analyses. </i>
 			</div>
-			<div id="varsMessage" style="display:none; margin-bottom: 22px;">
-				<i>Analyses the effect of a set of reads or polymorphisms on coding sequences. </i>
+			<div id="varsMessage" style="display:none; margin-bottom: 25px;">
+				<i>Analyses the effect of a set of polymorphisms on coding sequences. </i>
 			</div>
 
 			<div id="analysisTypeValidationInfo" class="warningMessage"></div>
@@ -122,45 +122,7 @@ body {font-size:16px;}
 					<div class="clear-floats"></div>
 				</div>
 			</div>
-
-			<div id="dataSourceValidationInfo" class="warningMessage"></div>
-			<div class="formInfo" id="formInfoSim">Input files</div>
 			
-			Reference sequence:<br>
-			<select id="refFileSelector" style="display:block; margin-bottom:22px;"></select>
-			<div id="refSeqValidationInfo" class="warningMessage"></div>
-			
-			<div id="insSeqField"> <!-- Not displayed by default -->
-				Insertion sequence file:<br>
-				<select id="insFileSelector" style="display:block; margin-bottom:22px;"></select>
-				<div id="insFileValidationInfo" class="warningMessage"></div>
-			</div>
-			
-			GFF3 file (gene structural annotation):<br>
-			<select id="gffFileSelector" style="display:block; margin-bottom:22px;"></select>
-			<div id="gffFileValidationInfo" class="warningMessage"></div>
-
-			Gene functional annotation file [OPTIONAL]:<br>
-			<select id="annFileSelector" style="display:block; margin-bottom:22px;"></select>
-			<div id="annFileValidationInfo" class="warningMessage"></div>
-			
-
-			<div id="expDataInterface">
-
-				Test reads (if your reads are paired-end, select both files while holding the Ctrl/Cmd key):<br>
-				<select multiple id="readsProblemSelector" style="display:block; margin-bottom:22px;"></select>
-				<div id="readsProblemWarnMsg" class="warningMessage">Please select one file for single-end reads and two files for paired-end reads.</div>
-				<div id="readsProblemWarnMsg2" class="warningMessage">The test and control read files must be different.</div>
-				
-				<div id="readsControl">
-					Control data (if your reads are paired-end, select both files while holding the Ctrl/Cmd key):<br>
-					<select multiple id="readsControlSelector" style="display:block; margin-bottom:22px;"></select>
-					<div id="readsControlWarnMsg" class="warningMessage">Please select one file for single-end reads and two files for paired-end reads.</div>
-					<div id="readsControlWarnMsg2" class="warningMessage">The test and control read files must be different.</div>
-				</div>
-			</div>
-
-
 			<div class="buttons-wrap" id="expMutType" style="display:none">
 
 				<div class="formInfo" id="formInfoSim">Analysis parameters</div>
@@ -297,6 +259,47 @@ body {font-size:16px;}
 					<div id="simSeqValMsg" class="warningMessage"></div>
 				</div>		
 			</div>
+
+			<div id="dataSourceValidationInfo" class="warningMessage"></div>
+
+			<div id="inputFiles" style="display:none;">
+				<div class="formInfo" id="formInfoSim">Input files</div>
+				
+				Reference sequence:<br>
+				<select id="refFileSelector" style="display:block; margin-bottom:22px;"></select>
+				<div id="refSeqValidationInfo" class="warningMessage"></div>
+				
+				<div id="insSeqField"> <!-- Not displayed by default -->
+					Insertion sequence file:<br>
+					<select id="insFileSelector" style="display:block; margin-bottom:22px;"></select>
+					<div id="insFileValidationInfo" class="warningMessage"></div>
+				</div>
+				
+				GFF3 file (gene structural annotation):<br>
+				<select id="gffFileSelector" style="display:block; margin-bottom:22px;"></select>
+				<div id="gffFileValidationInfo" class="warningMessage"></div>
+
+				Gene functional annotation file [OPTIONAL]:<br>
+				<select id="annFileSelector" style="display:block; margin-bottom:22px;"></select>
+				<div id="annFileValidationInfo" class="warningMessage"></div>
+			</div>
+	
+
+			<div id="expDataInterface">
+
+				Test reads (if your reads are paired-end, select both files while holding the Ctrl/Cmd key):<br>
+				<select multiple id="readsProblemSelector" style="display:block; margin-bottom:22px;"></select>
+				<div id="readsProblemWarnMsg" class="warningMessage">Please select one file for single-end reads and two files for paired-end reads.</div>
+				<div id="readsProblemWarnMsg2" class="warningMessage">The test and control read files must be different.</div>
+				
+				<div id="readsControl">
+					Control data (if your reads are paired-end, select both files while holding the Ctrl/Cmd key):<br>
+					<select multiple id="readsControlSelector" style="display:block; margin-bottom:22px;"></select>
+					<div id="readsControlWarnMsg" class="warningMessage">Please select one file for single-end reads and two files for paired-end reads.</div>
+					<div id="readsControlWarnMsg2" class="warningMessage">The test and control read files must be different.</div>
+				</div>
+			</div>
+
 			
 			<div id="formButtons">
 				<hr style="width: 100%; border: 2px solid rgb(150,150,150)" class="w3-round">

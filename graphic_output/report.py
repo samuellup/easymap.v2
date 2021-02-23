@@ -954,7 +954,7 @@ if mut_type == 'vars':
 	#Candidates table:
 	output.write(
 	'		<h2>Variants analysis</h2>' + '\n'
-	'		<p>SNP located in genes absent from the control sample. </p>' + '\n'
+	'		<p>SNP located in genes, absent from the control sample. </p>' + '\n'
 	)
 
 	#first we check that there are candidates 

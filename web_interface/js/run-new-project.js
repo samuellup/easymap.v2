@@ -283,6 +283,7 @@ window.onload = function() {
 		}
 		if (checkedOption == 'button1') {
 			cmdArgs[2] = 'ins';
+			document.getElementById("inputFiles").style.display = "block";
 			document.getElementById("expMutType").style.display = "none";
 			document.getElementById("insSeqField").style.display = "block";
 			document.getElementById("readsControl").style.display = "none";
@@ -292,6 +293,7 @@ window.onload = function() {
 			document.getElementById("checkBoxStringency").style.display = "none";
 			document.getElementById("checkBoxMultithread").style.display = "none";
 			document.getElementById("numberThreads").style.display = "none";
+
 			// Help messages
 			document.getElementById("insMessage").style.display = "block";
 			document.getElementById("snpMessage").style.display = "none";
@@ -307,6 +309,7 @@ window.onload = function() {
 			}
 		} else if (checkedOption == 'button2') {
 			cmdArgs[2] = 'snp';
+			document.getElementById("inputFiles").style.display = "block";
 			document.getElementById("expMutType").style.display = "block";
 			document.getElementById("insSeqField").style.display = "none";
 			document.getElementById("readsControl").style.display = "block";
@@ -315,6 +318,7 @@ window.onload = function() {
 			document.getElementById("dataSource").style.display = "block";
 			document.getElementById("checkBoxStringency").style.display = "block";
 			document.getElementById("checkBoxMultithread").style.display = "block";
+
 			// Help messages
 			document.getElementById("insMessage").style.display = "none";
 			document.getElementById("snpMessage").style.display = "block";
@@ -338,6 +342,7 @@ window.onload = function() {
 		} else if (checkedOption == 'button40') {
 			cmdArgs[2] = 'dens';
 			cmdArgs[3] = 'exp'
+			document.getElementById("inputFiles").style.display = "block";
 			document.getElementById("readsControl").style.display = "block";
 			document.getElementById("expMutType").style.display = "block";
 			document.getElementById("checkBoxStringency").style.display = "block";
@@ -360,6 +365,7 @@ window.onload = function() {
 		} else if (checkedOption == 'button41') {
 			cmdArgs[2] = 'vars';
 			cmdArgs[3] = 'exp'
+			document.getElementById("inputFiles").style.display = "block";
 			document.getElementById("readsControl").style.display = "block";
 			document.getElementById("expMutType").style.display = "block";
 			document.getElementById("checkBoxStringency").style.display = "none";
@@ -375,7 +381,6 @@ window.onload = function() {
 			document.getElementById("densMessage").style.display = "none";
 			document.getElementById("varsMessage").style.display = "block";
 
-	
 		}
 
 		//updateCmd();

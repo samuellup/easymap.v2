@@ -642,6 +642,7 @@ then
 	# (1) Get problem and control VA files
 	get_problem_va
 	get_control_va
+	control_format="fastq"
 
 	#draw snps
 	python2 $location/graphic_output/graphic-output.py -my_mut af_control -asnp $f1/control_filtered.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file

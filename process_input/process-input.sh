@@ -212,6 +212,9 @@ if [ $data_source == 'exp' ]; then
 		if [ $lib_type_ctrl == 'se' ]; then
 			if [[ "$read_s_ctrl" == *".fq" ]] ; then			
 				fq=`python2 process_input/verify-input.py -fq $read_s_ctrl 2>> $my_log_file` 
+			elif [[ "$read_s_ctrl" == *"None" ]] ; then	
+				fq=0
+				echo $(date "+%F > %T")": No control sample provided." >> $my_log_file
 			else
 				# Check contigs match between VCF and gff3 files
 				match_vcf=`python2 process_input/verify-input.py -vcf_match $read_s_ctrl -gff_match $gff_file 2>> $my_log_file` 
