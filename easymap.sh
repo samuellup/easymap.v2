@@ -187,7 +187,7 @@ echo "Library type (control sample):				" ${15} >> $my_log_file
 echo "Mutant strain [ref/noref]:					" ${16} >> $my_log_file
 echo "Type of cross [bc/oc]:						" ${17} >> $my_log_file
 echo "SNP analysis type [par/f2wt]:					" ${18} >> $my_log_file
-echo "Parental used as control [mut/nomut/np]:		" ${19} >> $my_log_file
+echo "Parental used as control [mut/nomut/no]:		" ${19} >> $my_log_file
 echo "Simulator (sim-mut.py) command:				" ${20} >> $my_log_file
 echo "Simulator (sim-recsel.py) command:			" ${21} >> $my_log_file
 echo "Simulator (sim-seq.py) command:				" ${22} >> $my_log_file

@@ -89,7 +89,7 @@ f3=$project_name/3_workflow_output
 my_status_file=$f2/status
 echo 'pid workflow '$$ >> $my_status_file
 
-#Check genome size to set interval_width
+# Check genome size to set interval_width
 {
 	interval_width=`python2 $location/scripts_snp/set-interval.py -a $f1/$my_gs`
 } || {
@@ -97,6 +97,13 @@ echo 'pid workflow '$$ >> $my_status_file
 	echo $(date "+%F > %T")': set-interval.py failed.' >> $my_log_file
 }
 echo $(date "+%F > %T")': set-interval.py finished, interval set at: '$interval_width   >> $my_log_file
+
+# Fix for mapping with no control sample
+if [ $my_pseq == none ]; then
+	my_cross_mapping=bc
+else 
+	my_cross_mapping=$my_cross
+fi
 
 
 ##################################################################################################################################################################################
@@ -567,7 +574,7 @@ function cr_analysis {
 #_________________________________Case 1 and 5: Mutant in ref/noref background, backcross, mutant parental control (ref/noref bc mut)_______________________________________________________________
 #_________________________________________________________________________________________________________________________________________________________________________________
 
-if [ $my_pseq == mut ] && [ $my_cross == bc ]  && [ $snp_analysis_type == par ]
+if [ $my_pseq == mut -o $my_pseq == none ] && [ $my_cross_mapping == bc ]  && [ $snp_analysis_type == par ]
 then
 
 	# (1) Get problem and control VA files
@@ -636,7 +643,7 @@ fi
 #_________________________________________________________________________________________________________________________________________________________________________________
 
 #if [ $my_mutbackgroud == ref ] && [ $my_cross == bc ]  && [ $snp_analysis_type == f2wt ]
-if [ $my_cross == bc ]  && [ $snp_analysis_type == f2wt ]
+if [ $my_cross_mapping == bc ]  && [ $snp_analysis_type == f2wt ]
 then
 
 	# (1) Get problem and control VA files
@@ -731,7 +738,7 @@ fi
 # _________________________________________________________________________________________________________________________________________________________________________________
 
 
-if [ $my_mutbackgroud == ref ] && [ $my_pseq == mut ] && [ $my_cross == oc ]  && [ $snp_analysis_type == par ]
+if [ $my_mutbackgroud == ref ] && [ $my_pseq == mut -o $my_pseq == none ] && [ $my_cross_mapping == oc ]  && [ $snp_analysis_type == par ]
 then
 
 	# (1) Get problem and control VA files
@@ -801,7 +808,7 @@ fi
 #_________________________________________________________________________________________________________________________________________________________________________________
 
 
-if [ $my_mutbackgroud == ref ] && [ $my_pseq == nomut ] && [ $my_cross == oc ]  && [ $snp_analysis_type == par ]
+if [ $my_mutbackgroud == ref ] && [ $my_pseq == nomut -o $my_pseq == none ] && [ $my_cross_mapping == oc ]  && [ $snp_analysis_type == par ]
 then
 	# (1) Get control VA file
 	if [[ "$my_p_rd" == *".vcf" ]]; then 
@@ -913,7 +920,7 @@ fi
 #_________________________________Case 7: Mutant in noref background, outcross, mutant parental control (noref oc mut)________________________________________________________________
 #_________________________________________________________________________________________________________________________________________________________________________________
 
-if [ $my_mutbackgroud == noref ] && [ $my_pseq == mut ] && [ $my_cross == oc ]  && [ $snp_analysis_type == par ]
+if [ $my_mutbackgroud == noref ] && [ $my_pseq == mut -o $my_pseq == none ] && [ $my_cross_mapping == oc ]  && [ $snp_analysis_type == par ]
 then
 
 	# (1) Get problem and control VA files

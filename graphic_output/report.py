@@ -121,16 +121,18 @@ with open(input_log, 'r') as f1:
 			if str(sp[-1]) == 'par': snp_analysis_type = 'parental'
 			if str(sp[-1]) == 'f2wt': snp_analysis_type = 'wild type F2'
 
-		if line.startswith('Parental used as control [mut/nomut/np]:'):
+		if line.startswith('Parental used as control [mut/nomut/no]:'):
 			sp = line.split()
 			if str(sp[-1]) == 'mut': parental_used_as_control = 'mutant'
-			if str(sp[-1]) == 'nomut': parental_used_as_control = 'wild type'
+			elif str(sp[-1]) == 'nomut': parental_used_as_control = 'wild type'
+			else : parental_used_as_control = 'none'
 
 if mut_type == 'snp':
 	#SNP mappint control samples
-	if snp_analysis_type == 'parental' and parental_used_as_control == 'mutant' : control = ' parental of the mutant strain.'
-	if snp_analysis_type == 'parental' and parental_used_as_control == 'wild type' : control = ' wild type parental of the mapping population.'
-	if snp_analysis_type == 'wild type F2' : control = ' wild type F2 of the mapping population.'
+	if snp_analysis_type == 'parental' and parental_used_as_control == 'mutant' : control = ' the parental of the mutant strain.'
+	if snp_analysis_type == 'parental' and parental_used_as_control == 'wild type' : control = ' the wild type parental of the mapping population.'
+	if snp_analysis_type == 'parental' and parental_used_as_control == 'none' : control = ' not provided.'
+	if snp_analysis_type == 'wild type F2' : control = ' the wild type F2 of the mapping population.'
 
 if data_source == 'sim':
 	with open(input_log, 'r') as f1:
@@ -404,7 +406,7 @@ if mut_type == 'snp':
 
 '		<tr>' + '\n'
 '			<td> <b>Experimental design: </b></td>' + '\n'
-'			<td> Mutation in ' + mut_background + ' genetic background. A ' + cross_type + ' was performed to obtain the mapping population. The control sample is the ' + control +'</td>' + '\n'
+'			<td> Mutation in ' + mut_background + ' genetic background. A ' + cross_type + ' was performed to obtain the mapping population. The control sample is ' + control +'</td>' + '\n'
 '		</tr>' + '\n'
 
 		)

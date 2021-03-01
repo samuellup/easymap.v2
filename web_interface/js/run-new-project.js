@@ -508,6 +508,9 @@ window.onload = function() {
 		} else if (checkedOption == 'button16') {
 			cmdArgs[18] = 'par';
 			cmdArgs[19] = 'nomut';
+		} else if (checkedOption == 'button42') {
+			cmdArgs[18] = 'par';
+			cmdArgs[19] = 'none';
 		} else {
 			cmdArgs[18] = 'f2wt';
 			cmdArgs[19] = 'n/p';
@@ -544,12 +547,12 @@ window.onload = function() {
 		var experimentalDesign = cmdArgs[16] + '_' + cmdArgs[17] + '_' + cmdArgs[18] + '_' + cmdArgs[19];
 
 		var allowedExperimentalDesigns = [
-			'ref_bc_par_mut',
+			'ref_bc_par_mut', 'ref_bc_par_none',
 			'ref_bc_f2wt_n/p',
-			'ref_oc_par_mut',
-			'ref_oc_par_nomut',
+			'ref_oc_par_mut', 'ref_oc_par_none',
+			'ref_oc_par_nomut', 'ref_oc_par_none',
 			'noref_bc_f2wt_n/p',
-			'noref_oc_par_mut',
+			'noref_oc_par_mut', 'noref_oc_par_none',
 			'ref_bc_n/p_n/p', 'ref_oc_n/p_n/p', 'ref_n/p_n/p_n/p',
 			'noref_bc_n/p_n/p', 'noref_oc_n/p_n/p', 'noref_n/p_n/p_n/p',
 			'n/p_n/p_n/p_n/p'
@@ -1161,6 +1164,7 @@ window.onload = function() {
 	document.getElementById("button15").onclick = cLoad;
 	document.getElementById("button16").onclick = cLoad;
 	document.getElementById("button17").onclick = cLoad;
+	document.getElementById("button42").onclick = cLoad;
 	document.getElementById("button47").onclick = buttons_mutType;
     document.getElementById("button48").onclick = buttons_mutType;
 
