@@ -937,7 +937,7 @@ def fa_vs_pos():
 						fa = float(sp[8])/(float(sp[8])+float(sp[7]))
 						fa_img = int(80/100.0*height) - int(fa/scaling_factor_y)
 						pos_img = int(int(sp[1])/scaling_factor_x) + int(70)
-						draw.ellipse((pos_img-2, fa_img-2, pos_img+2, fa_img+2), fill=(247, 170, 124)) 
+						draw.ellipse((pos_img-2, fa_img-2, pos_img+2, fa_img+2), fill=(247, 170, 124))    
 						#f2wt snps
 						fa = float(sp[6])/(float(sp[6])+float(sp[5]))
 						fa_img = int(80/100.0*height) - int(fa/scaling_factor_y) - 1
@@ -1149,6 +1149,257 @@ def fa_vs_pos():
 
 			if args.my_mut == 'af_candidates':
 				im.crop((0, 60, w-0, h-40)).save(project + '/3_workflow_output/candidates_' + str(i[0]) + '.png')
+
+
+#############################################################################################################
+#																											#
+# 							SNP - Alelic frequence VS Chromosome position									#
+#																											#
+#############################################################################################################
+def qtl_plot():
+	#Input 1
+	input1 = args.input_snp
+	input2 = args.input_f_snp
+	contig_source = args.input_f_snp
+
+	# Function to parse fasta file (based on one of the Biopython IOs)
+	def read_fasta(fp):
+		name, seq = None, []
+		for line in fp:
+			line = line.rstrip()
+			if line.startswith('>'):
+				if name: yield (name, ''.join(seq))
+				name, seq = line, []
+			else:
+				seq.append(line)
+		if name: yield (name, ''.join(seq))
+
+	# Read contig fasta file
+	contig_lengths = list()
+	with open(contig_source) as fp:
+		fastalist = list()
+		for name_contig, seq_contig in read_fasta(fp):
+			innerlist = list()
+			innerlist.append(name_contig.strip('>'))
+			innerlist.append(len(seq_contig))
+			fastalist.append(innerlist)
+			contig_lengths.append(len(seq_contig))
+
+	max_contig_len = 0
+	for i in contig_lengths:
+		if int(i) > max_contig_len:
+			max_contig_len = int(i)
+	#FA vs POS graphs 
+	for i in fastalist:
+		if int(i[1]) > 2000000: 
+			wide=int(880*float(i[1])/max_contig_len) + 120					#<-------------------------------------------------------------------------------- SET IMAGE SIZE
+			height=500
+			im = Image.new("RGB", (1000, int(height)), (255,255,255))		# Set for fixed-size imagens; for variable-sized images: im = Image.new("RGB", (wide, int(height)), (255,255,255))
+			draw = ImageDraw.Draw(im)
+			
+			#get fonts from foler 'fonts'
+			fnt2 = ImageFont.truetype('fonts/VeraMono.ttf', 14)
+
+			r = red(int(i[1]))
+			if 'Mb' in r:
+				max_graph_x = int(i[1]) + 10000
+			elif 'kb' in r: 
+				max_graph_x = int(i[1])
+
+			#Scaling factors
+			scaling_factor_x = (max_graph_x)/(wide - 120) 								#nt/pixel        
+			scaling_factor_y = (1.001/(63/100.0*height))  								#af/pixel
+
+			#Candidate region 
+			binput = open(project + '/1_intermediate_files/candidate_region.txt', 'r')
+			
+			#Retrieving candidate region coordinates
+			for line in binput:
+				sp = line.split()						
+				chromosome_candidate = sp[1].strip().lower()
+				if chromosome_candidate == i[0].lower():
+					if int(sp[2]) > 0 :
+						cr_start = int(sp[2])  
+					else:
+						cr_start = 0
+					if  int(sp[3]) < int(i[1]) :
+						cr_end = int(sp[3]) 
+					else:
+						cr_end = int(i[1])
+
+				#Drawing candidate region:
+				try:
+					if chromosome_candidate == i[0].lower():
+						cr_start_im = int(cr_start/scaling_factor_x) + 70
+						cr_end_im = int(cr_end/scaling_factor_x) + 70
+						draw.rectangle( [cr_start_im, int(15/100.0*height), cr_end_im, int(80/100.0*height)], fill=(249, 222, 252) )
+				except: pass
+					
+			# Drawing SNP
+			r, g, b = 247, 170, 124
+			rc, gc, bc = 122, 192, 240
+			with open(input1, "r") as lines: 
+				for l, line in enumerate(lines):
+					sp = line.split()
+					if i[0].lower() == sp[0].lower() :
+						pos_img = int(int(sp[1])/scaling_factor_x) + 70
+						# Sample 1
+						fa = float(sp[6])/(float(sp[6])+float(sp[5]))
+						fa_img = int(80/100.0*height) - int(fa/scaling_factor_y) - 1
+						draw.ellipse((pos_img-2, fa_img-2, pos_img+2, fa_img+2), fill=(r, g, b))
+						# Sample 2
+						fa = float(sp[8])/(float(sp[8])+float(sp[7]))
+						fa_img = int(80/100.0*height) - int(fa/scaling_factor_y) - 1
+						draw.ellipse((pos_img-2, fa_img-2, pos_img+2, fa_img+2), fill=(rc, gc, bc))
+			
+			# dAF plotting
+			binput = open(project + '/1_intermediate_files/mapping_info.txt', 'r')
+			blines = binput.readlines()
+
+			# dAF line
+			for b, bline in enumerate(blines):
+				sp = bline.split()					
+				if sp[0].lower().strip('>') == i[0].lower():
+					dAF_value = float(sp[3].strip())/2
+					dAF_value_img = int(47.5/100.0*height) - int(dAF_value/scaling_factor_y)
+
+					window_position = int(sp[1])
+					window_position_img = int(window_position/scaling_factor_x) + 70
+
+					try:
+						draw.line(((window_position_img, dAF_value_img) + (window_position_img_2, dAF_value_img_2)), fill=(255, 0, 0), width=2)	
+						window_position_img_2 = window_position_img
+						dAF_value_img_2 = dAF_value_img
+
+					except:
+						window_position_img_2 = window_position_img
+						dAF_value_img_2 = dAF_value_img
+
+			window_position_img = None 
+			dAF_value_img = None
+			window_position_img_2 = None 
+			dAF_value_img_2 = None
+
+			#Axes
+			draw.line(((wide - 49), int(15/100.0*height)) + ((wide - 49), int(80/100.0*height)), fill=(255, 255, 255, 0), width=2)  #cleanup
+			draw.line((68, int(15/100.0*height)) + (68, int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)	#Y axis
+			draw.line((68, int(80/100.0*height)) + ((wide - 50), int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)	#X axis
+			draw.line(((wide - 50), int(15/100.0*height)) + ((wide - 50), int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)	#-Y axis
+			draw.line((68, int(15/100.0*height)) + ((wide - 50), int(15/100.0*height)), fill=(0, 0, 0, 0), width=1)	#-X axis
+
+			#Axis rulers_____________________
+			#X Axis
+			if max_contig_len > 1000000  and max_contig_len <= 40000000 :
+				mbs = int(0/scaling_factor_x) + 68
+				x_tag = 0
+				while mbs in range(68, wide-50):
+					draw.line((mbs, int(81/100.0*height) ) + (mbs, int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)	
+					if len(str(x_tag)) == 1:
+						draw.text(((mbs - 4), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
+					elif len(str(x_tag)) == 2: 
+						draw.text(((mbs - 8), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
+					
+					mbs = mbs + 1000000/scaling_factor_x +1
+					x_tag = x_tag + 1
+
+			if max_contig_len > 40000000 and max_contig_len <= 90000000:
+				mbs = int(0/scaling_factor_x) + 68
+				x_tag = 0
+				while mbs in range(68, wide-50):
+					draw.line((mbs, int(81/100.0*height) ) + (mbs, int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)	
+					if len(str(x_tag)) == 1:
+						draw.text(((mbs - 4), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
+					elif len(str(x_tag)) == 2: 
+						draw.text(((mbs - 8), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
+					
+					mbs = mbs + 5000000/scaling_factor_x +1
+					x_tag = x_tag + 5
+
+			if max_contig_len > 90000000 :
+				mbs = int(0/scaling_factor_x) + 68
+				x_tag = 0
+				while mbs in range(68, wide-50):
+					draw.line((mbs, int(81/100.0*height) ) + (mbs, int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)	
+					if len(str(x_tag)) == 1:
+						draw.text(((mbs - 4), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
+					if len(str(x_tag)) == 2:
+						draw.text(((mbs - 8), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
+					elif len(str(x_tag)) == 3: 
+						draw.text(((mbs - 12), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
+					
+					mbs = mbs + 10000000/scaling_factor_x +1
+					x_tag = x_tag + 10
+
+			elif max_contig_len <= 1000000:
+				mbs = int(0/scaling_factor_x) + 68
+				x_tag = 0
+				while mbs in range(68, wide-50):
+					draw.line((mbs, int(81/100.0*height) ) + (mbs, int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)	
+					draw.text(((mbs - 4*len(str(x_tag))), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
+					mbs = mbs + 100000/scaling_factor_x +1
+					x_tag = x_tag + 100000
+
+			# Y axis - left
+			fa_img_0 = int(80/100.0*height) - int(0/scaling_factor_y) - 1		
+			fa_img_1 = int(80/100.0*height) - int(1/scaling_factor_y) - 1
+			fa_img_05 = int(80/100.0*height) - int(0.5/scaling_factor_y) - 1
+			fa_img_025 = int(80/100.0*height) - int(0.25/scaling_factor_y) - 1
+			fa_img_075 = int(80/100.0*height) - int(0.75/scaling_factor_y) - 1
+
+			draw.line(( 68 , fa_img_0 +1) + ( 63 , fa_img_0 +1 ), fill=(0, 0, 0, 0), width=1)	
+			draw.line(( 68 , fa_img_1 ) + ( 63 , fa_img_1 ), fill=(0, 0, 0, 0), width=1)	
+			draw.line(( 68 , fa_img_05 ) + ( 63 , fa_img_05 ), fill=(0, 0, 0, 0), width=1)	
+			draw.line(( 68 , fa_img_025 ) + ( 65 , fa_img_025 ), fill=(0, 0, 0, 0), width=1)	
+			draw.line(( 68 , fa_img_075 ) + ( 65 , fa_img_075 ), fill=(0, 0, 0, 0), width=1)	
+
+			draw.text(((48), fa_img_0-6), ( '0' ), font=fnt2, fill=(0,0,0,255))
+			draw.text(((32), fa_img_1-8), ( '1.0' ), font=fnt2, fill=(0,0,0,255))
+			draw.text(((32), fa_img_05-8), ( '0.5' ), font=fnt2, fill=(0,0,0,255))
+
+			# Y axis left label
+			txt=Image.new('L', (140, 20))
+			d = ImageDraw.Draw(txt)
+			d.text( (0, 0), "Allele frequency",  font=fnt2, fill=255)
+			w=txt.rotate(90,  expand=1)
+			im.paste( ImageOps.colorize(w, (0,0,0), (0,0,0)), (2,150),  w)
+
+
+			# Y axis - right
+			dAF_img_0 = int(80/100.0*height) - int(0/scaling_factor_y) - 1		
+			dAF_img_1 = int(80/100.0*height) - int(1/scaling_factor_y) - 1
+			dAF_img_05 = int(80/100.0*height) - int(0.5/scaling_factor_y) - 1
+			dAF_img_025 = int(80/100.0*height) - int(0.25/scaling_factor_y) - 1
+			dAF_img_075 = int(80/100.0*height) - int(0.75/scaling_factor_y) - 1
+
+			draw.line(( wide-50 , dAF_img_0 +1) + ( wide-45 , dAF_img_0 +1 ), fill=(0, 0, 0, 0), width=1)	
+			draw.line(( wide-50 , dAF_img_1 ) + ( wide-45 , dAF_img_1 ), fill=(0, 0, 0, 0), width=1)	
+			draw.line(( wide-50 , dAF_img_05 ) + ( wide-45 , dAF_img_05 ), fill=(0, 0, 0, 0), width=1)	
+			draw.line(( wide-50 , dAF_img_025 ) + ( wide-45 , dAF_img_025 ), fill=(0, 0, 0, 0), width=1)	
+			draw.line(( wide-50 , dAF_img_075 ) + ( wide-45 , dAF_img_075 ), fill=(0, 0, 0, 0), width=1)	
+
+			draw.text(((wide-38), dAF_img_0-6), ( '-1' ), font=fnt2, fill=(0,0,0,255))
+			draw.text(((wide-35), dAF_img_1-8), ( '1' ), font=fnt2, fill=(0,0,0,255))
+			draw.text(((wide-35), dAF_img_05-8), ( '0' ), font=fnt2, fill=(0,0,0,255))
+
+			# Y axis right label
+			txt=Image.new('L', (140, 20))
+			d = ImageDraw.Draw(txt)
+			d.text( (0, 0), "dAF",  font=fnt2, fill=255)
+			w=txt.rotate(90,  expand=1)
+			im.paste( ImageOps.colorize(w, (0,0,0), (0,0,0)), (wide-15,116),  w)
+
+			#X axis label
+			if int(i[1]) > 1000000: x_title = str(i[0]) + ' (Mb)'
+			if int(i[1]) <= 1000000: x_title = str(i[0]) + ' (bp)'
+			w, h = draw.textsize(str(x_title))
+			draw.text((( (wide-120)/2- w/2 +70), (int(87/100.0*height))), (x_title), font=fnt2, fill=(0,0,0,255))
+
+			#Crop and save image, specifying the format with the extension
+			w, h = im.size
+			im.crop((0, 60, w-0, h-40)).save(project + '/3_workflow_output/mapping_' + str(i[0]) + '.png')
+
+
+
 
 #############################################################################################################
 #																											#
@@ -2244,7 +2495,7 @@ def gene_plot():
 			scale = 500
 			scale_tag = '500 bp'
 
-		if args.my_mut == 'snp' or args.my_mut == 'dens' or args.my_mut == 'vars':
+		if args.my_mut == 'snp' or args.my_mut == 'dens' or args.my_mut == 'vars' or args.my_mut == 'qtl':
 			w, h = draw.textsize(str(scale_tag))
 			px_scale = float(scale/gene_scaling_factor)
 			draw.line((int(0.91*wide) - int(px_scale) - w/2 + px_scale/2, int(110/350.0*height)) + (int(0.91*wide) - w/2 + px_scale/2, int(110/350.0*height)), fill=(0, 0, 0, 0), width=int(0.002*wide))
@@ -2266,7 +2517,7 @@ def gene_plot():
 			draw.text((ins_pos - int(0.04*wide), int(0.115*wide)), ('Insertion ' + str(p[2])), font=fnt4, fill=(0,0,0,255))
 
 		#SNP arrow and info
-		if args.my_mut == 'snp' or args.my_mut == 'dens' or args.my_mut == 'vars':
+		if args.my_mut == 'snp' or args.my_mut == 'dens' or args.my_mut == 'vars' or args.my_mut == 'qtl':
 			snp_pos = int((int(p[1]) - gene_min_raw)/gene_scaling_factor)  + int(0.15*wide) 
 			draw.line((snp_pos, int(194/350.0*height)) + (snp_pos , int(194/350.0*height) + int(0.03*wide)), fill=(180, 0, 0, 0), width=int(0.005*wide))						
 			draw.polygon([(snp_pos, int(191/350.0*height)), (snp_pos - int(0.01*wide), int(191/350.0*height) + int(0.01*wide)), (snp_pos + int(0.01*wide), int(191/350.0*height) + int(0.01*wide))], fill = (200, 0, 0, 200))
@@ -2330,4 +2581,9 @@ def gene_plot():
 		if args.my_mut == 'vars' and aach == 'no':
 			im.crop((70, 100, w-20, h-70)).save(project + '/3_workflow_output/gene_plot_' + str(args.my_mut) + '_' + str(p[1]) + '_gene_' + str(p[3])+ '.png')		
 		if args.my_mut == 'vars' and aach == 'yes':
+			im.crop((70, 100, w-20, h-40)).save(project + '/3_workflow_output/gene_plot_' + str(args.my_mut) + '_' + str(p[1]) + '_gene_' + str(p[3])+ '.png')
+
+		if args.my_mut == 'qtl' and aach == 'no':
+			im.crop((70, 100, w-20, h-70)).save(project + '/3_workflow_output/gene_plot_' + str(args.my_mut) + '_' + str(p[1]) + '_gene_' + str(p[3])+ '.png')		
+		if args.my_mut == 'qtl' and aach == 'yes':
 			im.crop((70, 100, w-20, h-40)).save(project + '/3_workflow_output/gene_plot_' + str(args.my_mut) + '_' + str(p[1]) + '_gene_' + str(p[3])+ '.png')

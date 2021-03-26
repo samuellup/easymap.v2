@@ -667,7 +667,7 @@ then
 	}
 	echo $(date "+%F > %T")': First VCF filtering step of control data finished.' >> $my_log_file
 
-	# (3) Run af-comparison: Intersection of filtered control SNPs with problem reads: outputs VA file with 4 columns of allele absolute frequence
+	# (3) Run af-comparison: Intersection of filtered control SNPs with problem reads: outputs VA file with 4 columns of read counts
 	{
 		python2 $location/scripts_snp/af-comparison.py -mode $my_mutbackgroud -f2_mut $f1/F2_filtered.va -f2_wt $f1/control_filtered2.va -out $f1/F2_control_comparison.va -f_input $f1/$my_gs -step 1 2>> $my_log_file 
 

@@ -322,9 +322,21 @@ if [ $workflow == 'vars' ]; then
 	fi
 fi
 
+if [ $workflow == 'qtl' ]; then
+	workflow_result=`./workflows/workflow-qtl.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $cross_type $is_ref_strain $control_parental $snp_analysis_type $lib_type_ctrl $stringency $exp_mut_type $n_threads`
+	if [ $workflow_result == 0 ]; then
+		echo $(date "+%F > %T")": QTL analysis workflow finished correctly." >> $my_log_file
+	else
+		echo $(date "+%F > %T")": QTL analysis workflow failed (see details above in this log)." >> $my_log_file
+		echo "Easymap analysis failed. See log file for more info"
+		echo 'status:error' >> $my_status_file
+		exit
+	fi
+fi
+
 
 echo $(date "+%F > %T")": Execution of project {" $project_name "} finished." >> $my_log_file
 echo 'status:finished' >> $my_status_file
 
 # This message must remain as is because install.sh relies on it to know whether the installation was successfull or not.
-echo "Easymap analysis properly completed."
+echo "Easymap analysis completed."

@@ -208,7 +208,7 @@ if [ $data_source == 'exp' ]; then
 
 	# If workflow includes control reads, analyze them
 
-	if [ $analysis_type == 'snp' ] || [ $analysis_type == 'dens' ] || [ $analysis_type == 'vars' ] ; then
+	if [ $analysis_type == 'snp' ] || [ $analysis_type == 'dens' ] || [ $analysis_type == 'vars' ] || [ $analysis_type == 'qtl' ] ; then
 		if [ $lib_type_ctrl == 'se' ]; then
 			if [[ "$read_s_ctrl" == *".fq" ]] ; then			
 				fq=`python2 process_input/verify-input.py -fq $read_s_ctrl 2>> $my_log_file` 

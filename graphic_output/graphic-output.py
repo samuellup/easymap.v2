@@ -2,7 +2,7 @@
 
 #from __future__ import division
 import argparse
-from draw import fa_vs_pos, insertions_overview_and_histograms, gene_plot, legend, candidates_zoom, gene_legend, dens_graphs,dens_ovw
+from draw import fa_vs_pos, insertions_overview_and_histograms, gene_plot, legend, candidates_zoom, gene_legend, dens_graphs, dens_ovw, qtl_plot
 parser = argparse.ArgumentParser()
 
 #INPUT VARIABLES FOR SNP
@@ -37,7 +37,6 @@ parser.add_argument('-pname', action="store", dest='project_name')
 args = parser.parse_args()
 project = args.project_name
 
-
 if args.my_mut == 'af_control' or args.my_mut == 'af_sample' or args.my_mut == 'af_candidates' :
 	fa_vs_pos()
 
@@ -47,20 +46,21 @@ if args.my_mut == 'snp':
 	gene_plot()	
 	#legend()
 
-
 elif args.my_mut == 'lin':
 	insertions_overview_and_histograms()
 	gene_plot()
-
 
 elif args.my_mut == 'dens':
 	#dens_graphs()
 	dens_ovw()
 	gene_plot()	
 
+	
+elif args.my_mut == 'qtl':
+	qtl_plot()
+	gene_plot()	
 
 elif args.my_mut == 'vars':
-
 	gene_plot()	
 
 

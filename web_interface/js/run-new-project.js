@@ -174,7 +174,7 @@ function listInputFiles() {
 					var checkedOptionc = optionsc[i].id;
 				}
 			}
-			if (checkedOptionc == 'button17') {
+			if ((checkedOptionc == 'button17') || (checkedOptionP == 'button43')) {
 				var controlFormat = 'f2wt';
 			} else {
 				var controlFormat = 'par';
@@ -299,6 +299,7 @@ window.onload = function() {
 			document.getElementById("snpMessage").style.display = "none";
 			document.getElementById("densMessage").style.display = "none";
 			document.getElementById("varsMessage").style.display = "none";
+			document.getElementById("qtlMessage").style.display = "none";
 
 
 			if (cmdArgs[3] == 'exp') {
@@ -324,6 +325,7 @@ window.onload = function() {
 			document.getElementById("snpMessage").style.display = "block";
 			document.getElementById("densMessage").style.display = "none";
 			document.getElementById("varsMessage").style.display = "none";
+			document.getElementById("qtlMessage").style.display = "none";
 
 		
 			if (cmdArgs[3] == 'exp') {
@@ -341,7 +343,7 @@ window.onload = function() {
 
 		} else if (checkedOption == 'button40') {
 			cmdArgs[2] = 'dens';
-			cmdArgs[3] = 'exp'
+			cmdArgs[3] = 'exp';
 			document.getElementById("inputFiles").style.display = "block";
 			document.getElementById("readsControl").style.display = "block";
 			document.getElementById("expMutType").style.display = "block";
@@ -358,13 +360,14 @@ window.onload = function() {
 			document.getElementById("snpMessage").style.display = "none";
 			document.getElementById("densMessage").style.display = "block";
 			document.getElementById("varsMessage").style.display = "none";
+			document.getElementById("qtlMessage").style.display = "none";
 
 			if (cmdArgs[3] == 'exp') {
 				document.getElementById("expDataInterface").style.display = "block";
 			}
 		} else if (checkedOption == 'button41') {
 			cmdArgs[2] = 'vars';
-			cmdArgs[3] = 'exp'
+			cmdArgs[3] = 'exp';
 			document.getElementById("inputFiles").style.display = "block";
 			document.getElementById("readsControl").style.display = "block";
 			document.getElementById("expMutType").style.display = "block";
@@ -380,7 +383,27 @@ window.onload = function() {
 			document.getElementById("snpMessage").style.display = "none";
 			document.getElementById("densMessage").style.display = "none";
 			document.getElementById("varsMessage").style.display = "block";
+			document.getElementById("qtlMessage").style.display = "none";
 
+		} else if (checkedOption == 'button43') {
+			cmdArgs[2] = 'qtl';
+			cmdArgs[3] = 'exp';
+			document.getElementById("inputFiles").style.display = "block";
+			document.getElementById("readsControl").style.display = "block";
+			document.getElementById("expMutType").style.display = "none";
+			document.getElementById("checkBoxStringency").style.display = "block";
+			document.getElementById("checkBoxMultithread").style.display = "block";
+			document.getElementById("backgroundCrossCtype").style.display = "none";
+			document.getElementById("insSeqField").style.display = "none";
+			document.getElementById("expDataInterface").style.display = "block";
+			document.getElementById("dataSource").style.display = "none";
+			document.getElementById("simDataInterface").style.display = "none";
+			// Help messages
+			document.getElementById("insMessage").style.display = "none";
+			document.getElementById("snpMessage").style.display = "none";
+			document.getElementById("densMessage").style.display = "none";
+			document.getElementById("varsMessage").style.display = "none";
+			document.getElementById("qtlMessage").style.display = "block";
 		}
 
 		//updateCmd();
@@ -1142,6 +1165,7 @@ window.onload = function() {
 	document.getElementById("button2").onclick = qLoad;
 	document.getElementById("button40").onclick = qLoad;
 	document.getElementById("button41").onclick = qLoad;
+	document.getElementById("button43").onclick = qLoad;
 	document.getElementById("button3").onclick = buttons_dataSource;
 	document.getElementById("button4").onclick = buttons_dataSource;
 	

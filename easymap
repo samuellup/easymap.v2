@@ -20,7 +20,7 @@ import argparse, os, fnmatch, subprocess, json
 parser = argparse.ArgumentParser()
 parser.add_argument('--usage', '-u', action = 'store_true', dest = 'usage')
 parser.add_argument('--project-name', '-n', action = 'store', default = 'n/p', dest = 'project_name')
-parser.add_argument('--workflow', '-w', action = 'store', default = 'n/p', dest = 'workflow', choices = set(('snp','ins','dens', 'vars')))
+parser.add_argument('--workflow', '-w', action = 'store', default = 'n/p', dest = 'workflow', choices = set(('snp','ins','dens', 'vars', 'qtl')))
 parser.add_argument('--simulate-data', '-sim', action = 'store_true', dest = 'simulate')
 parser.add_argument('--reference-sequence', '-r', action = 'store', default = 'n/p', dest = 'ref_seq')
 parser.add_argument('--insertion-sequence', '-i', action = 'store', default = 'n/p', dest = 'ins_seq')
@@ -486,7 +486,7 @@ if data_source == "exp":
 				problems.append("Argument -p/--reads-test: the two names provided are identical.")
 
 	# If snp mode, check control reads
-	if workflow == "snp" or workflow == "dens" or workflow == "vars":
+	if workflow == "snp" or workflow == "dens" or workflow == "vars" or workflow == "qtl":
 		
 		if reads_control == "n/p":
 			error = 1
@@ -523,7 +523,7 @@ if data_source == "exp":
 			problems.append("The same name was provided to arguments -p/--reads-test and -c/--reads-control.")
 
 # Deal with the --low-stringency parameter
-if workflow == "snp" or workflow == "dens":
+if workflow == "snp" or workflow == "dens" or workflow == "qtl":
 	if args.stringency:
 		stringency = "low_stringency"
 	else:

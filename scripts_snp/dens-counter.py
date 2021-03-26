@@ -51,18 +51,49 @@ for ch in chromosomes:
 
 
 # Weighted averages 
-for i, p in enumerate(recount):
-	if i == 0: 
-		w_dens = 0.6*recount[i][2] + 0.25*recount[i+1][2] + 0.15*recount[i+2][2]
-	elif i == 1: 
-		w_dens =  0.2*recount[i-1][2] + 0.55*recount[i][2] + 0.15*recount[i+1][2] + 0.1*recount[i+2][2]
-	elif i == len(recount)-2:
-		w_dens = 0.1*recount[i-2][2] + 0.15*recount[i-1][2] + 0.55*recount[i][2] + 0.2*recount[i+1][2] 
-	elif i == len(recount)-1:
-		w_dens = 0.15*recount[i-2][2] + 0.25*recount[i-1][2] + 0.6*recount[i][2]
-	else:
-		w_dens = 0.1*recount[i-2][2] + 0.15*recount[i-1][2] + 0.5*recount[i][2] + 0.15*recount[i+1][2] + 0.1*recount[i+2][2]
-	recount[i].append(w_dens)
-	
-for p in recount: 
+out_list = list()
+for ch in chromosomes:
+	ch_list = list()
+	for p in recount:
+		if p[0] == ch[0]: 
+			ch_list.append(p)
+
+	if len(ch_list) > 3: 
+		for i, p in enumerate(ch_list):
+			if i == 0: 
+				w_avg = 0.6*ch_list[i][2] + 0.25*ch_list[i+1][2] + 0.15*ch_list[i+2][2]
+			elif i == 1: 
+				w_avg =  0.2*ch_list[i-1][2] + 0.55*ch_list[i][2] + 0.15*ch_list[i+1][2] + 0.1*ch_list[i+2][2]
+			elif i == len(ch_list)-2:
+				w_avg = 0.1*ch_list[i-2][2] + 0.15*ch_list[i-1][2] + 0.55*ch_list[i][2] + 0.2*ch_list[i+1][2] 
+			elif i == len(ch_list)-1:
+				w_avg = 0.15*ch_list[i-2][2] + 0.25*ch_list[i-1][2] + 0.6*ch_list[i][2]
+			else:
+				w_avg = 0.1*ch_list[i-2][2] + 0.15*ch_list[i-1][2] + 0.5*ch_list[i][2] + 0.15*ch_list[i+1][2] + 0.1*ch_list[i+2][2]
+			ch_list[i].append(w_avg)
+	elif len(ch_list) == 3:
+		for i, p in enumerate(ch_list): 
+			if i == 0: 
+				w_avg = 0.6*ch_list[i][2] + 0.25*ch_list[i+1][2] + 0.15*ch_list[i+2][2]
+			elif i == 1: 
+				w_avg =  0.2*ch_list[i-1][2] + 0.6*ch_list[i][2] + 0.2*ch_list[i+1][2] 
+			elif i == 2: 
+				w_avg = 0.15*ch_list[i-2][2] + 0.25*ch_list[i-1][2] + 0.6*ch_list[i][2] 
+			ch_list[i].append(w_avg)
+	elif len(ch_list) == 2:
+		for i, p in enumerate(ch_list): 
+			if i == 0: 
+				w_avg = 0.75*ch_list[i][2] + 0.25*ch_list[i+1][2]
+			elif i == 1: 
+				w_avg =  0.25*ch_list[i-1][2] + 0.75*ch_list[i][2] 
+			ch_list[i].append(w_avg)
+	elif len(ch_list) == 1:
+		for i, p in enumerate(ch_list): 
+			w_avg = ch_list[i][2] 
+		ch_list[i].append(w_avg)
+
+	for p in ch_list: 
+		out_list.append(p)
+
+for p in out_list: 
 	out.write(str(str(p[0])) + "\t" + str(p[1]) + "\t" + str(p[2]) + "\t" + str(p[3]) + "\n") 

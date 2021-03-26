@@ -86,6 +86,11 @@ body {font-size:16px;}
 				</div>
 
 				<div class="mx-button" style="padding:12px; padding-bottom:20px;">
+					<input type="radio" class="analysisType" name="mx12" id="button43" />
+					<label for="button43" unselectable>QTL-seq</label>					
+				</div>
+
+				<div class="mx-button" style="padding:12px; padding-bottom:20px;">
 					<input type="radio" class="analysisType" name="mx12" id="button41" />
 					<label for="button41" unselectable>Variant analyzer</label>					
 				</div>
@@ -106,7 +111,11 @@ body {font-size:16px;}
 			<div id="varsMessage" style="display:none; margin-bottom: 25px;">
 				<i>Analyses the effect of a set of polymorphisms on coding sequences. </i>
 			</div>
+			<div id="qtlMessage" style="display:none; margin-bottom: 25px;">
+				<i>Mapping of natural variants using QTL-seq approaches. </i>
+			</div>
 
+	
 			<div id="analysisTypeValidationInfo" class="warningMessage"></div>
 			
 			<div id="dataSource" class="buttons-wrap" style="display:none; margin-bottom:22px";>
