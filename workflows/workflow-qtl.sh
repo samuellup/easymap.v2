@@ -204,7 +204,7 @@ function get_problem_va {
 	depth_alignment $f1/alignment1.bam $f3/frequence_depth_alignment_distribution_sample.png
 
 	#Run vcf filter
-	dp_min=4 
+	dp_min=10 
 
 	{
 		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_raw.va -b $f1/F2_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -qual_min $problemSample_snpQualityTheshold -mut_type $exp_mut_type  2>> $my_log_file
@@ -307,7 +307,7 @@ function get_control_va {
 	depth_alignment $f1/alignment1P.bam $f3/frequence_depth_alignment_distribution_control.png
 
 	#Run vcf filter
-	dp_min=4 
+	dp_min=10
 
 	{
 		python2 $location/scripts_snp/variants-filter.py -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -mut_type $exp_mut_type  2>> $my_log_file
