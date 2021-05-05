@@ -827,6 +827,7 @@ if mut_type == 'dens':
 					alt_nt = str(sp[4]).strip()
 					aminoacid = str(sp[17]).strip() + ' &rarr; ' + str(sp[18]).strip()
 					if aminoacid == '- &rarr; -': aminoacid = '-'
+					if aminoacid == 'aa &rarr; change': aminoacid = '-'
 					primer_f = str(sp[20]).strip()
 					primer_r = str(sp[22]).strip()
 					upstream = str(sp[24]).strip()
@@ -1007,6 +1008,7 @@ if mut_type == 'vars':
 					alt_nt = str(sp[4]).strip()
 					aminoacid = str(sp[17]).strip() + ' &rarr; ' + str(sp[18]).strip()
 					if aminoacid == '- &rarr; -': aminoacid = '-'
+					if aminoacid == 'aa &rarr; change': aminoacid = '-'
 					primer_f = str(sp[20]).strip()
 					primer_r = str(sp[22]).strip()
 					upstream = str(sp[24]).strip()
@@ -1070,6 +1072,7 @@ if mut_type == 'vars':
 					alt_nt = str(sp[4]).strip()
 					aminoacid = str(sp[17]).strip() + ' &rarr; ' + str(sp[18]).strip()
 					if aminoacid == '- &rarr; -': aminoacid = '-'
+					if aminoacid == 'aa &rarr; change': aminoacid = '-'
 					primer_f = str(sp[20]).strip()
 					primer_r = str(sp[22]).strip()
 					upstream = str(sp[24]).strip()
@@ -1295,6 +1298,7 @@ if mut_type == 'snp':
 					alt_nt = str(sp[4]).strip()
 					aminoacid = str(sp[17]).strip() + ' &rarr; ' + str(sp[18]).strip()
 					if aminoacid == '- &rarr; -': aminoacid = '-'
+					if aminoacid == 'aa &rarr; change': aminoacid = '-'
 					primer_f = str(sp[20]).strip()
 					primer_r = str(sp[22]).strip()
 					upstream = str(sp[24]).strip()
@@ -1461,8 +1465,8 @@ if mut_type == 'qtl':
 
 	if n_candidates == 0:
 		output.write(
-		'		<center> <p>No candidate variants found</p> <center/>' + '\n'
-		'		<p>Click to see a list of <a href="candidate_variants_total.txt" target="_blank">all variants</a>. </p>' + '\n'
+		'		<center> <p>No significant linkage disequilibrium was found</p> <center/>' + '\n'
+		'		<p>Click to see a list of <a href="candidate_variants_total.txt" target="_blank">all variants in the genome</a>. </p>' + '\n'
 		
 		)
 
@@ -1504,6 +1508,7 @@ if mut_type == 'qtl':
 					alt_nt = str(sp[4]).strip()
 					aminoacid = str(sp[19]).strip() + ' &rarr; ' + str(sp[20]).strip()
 					if aminoacid == '- &rarr; -': aminoacid = '-'
+					if aminoacid == 'aa &rarr; change': aminoacid = '-'
 					primer_f = str(sp[22]).strip()
 					primer_r = str(sp[24]).strip()
 					upstream = str(sp[26]).strip()
