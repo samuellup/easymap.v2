@@ -2,7 +2,7 @@
 
 #from __future__ import division
 import argparse
-from draw import fa_vs_pos, insertions_overview_and_histograms, gene_plot, legend, candidates_zoom, gene_legend, dens_graphs, dens_ovw, qtl_plot
+from draw import fa_vs_pos, insertions_overview_and_histograms, gene_plot, legend, candidates_zoom, gene_legend, dens_graphs, dens_ovw, qtl_plot, qtl_plot_points
 parser = argparse.ArgumentParser()
 
 #INPUT VARIABLES FOR SNP
@@ -58,6 +58,7 @@ elif args.my_mut == 'dens':
 	
 elif args.my_mut == 'qtl':
 	qtl_plot()
+	qtl_plot_points()
 	gene_plot()	
 
 elif args.my_mut == 'vars':

@@ -27,11 +27,11 @@ for basename in os.listdir(dirname):
 for file_name in user_input_files:
 	extension = file_name.split('.')[-1]
 	name = file_name.strip('.'+extension)
-	if extension == "fa":
+	if extension == "fa" or extension == 'fna' or extension == 'fasta':
 		files_fasta.append(file_name)
 		basename = file_name.split('.')[0]
 		if basename not in files_fasta_basenames: files_fasta_basenames.append(basename)
-	elif extension == 'fq':
+	elif extension == 'fq' or extension == 'fastq':
 		files_fastq.append(file_name)
 		files_control.append(file_name)
 		files_problem_vars.append(file_name)
