@@ -100,10 +100,10 @@ elif [ $interval_width -ge 11000000 ]; then
 	wd_width=1000000
 	wd_step=1000000
 fi
-# Bypass (for testing)
-wd_width=500000
-wd_step=500000
-
+# BYPASS (for testing)
+wd_width=100000
+wd_step=100000
+interval_width=2000000
 
 ##################################################################################################################################################################################
 #																																												 #
@@ -159,7 +159,7 @@ function get_problem_va {
 	#SAM to BAM
 	{
 		$location/samtools1/samtools sort  -@ $n_threads  $f1/alignment1.sam > $f1/alignment1.bam 2> $f2/sam-to-bam_problem-sample_std2.txt
-		rm -rf ./user_projects/$project_name/1_intermediate_files/alignment1.sam
+		rm $f1/alignment1.sam
 
 	} || {
 		echo 'Error transforming SAM to BAM.' >> $my_log_file
@@ -235,7 +235,6 @@ function get_problem_va {
 ##################################################################################################################################################################################
 
 function get_control_va { 
-	
 	if [ $my_control_mode == se ] 
 	then
 		#Run hisat2 unpaired to align raw reads to genome 
@@ -269,8 +268,7 @@ function get_control_va {
 	#SAM to BAM
 	{
 		$location/samtools1/samtools sort  -@ $n_threads $f1/alignment1P.sam > $f1/alignment1P.bam 2> $f2/sam-to-bam_control-sample_std2.txt
-
-		rm -rf ./user_projects/$project_name/1_intermediate_files/alignment1P.sam
+		rm $f1/alignment1P.sam
 
 	} || {
 		echo $(date "+%F > %T")': Error transforming SAM to BAM' >> $my_log_file
