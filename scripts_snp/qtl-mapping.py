@@ -1,3 +1,5 @@
+# Testing: 	python2 qtl-mapping.py -in F2_control_comparison.va  -out mapping_info.txt -out2 candidate_region.txt -width 100000 -step 100000 -f_input genome.fa	-cand_interval 2000000
+
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -63,6 +65,7 @@ for ch in chromosomes:
 
 # Weighted averages 
 out_list = list()
+w_avg_list = list()
 for ch in chromosomes:
 	ch_list = list()
 	for p in recount:
@@ -72,16 +75,17 @@ for ch in chromosomes:
 	if len(ch_list) > 3: 
 		for i, p in enumerate(ch_list):
 			if i == 0: 
-				w_avg = 0.6*ch_list[i][2] + 0.25*ch_list[i+1][2] + 0.15*ch_list[i+2][2]
+				w_avg = 0.65*ch_list[i][2] + 0.25*ch_list[i+1][2] + 0.1*ch_list[i+2][2]
 			elif i == 1: 
-				w_avg =  0.15*ch_list[i-1][2] + 0.6*ch_list[i][2] + 0.15*ch_list[i+1][2] + 0.1*ch_list[i+2][2]
+				w_avg =  0.15*ch_list[i-1][2] + 0.62*ch_list[i][2] + 0.14*ch_list[i+1][2] + 0.09*ch_list[i+2][2]
 			elif i == len(ch_list)-2:
-				w_avg = 0.09*ch_list[i-2][2] + 0.14*ch_list[i-1][2] + 0.6*ch_list[i][2] + 0.17*ch_list[i+1][2] 
+				w_avg = 0.09*ch_list[i-2][2] + 0.14*ch_list[i-1][2] + 0.62*ch_list[i][2] + 0.15*ch_list[i+1][2] 
 			elif i == len(ch_list)-1:
-				w_avg = 0.15*ch_list[i-2][2] + 0.25*ch_list[i-1][2] + 0.6*ch_list[i][2]
+				w_avg = 0.1*ch_list[i-2][2] + 0.25*ch_list[i-1][2] + 0.65*ch_list[i][2]
 			else:
 				w_avg = 0.06*ch_list[i-2][2] + 0.14*ch_list[i-1][2] + 0.6*ch_list[i][2] + 0.14*ch_list[i+1][2] + 0.06*ch_list[i+2][2]
 			ch_list[i].append(w_avg)
+			w_avg_list.append(w_avg)
 	elif len(ch_list) == 3:
 		for i, p in enumerate(ch_list): 
 			if i == 0: 
@@ -91,6 +95,7 @@ for ch in chromosomes:
 			elif i == 2: 
 				w_avg = 0.15*ch_list[i-2][2] + 0.25*ch_list[i-1][2] + 0.6*ch_list[i][2] 
 			ch_list[i].append(w_avg)
+			w_avg_list.append(w_avg)
 	elif len(ch_list) == 2:
 		for i, p in enumerate(ch_list): 
 			if i == 0: 
@@ -98,10 +103,12 @@ for ch in chromosomes:
 			elif i == 1: 
 				w_avg =  0.25*ch_list[i-1][2] + 0.75*ch_list[i][2] 
 			ch_list[i].append(w_avg)
+			w_avg_list.append(w_avg)
 	elif len(ch_list) == 1:
 		for i, p in enumerate(ch_list): 
 			w_avg = ch_list[i][2] 
 		ch_list[i].append(w_avg)
+		w_avg_list.append(w_avg)
 
 	for p in ch_list: 
 		out_list.append(p)
@@ -109,11 +116,24 @@ for ch in chromosomes:
 for p in out_list: 
 	out.write(str(str(p[0])) + "\t" + str(p[1]) + "\t" + str(p[2]) + "\t" + str(p[3]) + "\n") 
 
+#set starting limit dAF and dAF correction factor (average dAF across the genome)
+dAF_lim = 0.4
+sum_v=0.0
+for v in w_avg_list: sum_v = sum_v + float(v)
+try: dAF_correction = sum_v/(float(len(w_avg_list)))
+except: dAF_correction = 0.0
+
 # Retrieving information for qtl selection 
 dAF_peaks = list()
-for p in out_list: 
-	if abs(float(p[3])) > 0.4: 
-		dAF_peaks.append(p)		
+while dAF_lim >= 0.15:
+	for p in out_list: 
+		if (abs(float(p[3])) + dAF_correction ) > dAF_lim: 
+			dAF_peaks.append(p)
+	if len(dAF_peaks) >= 1: break
+	else: 
+		if dAF_lim >= 0.3: dAF_lim = dAF_lim - 0.05
+		else: dAF_lim = dAF_lim - 0.02
+
 
 # CR selection 
 regs = list()
