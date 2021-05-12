@@ -375,7 +375,9 @@ function depth_alignment {
 
 
 # Get VA files
-problem_format, control_format, in_format = "fastq", "fastq", "fastq"
+problem_format="fastq"
+control_format="fastq"
+in_format="fastq"
 get_problem_va
 get_control_va
 

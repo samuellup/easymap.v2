@@ -59,7 +59,7 @@ if args.ref_seq == "n/p":
 	error = 1
 	problems.append("Argument -r/--reference-sequence is required.")
 
-if args.gff_file == "n/p":
+if args.gff_file == "n/p" and args.workflow != "qtl":
 	error = 1
 	problems.append("Argument -g/--gff-file is required.")
 
@@ -169,7 +169,11 @@ if fasta_name_has_bad_format == False:
 		problems.append("Argument -r/--reference-sequence: the name provided does not match the basename of any .fa file in the directory /user_data.")
 
 # Check gff file
-if gff_file not in input_files:
+if gff_file not in input_files and args.workflow != "qtl":
+		error = 1
+		problems.append("Argument -g/--gff-file: the name provided does not match any file in the directory /user_data.")
+
+if gff_file not in input_files and args.workflow == "qtl" and gff_file != "n/p":
 		error = 1
 		problems.append("Argument -g/--gff-file: the name provided does not match any file in the directory /user_data.")
 
@@ -518,7 +522,7 @@ if data_source == "exp":
 				error = 1
 				problems.append("Argument -c/--reads-control: the name provided does not match any file in the directory /user_data.")
 
-		if reads_control == reads_sample:
+		if reads_control == reads_sample and reads_sample != "n/p":
 			error = 1
 			problems.append("The same name was provided to arguments -p/--reads-test and -c/--reads-control.")
 

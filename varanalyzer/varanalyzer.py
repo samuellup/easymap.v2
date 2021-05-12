@@ -144,14 +144,16 @@ if input_type == 'lim':
 
 # Extract needed info from template gff file: only mRNAs and certain columns
 # The following code only checks whether a mutation position lies within a mRNA sequence
+input_gff="."
 gff_array1 = []
-with open(gff_source) as input_gff:
-	for line_gff in input_gff:
-		if not line_gff.startswith('#'):
-			fields_gff = line_gff.split('\t')
-			if fields_gff[2].lower() == 'mrna':
-				useful_gff_info = fields_gff[2].lower(), fields_gff[0].lower(), int(fields_gff[3]), int(fields_gff[4]), fields_gff[6], fields_gff[8].split(';')[0][3:]
-				gff_array1.append(useful_gff_info)
+if gff_source != "user_data/n/p": 
+	with open(gff_source) as input_gff:
+		for line_gff in input_gff:
+			if not line_gff.startswith('#'):
+				fields_gff = line_gff.split('\t')
+				if fields_gff[2].lower() == 'mrna':
+					useful_gff_info = fields_gff[2].lower(), fields_gff[0].lower(), int(fields_gff[3]), int(fields_gff[4]), fields_gff[6], fields_gff[8].split(';')[0][3:]
+					gff_array1.append(useful_gff_info)
 
 # Check whether each mutation position lies within a mRNA sequence or a putative regulatory region of the template gff file
 variants_info = []
@@ -201,13 +203,14 @@ del mut_array, gff_array1
 # makes more complicated the detection on the functional element affected by the mutation just
 # after "if variant_info[5] == 'tu':".
 gff_array2 = []
-with open(gff_source) as input_gff:
-	for line_gff in input_gff:
-		if not line_gff.startswith("#"):
-			fields_gff = line_gff.split('\t')
-			if fields_gff[2].lower() == 'cds' or fields_gff[2].lower() == 'exon' or fields_gff[2].lower() == 'five_prime_utr' or fields_gff[2].lower() == 'three_prime_utr':
-				useful_gff_info = fields_gff[0].lower(), int(fields_gff[3]), int(fields_gff[4]), fields_gff[2].lower(), fields_gff[8]
-				gff_array2.append(useful_gff_info)
+if gff_source != "user_data/n/p": 
+	with open(gff_source) as input_gff:
+		for line_gff in input_gff:
+			if not line_gff.startswith("#"):
+				fields_gff = line_gff.split('\t')
+				if fields_gff[2].lower() == 'cds' or fields_gff[2].lower() == 'exon' or fields_gff[2].lower() == 'five_prime_utr' or fields_gff[2].lower() == 'three_prime_utr':
+					useful_gff_info = fields_gff[0].lower(), int(fields_gff[3]), int(fields_gff[4]), fields_gff[2].lower(), fields_gff[8]
+					gff_array2.append(useful_gff_info)
 
 # Analyze variants that are marked as interrupting a mRNA or putative regulatory region
 variants_info2 = []

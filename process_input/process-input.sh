@@ -314,7 +314,11 @@ fi
 
 
 # Check gff input
-gff=`python2 process_input/verify-input.py -gff $gff_file 2>> $my_log_file` 
+if [ $gff_file != "user_data/n/p" ]; then
+	gff=`python2 process_input/verify-input.py -gff $gff_file 2>> $my_log_file` 
+else
+	gff=0
+fi
 
 if [ $gff == 0 ]; then
 	echo $(date "+%F > %T")": GFF3 input check passed." >> $my_log_file
@@ -339,7 +343,11 @@ fi
 
 
 # Check contigs match between fasta and gff3 files
-match=`python2 process_input/verify-input.py -fa_match $ref_seqs_merged_file -gff_match $gff_file 2>> $my_log_file` 
+if [ $gff_file != "user_data/n/p" ]; then
+	match=`python2 process_input/verify-input.py -fa_match $ref_seqs_merged_file -gff_match $gff_file 2>> $my_log_file` 
+else
+	match=4
+fi
 
 if [ $match == 0 ]; then
 		echo $(date "+%F > %T")": Contigs match check between FASTA and GFF3 inputs passed." >> $my_log_file
@@ -351,6 +359,8 @@ elif [ $match == 2 ]; then
 		exit_code=1
 elif [ $match == 3 ]; then
 		echo $(date "+%F > %T")": Contigs match check between FASTA and GFF3 inputs. Warning: some contig names in the GFF3 file are not in the FASTA file. The execution will continue. Please provide new files if considered necessary." >> $my_log_file	
+elif [ $match == 4 ]; then
+		echo $(date "+%F > %T")": GFF file not provided, structural annotation will not be reported" >> $my_log_file	
 fi
 
 echo $exit_code

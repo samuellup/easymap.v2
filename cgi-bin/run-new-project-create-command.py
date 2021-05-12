@@ -7,13 +7,17 @@ arguments = cgi.FieldStorage()
 
 print 'Content-type:text/html\r\n\r\n'
 
+#Gff bypass
+if arguments['gff_file'].value == "None": gff_input="n/p"
+else: gff_input = arguments['gff_file'].value
+
 cmdString = str(arguments['program'].value) + ' ' + \
 			str(arguments['project_name'].value) + ' ' + \
 			str(arguments['workflow'].value) + ' ' + \
 			str(arguments['data_source'].value) + ' ' + \
 			str(arguments['ref_seq'].value) + ' ' + \
 			str(arguments['ins_seq'].value) + ' ' + \
-			str(arguments['gff_file'].value) + ' ' + \
+			str(gff_input) + ' ' + \
 			str(arguments['ann_file'].value) + ' ' + \
 			str(arguments['read_s'].value) + ' ' + \
 			str(arguments['read_f'].value) + ' ' + \

@@ -9,6 +9,7 @@ print 'Content-type:application/json\r\n\r\n'
 files_fasta_basenames = list()
 files_fasta = list()
 files_fastq = list()
+files_gff = list()
 files_otherFiles = list()
 files_control = list()
 files_problem_vars = list()
@@ -38,6 +39,10 @@ for file_name in user_input_files:
 	elif extension == 'vcf': 
 		files_control.append(file_name)
 		files_problem_vars.append(file_name)
+	elif extension == 'gff' or extension == 'gff3': 
+		files_gff.append(file_name)
+		files_otherFiles.append(file_name)
+
 	else:
 		files_otherFiles.append(file_name)
 
@@ -49,8 +54,9 @@ files_otherFiles = sorted(files_otherFiles)
 files_control = sorted(files_control)
 files_problem_vars = sorted(files_problem_vars)
 files_control.insert(0, "None")
+files_gff.insert(0, "None")
 
-all_files = [files_fasta_basenames, files_fasta, files_fastq, files_otherFiles, files_control, files_problem_vars]
+all_files = [files_fasta_basenames, files_fasta, files_fastq, files_otherFiles, files_control, files_problem_vars, files_gff]
 
 print json.dumps(all_files)
 

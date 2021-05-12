@@ -119,22 +119,6 @@ function listInputFiles() {
 				}
 			}
 
-			// Create interface to select GFF and ANN files
-			var otherFiles = inputFilesresponse[3];
-			var gffFiles = document.getElementById('gffFileSelector');
-			var annFiles = document.getElementById('annFileSelector');
-			if (otherFiles.length < 1) {
-				gffFiles.options[gffFiles.options.length] = new Option('There are no files with the appropriate extension', 'n/p');
-				annFiles.options[annFiles.options.length] = new Option('There are no files with the appropriate extension');
-			} else {
-				gffFiles.options[gffFiles.options.length] = new Option('Select a file', 'n/p');
-				annFiles.options[annFiles.options.length] = new Option('Select a file', 'n/p');
-				for (i = 0; i < otherFiles.length; i++) {
-					gffFiles.options[gffFiles.options.length] = new Option(otherFiles[i], otherFiles[i]);
-					annFiles.options[annFiles.options.length] = new Option(otherFiles[i], otherFiles[i]);
-				}
-			}
-
 			// Create interfaces to select fastq files
 			var fastqFiles = inputFilesresponse[2];
 			var controlFiles = inputFilesresponse[4]; 
@@ -196,6 +180,44 @@ function listInputFiles() {
 					}
 				}
 			}
+
+			// Create interface to select ANN files
+			var otherFiles = inputFilesresponse[3];
+			var annFiles = document.getElementById('annFileSelector');
+			if (otherFiles.length < 1) {
+				annFiles.options[annFiles.options.length] = new Option('There are no files with the appropriate extension');
+			} else {
+				annFiles.options[annFiles.options.length] = new Option('Select a file', 'n/p');
+				for (i = 0; i < otherFiles.length; i++) {
+					annFiles.options[annFiles.options.length] = new Option(otherFiles[i], otherFiles[i]);
+				}
+			}
+
+			// Create interface to select GFF files
+			if (checkedOptionP == 'button43') {
+				var gffInput = inputFilesresponse[6];
+				var gffFiles = document.getElementById('gffFileSelector');
+				if (gffInput.length < 1) {
+					gffFiles.options[gffFiles.options.length] = new Option('There are no files with the appropriate extension', 'n/p');
+				} else {
+					gffFiles.options[gffFiles.options.length] = new Option('Select a file', 'n/p');
+					for (i = 0; i < gffInput.length; i++) {
+						gffFiles.options[gffFiles.options.length] = new Option(gffInput[i], gffInput[i]);
+					}
+				}
+			} else {
+				var otherFiles = inputFilesresponse[3];
+				var gffFiles = document.getElementById('gffFileSelector');
+				if (otherFiles.length < 1) {
+					gffFiles.options[gffFiles.options.length] = new Option('There are no files with the appropriate extension', 'n/p');
+				} else {
+					gffFiles.options[gffFiles.options.length] = new Option('Select a file', 'n/p');
+					for (i = 0; i < otherFiles.length; i++) {
+						gffFiles.options[gffFiles.options.length] = new Option(otherFiles[i], otherFiles[i]);
+					}
+				}
+			}
+
 		}
 	};
 	xmlhttp.open("GET", "../cgi-bin/run-new-project-list-input-files.py", true);

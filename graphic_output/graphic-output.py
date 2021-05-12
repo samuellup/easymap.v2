@@ -59,7 +59,8 @@ elif args.my_mut == 'dens':
 elif args.my_mut == 'qtl':
 	qtl_plot()
 	qtl_plot_points()
-	gene_plot()	
+	if args.gff != "user_data/n/p": 
+		gene_plot()	
 
 elif args.my_mut == 'vars':
 	gene_plot()	
