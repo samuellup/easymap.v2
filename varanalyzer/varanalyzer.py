@@ -309,6 +309,8 @@ for variant_info in variants_info:
 				target_fasta_header = '>' + variant_info[1]
 						
 				with open(contigs_source) as fp:
+					cds_seq_list_wt = []
+					cds_seq_list_mt = []
 					for name_contig, seq_contig in read_fasta(fp): # Create an array with the names and sequences of the contigs in the fasta input using the function 'read_fasta(fp)'
 						if name_contig.lower() == target_fasta_header.lower(): # Only work with the contig where the mutation lies
 							cds_seq_list_wt = []
