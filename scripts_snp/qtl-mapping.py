@@ -75,15 +75,15 @@ for ch in chromosomes:
 	if len(ch_list) > 3: 
 		for i, p in enumerate(ch_list):
 			if i == 0: 
-				w_avg = 0.65*ch_list[i][2] + 0.25*ch_list[i+1][2] + 0.1*ch_list[i+2][2]
+				w_avg = 0.6*ch_list[i][2] + 0.25*ch_list[i+1][2] + 0.15*ch_list[i+2][2]
 			elif i == 1: 
-				w_avg =  0.15*ch_list[i-1][2] + 0.62*ch_list[i][2] + 0.14*ch_list[i+1][2] + 0.09*ch_list[i+2][2]
+				w_avg =  0.2*ch_list[i-1][2] + 0.55*ch_list[i][2] + 0.15*ch_list[i+1][2] + 0.1*ch_list[i+2][2]
 			elif i == len(ch_list)-2:
-				w_avg = 0.09*ch_list[i-2][2] + 0.14*ch_list[i-1][2] + 0.62*ch_list[i][2] + 0.15*ch_list[i+1][2] 
+				w_avg = 0.1*ch_list[i-2][2] + 0.15*ch_list[i-1][2] + 0.55*ch_list[i][2] + 0.2*ch_list[i+1][2] 
 			elif i == len(ch_list)-1:
-				w_avg = 0.1*ch_list[i-2][2] + 0.25*ch_list[i-1][2] + 0.65*ch_list[i][2]
+				w_avg = 0.15*ch_list[i-2][2] + 0.25*ch_list[i-1][2] + 0.6*ch_list[i][2]
 			else:
-				w_avg = 0.06*ch_list[i-2][2] + 0.14*ch_list[i-1][2] + 0.6*ch_list[i][2] + 0.14*ch_list[i+1][2] + 0.06*ch_list[i+2][2]
+				w_avg = 0.1*ch_list[i-2][2] + 0.15*ch_list[i-1][2] + 0.5*ch_list[i][2] + 0.15*ch_list[i+1][2] + 0.1*ch_list[i+2][2]
 			ch_list[i].append(w_avg)
 			w_avg_list.append(w_avg)
 	elif len(ch_list) == 3:
@@ -91,7 +91,7 @@ for ch in chromosomes:
 			if i == 0: 
 				w_avg = 0.6*ch_list[i][2] + 0.25*ch_list[i+1][2] + 0.15*ch_list[i+2][2]
 			elif i == 1: 
-				w_avg =  0.2*ch_list[i-1][2] + 0.6*ch_list[i][2] + 0.2*ch_list[i+1][2] 
+				w_avg =  0.25*ch_list[i-1][2] + 0.5*ch_list[i][2] + 0.25*ch_list[i+1][2] 
 			elif i == 2: 
 				w_avg = 0.15*ch_list[i-2][2] + 0.25*ch_list[i-1][2] + 0.6*ch_list[i][2] 
 			ch_list[i].append(w_avg)
@@ -99,9 +99,9 @@ for ch in chromosomes:
 	elif len(ch_list) == 2:
 		for i, p in enumerate(ch_list): 
 			if i == 0: 
-				w_avg = 0.75*ch_list[i][2] + 0.25*ch_list[i+1][2]
+				w_avg = 0.7*ch_list[i][2] + 0.3*ch_list[i+1][2]
 			elif i == 1: 
-				w_avg =  0.25*ch_list[i-1][2] + 0.75*ch_list[i][2] 
+				w_avg =  0.3*ch_list[i-1][2] + 0.7*ch_list[i][2] 
 			ch_list[i].append(w_avg)
 			w_avg_list.append(w_avg)
 	elif len(ch_list) == 1:
@@ -178,3 +178,9 @@ regs = regs_s
 for reg in regs: 
 	with open(args.out2, "a+") as out: 
 		out.write('?'+"\t" + str(reg[0]) +  "\t" + str(reg[1]) +"\t" + str(reg[2]) + "\n")
+
+#Write mapping data
+try: 
+	with open(args.out2, "a+") as out: 
+		out.write('#'+"\t" + str("dAF_correction: ") + str(dAF_correction) +  "\t"  + str("dAF_lim: ") +  str(dAF_lim) + "\n")
+except: pass
