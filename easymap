@@ -186,7 +186,6 @@ if ann_file != "n/p":
 #In the analysis mode of snp, cross_type, is_ref_strain and control_parental are required parameters
 
 SNPexperimentalDesignsAllowed = ['ref_bc_parmut', 'ref_bc_f2wt', 'ref_oc_parmut', 'ref_oc_parpol', 'noref_bc_f2wt', 'noref_oc_parmut', 'n/p']
-
 if workflow == "snp":
 	if args.exp_design == "n/p":
 		error = 1
@@ -492,9 +491,15 @@ if data_source == "exp":
 	# If snp mode, check control reads
 	if workflow == "snp" or workflow == "dens" or workflow == "vars" or workflow == "qtl":
 		
-		if reads_control == "n/p":
+		if reads_control == "n/p" and workflow == "qtl":
 			error = 1
-			problems.append("Argument -c/--reads-control is required. Alternatively, you can use the -sim/--simulate-reads mode.")
+			problems.append("Argument -c/--reads-control is required for this experimental design.")
+		elif reads_control == "n/p" and workflow == "snp" and control_type == "f2wt" :
+			error = 1
+			problems.append("Argument -c/--reads-control is required for this experimental design.")
+		elif reads_control == "n/p" :
+			lib_type_control = "se" 
+			read_s_control = "None"
 		else:
 			RC = reads_control.split(",") 
 			if len(RC) == 1:
@@ -518,7 +523,7 @@ if data_source == "exp":
 					problems.append("Argument -c/--reads-control: the two names provided are identical.")
 		
 		if lib_type_control == "se":
-			if reads_control not in input_files:
+			if reads_control not in input_files and reads_control != "n/p":
 				error = 1
 				problems.append("Argument -c/--reads-control: the name provided does not match any file in the directory /user_data.")
 
