@@ -76,7 +76,7 @@ if [ $stringency == high_stringency ]; then
 else
 	problemSample_bowtie_mp="--mp 3,2"
 	problemSample_mpileup_C=""
-	problemSample_snpQualityTheshold="20"
+	problemSample_snpQualityTheshold="30"
 
 fi
 

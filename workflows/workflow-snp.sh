@@ -72,7 +72,7 @@ n_threads=${22}
 if [ $stringency == high_stringency ]; then
 	problemSample_bowtie_mp="--mp 6,2"
 	problemSample_mpileup_C="-C50"
-	problemSample_snpQualityTheshold="120"
+	problemSample_snpQualityTheshold="100"
 else
 	problemSample_bowtie_mp="--mp 3,2"
 	problemSample_mpileup_C=""
