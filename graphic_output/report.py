@@ -1423,7 +1423,7 @@ if mut_type == 'qtl':
 	#Mapping
 	output.write(
 	'		<h2>Mapping analysis overview</h2>' + '\n'
-	'		<p>All input contigs are displayed, with the polymorphisms used for QTL mapping and the difference between average allele frequency in sliding windows (dAF). The detected QTL are highlighted.</p>' + '\n'
+	'		<p>All input contigs are displayed, with the polymorphisms used for QTL mapping and the difference between average allele frequency in sliding windows (dAF). Detected QTL are highlighted, however please inspect all contigs to detect additional regions of interest that may have been missed.</p>' + '\n'
 		) 
 	for f in sorted(files):
 		if 'mapping' in str(f):
@@ -1473,7 +1473,7 @@ if mut_type == 'qtl':
 		output.write(
 			#Table
 			'		<p>The following table includes variants that affect a coding sequence and with an absolute allele frequency difference between the test and control sample higher than 0.4. ' + '\n'
-			'		 Click to see <a href="candidate_variants.txt" target="_blank"> all variants within the highlighted QTL </a>, <a href="all_qtl_genes.txt" target="_blank"> a list of all genes within the highlighted QTL </a>   or  <a href="candidate_variants_total.txt" target="_blank"> all variants in the genome</a>. </p>' + '\n'
+			'		 Click to see <a href="candidate_variants.txt" target="_blank"> all variants within the highlighted QTL </a>, <a href="all_qtl_genes.txt" target="_blank"> a list of all genes within the highlighted QTL </a>   or  <a href="candidate_variants_total.txt" target="_blank"> all variants in the genome</a>. You may use the latter to define more stringent or lenient filtering parameters or to study alternative regions of interest in the genome. </p>' + '\n'
 
 			'		<table id="candidates" border="0" align="center" cellpadding="10">' + '\n'
 			'		  <tr>' + '\n'

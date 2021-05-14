@@ -100,16 +100,16 @@ body {font-size:16px;}
 
 			<!-- beginning of page content -->
 			<div id="insMessage" style="display:none; margin-bottom: 25px;">
-				<i>Mapping of large DNA insertions of known sequence. </i>
+				<i>Mapping of large DNA insertions of known sequence by capturing reads or read pairs spanning the junction of the insertion and the genome. </i>
 			</div>
 			<div id="snpMessage" style="display:none; margin-bottom: 25px;">
-				<i>Mapping of point mutations in bulked segregant populations. </i>
+				<i>Mapping of recessive point mutations in bulked segregant populations via linkage analysis. </i>
 			</div>
 			<div id="densMessage" style="display:none; margin-bottom: 25px;">
-				<i>Mapping of point mutations through variant density analyses. </i>
+				<i>Mapping of point mutations in mutants selected after several backrosses by analysis of the variant density across the genome. </i>
 			</div>
 			<div id="varsMessage" style="display:none; margin-bottom: 25px;">
-				<i>Analyses the effect of a set of polymorphisms on coding sequences. </i>
+				<i>Analyses the effect of a set of polymorphisms on coding sequences with no mapping algorithm. </i>
 			</div>
 			<div id="qtlMessage" style="display:none; margin-bottom: 25px;">
 				<i>Mapping of natural variants using QTL-seq approaches. </i>
@@ -222,8 +222,8 @@ body {font-size:16px;}
 				</div>
 
 				<i>By default, Easymap only considers SNPs that pass high quality thresholds. However, in sub-optimal read datasets, 
-				performing more lenient filtering can help to identify a candidate interval and the causal mutation. If you analyze your reads
-				in the default mode and obtain very few SNPs or believe that the causal mutation could have been discarded, turn on this option
+				more lenient filtering can help to identify a candidate interval and the causal mutation. If you analyzed your reads
+				in the default mode and obtained very few SNPs or believe that the causal mutation could have been discarded, turn on this option
 				and run the program again. </i>
 			</div>
 
@@ -301,13 +301,13 @@ body {font-size:16px;}
 
 			<div id="expDataInterface">
 
-				Test reads (if your reads are paired-end, select both files while holding the Ctrl/Cmd key):<br>
+				Test sample (if your reads are paired-end, select both files while holding the Ctrl/Cmd key):<br>
 				<select multiple id="readsProblemSelector" style="display:block; margin-bottom:22px;"></select>
 				<div id="readsProblemWarnMsg" class="warningMessage">Please select one file for single-end reads and two files for paired-end reads.</div>
 				<div id="readsProblemWarnMsg2" class="warningMessage">The test and control read files must be different.</div>
 				
 				<div id="readsControl">
-					Control data (if your reads are paired-end, select both files while holding the Ctrl/Cmd key):<br>
+					Control sample (if your reads are paired-end, select both files while holding the Ctrl/Cmd key):<br>
 					<select multiple id="readsControlSelector" style="display:block; margin-bottom:22px;"></select>
 					<div id="readsControlWarnMsg" class="warningMessage">Please select one file for single-end reads and two files for paired-end reads.</div>
 					<div id="readsControlWarnMsg2" class="warningMessage">The test and control read files must be different.</div>
