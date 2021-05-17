@@ -99,7 +99,7 @@ echo 'pid workflow '$$ >> $my_status_file
 }
 echo $(date "+%F > %T")': set-interval.py finished, interval set at: '$interval_width   >> $my_log_file
 
-# Set variant density mapping window width and step according to genome size
+# Set variant density mapping window width and step
 if [ $interval_width -lt 4000000 ]; then
 	dens_width=1000000
 	dens_step=1000000

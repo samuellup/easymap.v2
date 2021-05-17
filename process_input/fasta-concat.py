@@ -40,8 +40,8 @@ def batch_gen(data, batch_size):
 # Create list with all the files in user_data folder
 input_files = sorted(os.listdir('./user_data'))
 
-# Create a list with only the files that match the basename provided by the user and end in '.fa'
-ref_files = fnmatch.filter(input_files, basename + '*.[Ff][Aa]') # fnmatch filters a list using a string that accepts wildcards
+# Create a list with only the files that match the basename provided by the user and end in '.f*'
+ref_files = fnmatch.filter(input_files, basename + '*.[Ff]*') # fnmatch filters a list using a string that accepts wildcards
 
 # Create and open output file
 output = open(output_dir + '/genome.fa', 'w')
