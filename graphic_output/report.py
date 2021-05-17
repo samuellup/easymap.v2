@@ -1444,7 +1444,7 @@ if mut_type == 'qtl':
 	#Candidates table:
 	output.write(
 	'		<hr class="easymap">' + '\n'
-	'		<h2>Candidate mutations analysis</h2>' + '\n'
+	'		<h2>Candidate variants overview</h2>' + '\n'
 	)
 
 	#first we check that there are candidates 
@@ -1463,7 +1463,7 @@ if mut_type == 'qtl':
 
 	if n_candidates == 0:
 		output.write(
-		'		<center> <p>No significant linkage disequilibrium was found</p> <center/>' + '\n'
+		'		<center> <p>No candidate variants found.</p> <center/>' + '\n'
 		'		<p>Click to see a list of <a href="candidate_variants_total.txt" target="_blank">all variants in the genome</a>. </p>' + '\n'
 		
 		)
@@ -1472,8 +1472,8 @@ if mut_type == 'qtl':
 	if n_candidates > 0: 
 		output.write(
 			#Table
-			'		<p>The following table includes variants that affect a coding sequence and with an absolute allele frequency difference between the test and control sample higher than 0.4. ' + '\n'
-			'		 Click to see <a href="candidate_variants.txt" target="_blank"> all variants within the highlighted QTL </a>, <a href="all_qtl_genes.txt" target="_blank"> a list of all genes within the highlighted QTL </a>   or  <a href="candidate_variants_total.txt" target="_blank"> all variants in the genome</a>. You may use the latter to define more stringent or lenient filtering parameters or to study alternative regions of interest in the genome. </p>' + '\n'
+			'		<p>The following table includes variants within the highlighted genomic region(s) that affect a coding sequence and with an absolute allele frequency difference between the test and control sample higher than 0.4. ' + '\n'
+			'		 Click to see a list of <a href="candidate_variants.txt" target="_blank"> all variants within the highlighted QTL </a>, <a href="all_qtl_genes.txt" target="_blank"> a list of all genes within the highlighted QTL </a>   or  a list of <a href="candidate_variants_total.txt" target="_blank"> all variants in the genome</a>. You may use the latter to define more stringent or lenient filtering parameters or to study alternative regions of interest in the genome. </p>' + '\n'
 
 			'		<table id="candidates" border="0" align="center" cellpadding="10">' + '\n'
 			'		  <tr>' + '\n'
@@ -1483,7 +1483,6 @@ if mut_type == 'qtl':
 			'		    <th>AF_test</th>' + '\n'
 			'		    <th>AF_control</th>' + '\n'
 			'		    <th>dAF</th>' + '\n'
-			'		    <th>DTP</th>' + '\n'
 			'		    <th>Nucleotide (Ref/Alt)</th>' + '\n'
 			'		    <th>Gene (gene element)</th>' + '\n'
 			'		    <th>Amino acid (Ref/Alt)</th>' + '\n'
@@ -1522,7 +1521,7 @@ if mut_type == 'qtl':
 					if str(sp[17]).strip() != "intron" and gene != "-" : 
 						try: 
 							if float(dAF) > 0.4: 
-								variants_list.append([str(i), contig, position, AF_test, DTP, nucleotide, gene, aminoacid, primer_f, primer_r, upstream, downstream, annotation, alt_nt])
+								variants_list.append([str(i), contig, position, AF_test, dAF, nucleotide, gene, aminoacid, primer_f, primer_r, upstream, downstream, annotation, alt_nt])
 
 								output.write(
 								'		  <tr>' + '\n'
@@ -1532,7 +1531,6 @@ if mut_type == 'qtl':
 								'		    <td>'+AF_test+'</th>' + '\n'
 								'		    <td>'+AF_control+'</th>' + '\n'
 								'		    <td>'+ dAF +'</th>' + '\n'
-								'		    <td>'+ DTP +'</th>' + '\n'
 								'		    <td>'+ nucleotide +'</th>' + '\n'
 								'		    <td>'+ gene +'</th>' + '\n'
 								'		    <td>'+ aminoacid +'</th>' + '\n'
@@ -1555,7 +1553,7 @@ if mut_type == 'qtl':
 	if n_candidates > 0:
 		output.write(
 		'		<h2>Candidate variants</h2>' + '\n'
-		'		<p>This section contains a list of the candidate mutations affecting gene open reading frames.</p>' + '\n'
+		'		<p>This section contains a list of the previusly listed candidate mutations affecting gene open reading frames.</p>' + '\n'
 			) 
 		for var in variants_list:
 			gene_name = var[6].split(' (')[0]
@@ -1576,12 +1574,12 @@ if mut_type == 'qtl':
 					'		</tr>' + '\n'
 
 					'		<tr>' + '\n'
-					'			<td> <b>Allelic frequence:</b></td>' + '\n'
+					'			<td> <b>Allelic frequence in test sample:</b></td>' + '\n'
 					'			<td style="font-family:Lucida Console, monospace">' + var[3] + '</td>' + '\n'
 					'		</tr>' + '\n'
 
 					'		<tr>' + '\n'
-					'			<td> <b>Distance to peak (DTP):</b></td>' + '\n'
+					'			<td> <b>dAF:</b></td>' + '\n'
 					'			<td style="font-family:Lucida Console, monospace">' + var[4] + '</td>' + '\n'
 					'		</tr>' + '\n'
 					)
