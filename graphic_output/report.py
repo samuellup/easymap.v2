@@ -1423,7 +1423,7 @@ if mut_type == 'qtl':
 	#Mapping
 	output.write(
 	'		<h2>Mapping analysis overview</h2>' + '\n'
-	'		<p>All input contigs are displayed, with the polymorphisms used for QTL mapping and the difference between average allele frequency in sliding windows (dAF). Detected QTL are highlighted, however please inspect all contigs to detect additional regions of interest that may have been missed.</p>' + '\n'
+	'		<p>All input contigs are displayed, with the polymorphisms used for QTL mapping and the difference between average allele frequency in sliding windows (dAF). Detected QTL are highlighted, however please inspect all contigs to detect additional regions that may be of interest to you.</p>' + '\n'
 		) 
 	for f in sorted(files):
 		if 'mapping' in str(f):
