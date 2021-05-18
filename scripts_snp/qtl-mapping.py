@@ -122,6 +122,7 @@ sum_v=0.0
 for v in w_avg_list: sum_v = sum_v + float(v)
 try: dAF_correction = sum_v/(float(len(w_avg_list)))
 except: dAF_correction = 0.0
+del w_avg_list
 
 # Retrieving information for qtl selection 
 dAF_peaks = list()

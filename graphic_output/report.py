@@ -740,7 +740,7 @@ if mut_type == 'lin':
 if mut_type == 'dens':
 	#Chromosomes DENS vs POS overview
 	output.write(
-	'		<h2>Density analysis overview</h2>' + '\n'
+	'		<h2>Variant density analysis </h2>' + '\n'
 	'		<p>All input contigs are displayed, variant density mapping is plotted for each chromosome and the candidate regions are highlighted. </p>' + '\n'
 		) 
 	for f in sorted(files):
@@ -773,7 +773,7 @@ if mut_type == 'dens':
 	#Candidates table:
 	output.write(
 	'		<hr class="easymap">' + '\n'
-	'		<h2>Candidate region analysis</h2>' + '\n'
+	'		<h2>Candidate variants overview</h2>' + '\n'
 	'		<p>A list of SNP located in genes within the candidate region with a high alternative allele frequency and absent from the control sample. </p>' + '\n'
 	)
 
@@ -871,7 +871,7 @@ if mut_type == 'dens':
 	if n_candidates > 0:
 		output.write(
 		'		<h2>Candidate variants</h2>' + '\n'
-		'		<p>This section contains a list of the candidate mutations affecting gene open reading frames.</p>' + '\n'
+		'		<p>This section contains a list of the candidate variants affecting gene open reading frames.</p>' + '\n'
 			) 
 		for var in variants_list:
 			gene_name = var[6].split(' (')[0]
@@ -987,7 +987,6 @@ if mut_type == 'vars':
 			'		    <th>Contig</th>' + '\n'
 			'		    <th>Position</th>' + '\n'
 			'		    <th>AF</th>' + '\n'
-			'		    <th>DTP</th>' + '\n'
 			'		    <th>Nucleotide (Ref/Alt)</th>' + '\n'
 			'		    <th>Gene (gene element)</th>' + '\n'
 			'		    <th>Amino acid (Ref/Alt)</th>' + '\n'
@@ -1031,7 +1030,6 @@ if mut_type == 'vars':
 						'		    <td>'+contig+'</th>' + '\n'
 						'		    <td>'+position+'</th>' + '\n'
 						'		    <td>'+AF+'</th>' + '\n'
-						'		    <td>'+DTP+'</th>' + '\n'
 						'		    <td>'+nucleotide+'</th>' + '\n'
 						'		    <td>'+gene+'</th>' + '\n'
 						'		    <td>'+aminoacid+'</th>' + '\n'
@@ -1113,7 +1111,7 @@ if mut_type == 'vars':
 	if n_candidates > 0:
 		output.write(
 		'		<h2>Candidate variants</h2>' + '\n'
-		'		<p>This section contains a list of the candidate mutations affecting gene open reading frames.</p>' + '\n'
+		'		<p>This section contains a list of the candidate variants affecting gene open reading frames.</p>' + '\n'
 			) 
 		for var in variants_list:
 			gene_name = var[6].split(' (')[0]
@@ -1341,7 +1339,7 @@ if mut_type == 'snp':
 	if n_candidates > 0:
 		output.write(
 		'		<h2>Candidate variants</h2>' + '\n'
-		'		<p>This section contains a list of the candidate mutations affecting gene open reading frames.</p>' + '\n'
+		'		<p>This section contains a list of the candidate variants affecting gene open reading frames.</p>' + '\n'
 			) 
 		for var in variants_list:
 			gene_name = var[6].split(' (')[0]
@@ -1422,7 +1420,7 @@ if mut_type == 'qtl':
 	#Chromosomes FA vs POS
 	#Mapping
 	output.write(
-	'		<h2>Mapping analysis overview</h2>' + '\n'
+	'		<h2>Mapping analysis </h2>' + '\n'
 	'		<p>All input contigs are displayed, with the polymorphisms used for QTL mapping and the difference between average allele frequency in sliding windows (dAF). Detected QTL are highlighted, however please inspect all contigs to detect additional regions that may be of interest to you.</p>' + '\n'
 		) 
 	for f in sorted(files):
@@ -1553,7 +1551,7 @@ if mut_type == 'qtl':
 	if n_candidates > 0:
 		output.write(
 		'		<h2>Candidate variants</h2>' + '\n'
-		'		<p>This section contains a list of the previusly listed candidate mutations affecting gene open reading frames.</p>' + '\n'
+		'		<p>This section contains a list of the previusly listed candidate variants affecting gene open reading frames.</p>' + '\n'
 			) 
 		for var in variants_list:
 			gene_name = var[6].split(' (')[0]
