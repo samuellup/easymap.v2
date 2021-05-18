@@ -65,7 +65,7 @@ n_threads=${22}
 
 # Set internal variables for very low stringency 
 problemSample_bowtie_mp="--mp 3,2"
-problemSample_snpQualityTheshold="10"
+problemSample_snpQualityTheshold="30"
 
 # Define the folders in the easymap directory 
 f0=user_data
