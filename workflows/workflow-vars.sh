@@ -180,7 +180,7 @@ function get_problem_va {
 	dp_min=4 
 
 	{
-		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_raw.va -b $f1/F2_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -qual_min $problemSample_snpQualityTheshold -mut_type $exp_mut_type  2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_raw.va -b $f1/F2_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min  -qual_min $problemSample_snpQualityTheshold -mut_type $exp_mut_type  2>> $my_log_file
 
 	} || {
 		echo 'Error during execution of variants-filter.py with F2 data.' >> $my_log_file
@@ -280,10 +280,9 @@ function get_control_va {
 	depth_alignment $f1/alignment1P.bam $f3/frequence_depth_alignment_distribution_control.png
 
 	#Run vcf filter
-	dp_min=4 
 
 	{
-		python2 $location/scripts_snp/variants-filter.py -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -mut_type $exp_mut_type -qual_min $problemSample_snpQualityTheshold  2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs -mut_type $exp_mut_type -dp_min $dp_min  -qual_min $problemSample_snpQualityTheshold  2>> $my_log_file
 
 	} || {
 		echo $(date "+%F > %T")': Error during execution of variants-filter.py with control data.' >> $my_log_file
@@ -321,10 +320,9 @@ function get_control_va_from_vcf {
 	echo $(date "+%F > %T")': VCF grooming of control data finished.' >> $my_log_file
 
 	#Run vcf filter
-	dp_min=4 
 
 	{
-		python2 $location/scripts_snp/variants-filter.py -in_format "vcf" -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs  -mut_type $exp_mut_type -qual_min $problemSample_snpQualityTheshold  2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -in_format "vcf" -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs  -mut_type $exp_mut_type  2>> $my_log_file
 
 	} || {
 		echo $(date "+%F > %T")': Error during execution of variants-filter.py with control data.' >> $my_log_file
@@ -358,10 +356,9 @@ function get_problem_va_from_vcf {
 	echo $(date "+%F > %T")': VCF grooming of control data finished.' >> $my_log_file
 
 	#Run vcf filter
-	dp_min=4 
 
 	{
-		python2 $location/scripts_snp/variants-filter.py -in_format "vcf" -a $f1/F2_raw.va -b $f1/F2_filtered.va -step 3 -fasta $f1/$my_gs  -qual_min $problemSample_snpQualityTheshold -mut_type $exp_mut_type 2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -in_format "vcf" -a $f1/F2_raw.va -b $f1/F2_filtered.va -step 3 -fasta $f1/$my_gs   -mut_type $exp_mut_type 2>> $my_log_file
 
 	} || {
 		echo $(date "+%F > %T")': Error during execution of variants-filter.py with control data.' >> $my_log_file
