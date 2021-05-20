@@ -162,7 +162,7 @@ if len(ref_seq.split(" ")) != 1:
 
 if fasta_name_has_bad_format == False:
 	# Check if there are .fa files in the directory user_data that have the string provided by the user as basename
-	refs_in_input_files = fnmatch.filter(input_files, ref_seq + '*.[Ff][Aa]') # fnmatch filters a list using a string that accepts wildcards
+	refs_in_input_files = fnmatch.filter(input_files, ref_seq + '*.[Ff]*') # fnmatch filters a list using a string that accepts wildcards
 	refs_in_input_files.sort()
 	if not refs_in_input_files:
 		error = 1
