@@ -88,7 +88,8 @@ with open(input_log, 'r') as f1:
 
 		if line.startswith('GFF file:'):
 			sp = line.split()
-			gff_file = str(sp[-1])
+			if str(sp[-1]) == "n/p": gff_file = "Not provided"
+			else: gff_file = str(sp[-1])
 
 		if line.startswith('Annotation file:'):
 			sp = line.split()
@@ -1460,12 +1461,16 @@ if mut_type == 'qtl':
 	#then if the number of candidates is > 0, we write the candidates in a table
 
 	if n_candidates == 0:
-		output.write(
-		'		<center> <p>No candidate variants found.</p> <center/>' + '\n'
-		'		<p>Click to see a list of <a href="candidate_variants_total.txt" target="_blank">all variants in the genome</a>. </p>' + '\n'
-		
-		)
-
+		if gff_file != "Not provided":
+			output.write(
+			'		<center> <p>No candidate variants found.</p> <center/>' + '\n'
+			'		<p>Click to see a list of <a href="candidate_variants_total.txt" target="_blank">all variants in the genome</a>. </p>' + '\n'
+			)
+		elif gff_file == "Not provided":
+			output.write(
+			'		<center> <p>No structural annotation file was provided, effects of the detected variants on genes and proteins can not be assessed.</p> <center/>' + '\n'
+			'		<p>Click to see a list of <a href="candidate_variants_total.txt" target="_blank">all variants in the genome</a>. </p>' + '\n'
+			)
 
 	if n_candidates > 0: 
 		output.write(
