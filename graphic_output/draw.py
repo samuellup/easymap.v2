@@ -1237,7 +1237,7 @@ def qtl_plot():
 					
 			# Drawing SNP
 			r, g, b = 247, 170, 124
-			rc, gc, bc = 122, 192, 240
+			rc, gc, bc = 245, 120, 44
 			with open(input1, "r") as lines: 
 				for l, line in enumerate(lines):
 					sp = line.split()
@@ -1478,7 +1478,7 @@ def qtl_plot_points():
 				except: pass
 					
 			# Drawing SNP
-			r, g, b = 247, 170, 124
+			r, g, b = 31, 120, 180
 			rc, gc, bc = 122, 192, 240
 			with open(input1, "r") as lines: 
 				for l, line in enumerate(lines):
