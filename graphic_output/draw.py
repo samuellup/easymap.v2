@@ -1236,8 +1236,8 @@ def qtl_plot():
 				except: pass
 					
 			# Drawing SNP
-			r, g, b = 31, 120, 180
-			rc, gc, bc = 245, 120, 44
+			rc, gc, bc = 31, 120, 180
+			r, g, b = 245, 120, 44
 			with open(input1, "r") as lines: 
 				for l, line in enumerate(lines):
 					sp = line.split()
