@@ -101,7 +101,7 @@ elif [ $interval_width -ge 11000000 ]; then
 	wd_step=1000000
 fi
 # BYPASS (for testing)
-wd_width=100000
+wd_width=200000
 wd_step=100000
 interval_width=2000000
 

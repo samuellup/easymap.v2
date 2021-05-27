@@ -113,6 +113,9 @@ for ch in chromosomes:
 	for p in ch_list: 
 		out_list.append(p)
 
+del recount
+del ch_list
+
 for p in out_list: 
 	out.write(str(str(p[0])) + "\t" + str(p[1]) + "\t" + str(p[2]) + "\t" + str(p[3]) + "\n") 
 
@@ -134,7 +137,7 @@ while dAF_lim >= 0.15:
 	else: 
 		if dAF_lim >= 0.3: dAF_lim = dAF_lim - 0.05
 		else: dAF_lim = dAF_lim - 0.02
-
+del out_list
 
 # CR selection 
 regs = list()
