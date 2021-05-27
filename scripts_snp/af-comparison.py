@@ -203,7 +203,6 @@ if mode == "qtl":
 						dAF = "-"
 						f5.write( str(chr) + '\t' + str(i) + '\t' + str(dic_mut[i][0]) +'\t' +  str(dic_mut[i][1]) +'\t' +  str(dic_mut[i][2]) + '\t' + str(dic_mut[i][3]) + '\t' + str(dic_mut[i][4]) + '\t' + "-" +'\t' +  "-"  + '\t' + AF_mut + '\t' + AF_wt + '\t' + dAF + '\n')
 
-
 if step == 3: 
 	#From the data of read_fasta, I create a dictionary with the name of the contigs and its lenght
 	with open(f_input) as fp:
