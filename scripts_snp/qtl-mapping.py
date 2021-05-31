@@ -44,7 +44,7 @@ for chr in chromosomes:
 
 recount = list()
 for ch in chromosomes:
-	for center_pos in range(width/2, max_chr, step):
+	for center_pos in range(width/2, (int(ch[1])-width/2), step):
 		avgAF = 0
 		AF_sum = 0.0
 		snp_count = 0 
@@ -127,11 +127,10 @@ try: dAF_correction = sum_v/(float(len(w_avg_list)))
 except: dAF_correction = 0.0
 del w_avg_list
 
-# Retrieving information for qtl selection 
 dAF_peaks = list()
-while dAF_lim >= 0.15:
+while dAF_lim >= 0.1:
 	for p in out_list: 
-		if (abs(float(p[3])) + dAF_correction ) > dAF_lim: 
+		if (abs(float(p[3])) - dAF_correction ) > dAF_lim: 
 			dAF_peaks.append(p)
 	if len(dAF_peaks) >= 1: break
 	else: 
