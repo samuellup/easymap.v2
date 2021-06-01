@@ -130,7 +130,7 @@ del w_avg_list
 dAF_peaks = list()
 while dAF_lim >= 0.1:
 	for p in out_list: 
-		if (abs(float(p[3])) - dAF_correction ) > dAF_lim: 
+		if (abs(float(p[3]) - dAF_correction )) > dAF_lim: 
 			dAF_peaks.append(p)
 	if len(dAF_peaks) >= 1: break
 	else: 
