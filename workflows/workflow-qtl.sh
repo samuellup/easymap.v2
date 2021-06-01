@@ -525,6 +525,8 @@ echo $(date "+%F > %T")': Graphic output generated.' >> $my_log_file
 { 
 	zip $f3/report_images.zip $f3/*.png > $f2/zip.txt
 	cp $location/fonts/gene_legend_snp.png $f3/gene_legend_snp.png
+	cp $location/fonts/legend_qtl.png $f3/legend_qtl.png
+
 	python2 $location/graphic_output/report.py  -log $my_log_file  -output_html $f3/report.html -project $project_name -mut_type qtl -files_dir $f3 -cand_reg_file $f1/candidate_region.txt -variants $f3/candidate_variants.txt 2>> $my_log_file
 
 } || {

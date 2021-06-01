@@ -1832,7 +1832,7 @@ def candidates_zoom():
 def legend():
 
 	wide = 250
-	high = 310
+	high = 260
 
 	im = Image.new("RGB", (wide, high), (255,255,255))
 	draw = ImageDraw.Draw(im)
@@ -1853,10 +1853,10 @@ def legend():
 	draw.text((w+20, h+20), 'Legend:', font=fnt2, fill=(0,0,0,255))
 	
 	draw.ellipse((w+40-2, h+60-2, w+40+2, h+60+2), fill=(31, 120, 180))
-	draw.text((w+60, h+52), 'F2 problem SNPs', font=fnt2, fill=(0,0,0,255))
+	draw.text((w+60, h+52), 'Test sample SNP', font=fnt2, fill=(0,0,0,255))
 
 	draw.ellipse((w+40-2, h+90-2, w+40+2, h+90+2), fill=(245, 120, 44))
-	draw.text((w+60, h+82), 'Control SNPs', font=fnt2, fill=(0,0,0,255))
+	draw.text((w+60, h+82), 'Control sample SNP', font=fnt2, fill=(0,0,0,255))
 
 	draw.line((w+38, h+120) + (w+44, h+120), fill=(46, 255, 0), width=2)
 	draw.text((w+60, h+112), 'SMA', font=fnt2, fill=(0,0,0,255))
@@ -1864,22 +1864,64 @@ def legend():
 	draw.line((w+38, h+150) + (w+44, h+150), fill=(255, 0, 0), width=2)
 	draw.text((w+60, h+142), 'Boost', font=fnt2, fill=(0,0,0,255))
 
-	draw.line((w+38, h+180) + (w+44, h+180), fill=(255, 0, 255), width=2)
-	draw.text((w+60, h+172), 'AF difference', font=fnt2, fill=(0,0,0,255))
-
 	draw.line((w+37, h+210) + (w+45, h+210), fill=(255, 0, 0), width=2)
 	draw.line((w+40, h+210) + (w+42, h+210), fill=(255, 255, 255), width=2)
 	draw.text((w+60, h+202), 'Selected position', font=fnt2, fill=(0,0,0,255))
 
-	draw.line((w+38, h+240) + (w+44, h+240), fill=(249, 222, 252), width=8)
-	draw.text((w+60, h+232), 'Candidate region', font=fnt2, fill=(0,0,0,255))
-	draw.rectangle( [w+38, h+244, w+44, h+236], fill=None, outline=(0,0,0) )
+	draw.line((w+38, h+180) + (w+44, h+180), fill=(249, 222, 252), width=8)
+	draw.text((w+60, h+172), 'Candidate region', font=fnt2, fill=(0,0,0,255))
+	draw.rectangle( [w+38, h+184, w+44, h+176], fill=None, outline=(0,0,0) )
 
-	draw.line((w+38, h+270) + (w+44, h+270), fill=(255, 252, 232), width=8)
-	draw.text((w+60, h+262), 'Selected chromosome', font=fnt2, fill=(0,0,0,255))
-	draw.rectangle( [w+38, h+274, w+44, h+266], fill=None, outline=(0,0,0) )
+	im.save('./legend.png')
 
-	im.save(project + '/3_workflow_output/legend.png')
+
+
+
+
+#############################################################################################################
+#																											#
+# 												QTL - LEGEND												#
+#																											#
+#############################################################################################################
+
+
+def legend_qtl():
+
+	wide = 250
+	high = 200
+
+	im = Image.new("RGB", (wide, high), (255,255,255))
+	draw = ImageDraw.Draw(im)
+	fnt2 = ImageFont.truetype('fonts/VeraMono.ttf', 14)
+
+	w = 10
+	h = 10
+	length = high - 10
+	width = wide - 10
+
+	#legend box
+	draw.line((w, h) + (width, h), fill=256, width=1)
+	draw.line((w, h) + (w, length), fill=256, width=1)
+	draw.line((width, length) + (width, h), fill=256, width=1)
+	draw.line((w, length) + (width, length), fill=256, width=1)
+
+	#legend items
+	draw.text((w+20, h+20), 'Legend:', font=fnt2, fill=(0,0,0,255))
+	
+	draw.ellipse((w+40-2, h+60-2, w+40+2, h+60+2), fill=(31, 120, 180))
+	draw.text((w+60, h+52), 'Sample 1 SNP', font=fnt2, fill=(0,0,0,255))
+
+	draw.ellipse((w+40-2, h+90-2, w+40+2, h+90+2), fill=(245, 120, 44))
+	draw.text((w+60, h+82), 'Sample 2 SNP', font=fnt2, fill=(0,0,0,255))
+
+	draw.line((w+38, h+120) + (w+44, h+120), fill=(255, 0, 0), width=2)
+	draw.text((w+60, h+112), 'dAF', font=fnt2, fill=(0,0,0,255))
+
+	draw.line((w+38, h+150) + (w+44, h+150), fill=(249, 222, 252), width=8)
+	draw.text((w+60, h+142), 'Candidate region', font=fnt2, fill=(0,0,0,255))
+	draw.rectangle( [w+38, h+154, w+44, h+146], fill=None, outline=(0,0,0) )
+
+	im.save('./legend_qtl.png')
 
 
 #############################################################################################################

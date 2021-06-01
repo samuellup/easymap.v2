@@ -1430,15 +1430,15 @@ if mut_type == 'qtl':
 			'		<left> <img class="img" src="' +  str(f).split('3_workflow_output/')[-1]  + ' " align="middle" > </left>' + '\n'
 			)
 
-	'''
+	
 	#Legend
 	##PathInterfaceToImages = '../user_projects/' + project_name + '/3_workflow_output/'
 	#ReplacementImage = 'onerror="this.src=\'./legend.png'"'
 	output.write(
 	'		<h3>Legend</h3>' + '\n'
-	'		<left> <img class="img" src="legend.png" align="middle" >  </left>' + '\n'
+	'		<left> <img class="img" src="legend_qtl.png" align="middle" >  </left>' + '\n'
 	)
-	'''
+	
 
 	#Candidates table:
 	output.write(
