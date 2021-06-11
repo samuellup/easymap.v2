@@ -119,7 +119,7 @@ fi
 if [ $data_source == 'exp' ]; then
 	if [ $lib_type_sample == 'se' ]; then
 		
-		if [[ "$read_s" == *".fq" ] || [ "$read_s" == *".fastq" ]] ; then			
+		if [ "$read_s" == *".fq" ] || [ "$read_s" == *".fastq" ] ; then			
 			fq=`python2 process_input/verify-input.py -fq $read_s 2>> $my_log_file` 
 		else
 
@@ -148,7 +148,7 @@ if [ $data_source == 'exp' ]; then
 		fi
 
 		{
-			if [[ "$read_s" == *".fq" ] || [ "$read_s" == *".fastq" ]]; then
+			if [ "$read_s" == *".fq" ] || [ "$read_s" == *".fastq" ]; then
 				fq_qual=`python2 ./graphic_output/fastq-stats.py -fasq $read_s -out $project_name/$f3/single-end-problem-reads-qual-stats.png 2>> $my_log_file` 
 			else
 				fq_qual=4
@@ -210,7 +210,7 @@ if [ $data_source == 'exp' ]; then
 
 	if [ $analysis_type == 'snp' ] || [ $analysis_type == 'dens' ] || [ $analysis_type == 'vars' ] || [ $analysis_type == 'qtl' ] ; then
 		if [ $lib_type_ctrl == 'se' ]; then
-			if [[ "$read_s_ctrl" == *".fq" ] || [ "$read_s_ctrl" == *".fastq" ]] ; then			
+			if [ "$read_s_ctrl" == *".fq" ] || [ "$read_s_ctrl" == *".fastq" ] ; then			
 				fq=`python2 process_input/verify-input.py -fq $read_s_ctrl 2>> $my_log_file` 
 			elif [[ "$read_s_ctrl" == *"None" ]] ; then	
 				fq=0
@@ -241,7 +241,7 @@ if [ $data_source == 'exp' ]; then
 			fi
 
 			{
-				if [[ "$read_s_ctrl" == *".fq" ] || [ "$read_s_ctrl" == *".fastq" ]]; then
+				if [ "$read_s_ctrl" == *".fq" ] || [ "$read_s_ctrl" == *".fastq" ]; then
 					fq_qual=`python2 ./graphic_output/fastq-stats.py -fasq $read_s_ctrl -out $project_name/$f3/single-end-control-reads-qual-stats.png 2>> $my_log_file` 
 				else
 					fq_qual=4
