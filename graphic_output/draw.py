@@ -1574,8 +1574,8 @@ def qtl_plot_points():
 					elif len(str(x_tag)) == 3: 
 						draw.text(((mbs - 12), (int(81.8/100.0*height))), (str(x_tag).strip()), font=fnt2, fill=(0,0,0,255))
 					
-					mbs = mbs + 10000000/scaling_factor_x +1
-					x_tag = x_tag + 10
+					mbs = mbs + 25000000/scaling_factor_x +1
+					x_tag = x_tag + 25
 
 			elif max_contig_len <= 1000000:
 				mbs = int(0/scaling_factor_x) + 68
