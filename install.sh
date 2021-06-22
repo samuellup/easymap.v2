@@ -74,7 +74,10 @@ cd ../hisat2
 make clean
 make
 
-cd ../fastp
+cd ..
+if [ -d ./fastp ]; then rm -rf ./fastp; fi
+git clone https://github.com/OpenGene/fastp.git
+cd ./fastp
 make clean
 make
 sudo make install 
