@@ -65,6 +65,24 @@ snp_analysis_type=${18}
 stringency=${20}
 exp_mut_type=${21}
 n_threads=${22}
+preprocessing=${23}
+
+# Define the folders in the easymap directory 
+f0=user_data
+f1=$project_name/1_intermediate_files
+f2=$project_name/2_logs
+f3=$project_name/3_workflow_output
+
+if [ $preprocessing == yes ]; then
+	my_rd=$f1/read_s.fq										 					
+	my_rf=$f1/read_f.fq 														
+	my_rr=$f1/read_r.fq												 				
+	if [[ "$my_p_rd" == *".fq" ]] || [[ "$my_p_rd" == *".fastq" ]] ; then 
+		my_p_rd=$f1/read_s_ctrl.fq											 	
+	fi
+	my_p_rf=$f1/read_f_ctrl.fq 														
+	my_p_rr=$f1/read_r_ctrl.fq									
+fi
 
 
 
@@ -79,11 +97,6 @@ else
 	problemSample_snpQualityTheshold="30"
 fi
 
-# Define the folders in the easymap directory 
-f0=user_data
-f1=$project_name/1_intermediate_files
-f2=$project_name/2_logs
-f3=$project_name/3_workflow_output
 
 # Write PID to status file
 my_status_file=$f2/status
@@ -1003,6 +1016,7 @@ fi
 rm -f $f1/*.bam
 rm -f $f1/*.bai
 if [ -d "$f1/sim_data" ]; then rm -Rf $f1/sim_data/; fi
+rm -f $f1/*.fq
 
 
 echo $exit_code

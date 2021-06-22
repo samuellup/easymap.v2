@@ -36,7 +36,8 @@ cmdString = str(arguments['program'].value) + ' ' + \
 			str(arguments['sim_seq'].value) + ' ' + \
 			str(arguments['stringency'].value) + ' ' + \
             str(arguments['exp_mut_type'].value) + ' ' + \
-			str(arguments['n_threads'].value)
+			str(arguments['n_threads'].value) + ' ' + \
+			str(arguments['preprocessing'].value)
 
 processedCmdString = cmdString.replace('~', '+');
 print processedCmdString

@@ -227,10 +227,23 @@ body {font-size:16px;}
 				and run the program again. </i>
 			</div>
 
+
+			<div id="checkBoxPreprocessing" style="display:none;">
+
+				Perform automated pre-processing of read files?
+				
+				<div>
+				<input type="checkbox" class="switch_1" id="preprocessing">
+				</div>
+
+				<i>Checking this option will add an optional step to process the input reads to eliminate low-quality data, trim low-quality
+				nucleotides and  auto-remove adapters. This step is performed with fastp and will require additional storage space.	</i>
+			</div>
 			
+
 			<div id="checkBoxMultithread" style="display:none;">
 
-				Use multiple CPU cores during analysis? 
+				<br>Use multiple CPU cores during analysis? 
 				
 				<div>
 				<input type="checkbox" class="switch_1" id="multithreading">

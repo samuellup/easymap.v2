@@ -40,6 +40,7 @@ read_f_ctrl=${13}
 read_r_ctrl=${14}
 ref_seq=${15}
 lib_type_ctrl=${16}
+preprocessing=${17}
 
 # Establish locations of reference genome
 ref_seqs_dir=$f0/gnm_ref
@@ -312,6 +313,44 @@ if [ $data_source == 'exp' ]; then
 	fi
 fi
 
+# Pre-processing of reads with FASTP    # ADD CONDITIONAL ACCORDING TO "PREPROCESSING" VARIABLE 
+if [ $preprocessing == 'yes' ]; then
+	if [ $data_source == 'exp' ]; then
+		if [ $analysis_type == 'snp' ] || [ $analysis_type == 'dens' ] || [ $analysis_type == 'vars' ] || [ $analysis_type == 'qtl' ] ; then
+			# Test reads
+			{
+				if [ $lib_type_sample == 'se' ]; then
+					if [[ "$read_s" == *".fq" ]] || [[ "$read_s" == *".fastq" ]] ; then			
+						./fastp/fastp --length_required 20 -i $read_s -o $project_name/$f1/read_s.fq 2>> $project_name/2_logs/fastp_log.log
+					fi
+				fi
+				if [ $lib_type_sample == 'pe' ]; then
+					./fastp/fastp --length_required 20  -i $read_f -I $read_r -o $project_name/$f1/read_f.fq -O $project_name/$f1/read_r.fq 2>> $project_name/2_logs/fastp_log.log
+				fi
+				echo $(date "+%F > %T")": Test data pre-processing correct." >> $my_log_file
+			} || {
+				echo $(date "+%F > %T")": Test data pre-processing failed." >> $my_log_file
+				exit_code=1
+			}
+
+			# Control reads
+			{
+				if [ $lib_type_ctrl == 'se' ]; then
+					if [[ "$read_s_ctrl" == *".fq" ]] || [[ "$read_s_ctrl" == *".fastq" ]] ; then			
+						./fastp/fastp --length_required 20 -i $read_s_ctrl -o $project_name/$f1/read_s_ctrl.fq 2>> $project_name/2_logs/fastp_log.log
+					fi
+				fi
+				if [ $lib_type_sample == 'pe' ]; then
+					./fastp/fastp --length_required 20 -i $read_f_ctrl -I $read_r_ctrl -o $project_name/$f1/read_f_ctrl.fq -O $project_name/$f1/read_r_ctrl.fq 2>> $project_name/2_logs/fastp_log.log
+				fi
+				echo $(date "+%F > %T")": Control data pre-processing correct." >> $my_log_file
+			} || {
+				echo $(date "+%F > %T")": Control data pre-processing failed." >> $my_log_file
+				exit_code=1
+			}
+		fi
+	fi
+fi
 
 # Check gff input
 if [ $gff_file != "user_data/n/p" ]; then
@@ -340,7 +379,6 @@ fi
 #		exit_code=1
 #	fi
 #fi
-
 
 # Check contigs match between fasta and gff3 files
 if [ $gff_file != "user_data/n/p" ]; then

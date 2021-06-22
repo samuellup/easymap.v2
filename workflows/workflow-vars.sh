@@ -61,17 +61,32 @@ snp_analysis_type=${18}
 stringency=${20}
 exp_mut_type=${21}
 n_threads=${22}
-
-
-# Set internal variables for very low stringency 
-problemSample_bowtie_mp="--mp 3,2"
-problemSample_snpQualityTheshold="30"
+preprocessing=${23}
 
 # Define the folders in the easymap directory 
 f0=user_data
 f1=$project_name/1_intermediate_files
 f2=$project_name/2_logs
 f3=$project_name/3_workflow_output
+
+if [ $preprocessing == yes ]; then
+	if [[ "$my_rd" == *".fq" ]] || [[ "$my_rd" == *".fastq" ]] ; then 
+		my_rd=$f1/read_s.fq											 	
+	fi
+	my_rd=$f1/read_s.fq										 					
+	my_rf=$f1/read_f.fq 														
+	my_rr=$f1/read_r.fq												 				
+	if [[ "$my_p_rd" == *".fq" ]] || [[ "$my_p_rd" == *".fastq" ]] ; then 
+		my_p_rd=$f1/read_s_ctrl.fq											 	
+	fi
+	my_p_rf=$f1/read_f_ctrl.fq 														
+	my_p_rr=$f1/read_r_ctrl.fq									
+fi
+
+
+# Set internal variables for very low stringency 
+problemSample_bowtie_mp="--mp 3,2"
+problemSample_snpQualityTheshold="30"
 
 # Write PID to status file
 my_status_file=$f2/status
@@ -444,6 +459,9 @@ if [ "$problem_format" == "vcf" ] || [ "$control_format" == "vcf" ] ; then
 else
 	in_format="fastq"	
 fi
+
+rm -f $f1/*.fq
+
 
 # Run VA operations: Remove control SNPs from problem file
 {

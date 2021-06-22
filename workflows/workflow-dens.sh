@@ -42,8 +42,6 @@ exit_code=0 				# Set 'exit_code' (flag variable) to 0
 my_log_file=$1 				# Set location of log file
 export location="$PWD" 			#Save path to hisat2-build and hisat2 in variable BT2
 
-
-
 # Create input variables
 my_log_file=$1
 project_name=$2
@@ -66,7 +64,25 @@ snp_analysis_type=${18}
 stringency=${20}
 exp_mut_type=${21}
 n_threads=${22}
+preprocessing=${23}
 
+# Define the folders in the easymap directory 
+f0=user_data
+f1=$project_name/1_intermediate_files
+f2=$project_name/2_logs
+f3=$project_name/3_workflow_output
+
+
+if [ $preprocessing == yes ]; then
+	my_rd=$f1/read_s.fq										 					
+	my_rf=$f1/read_f.fq 														
+	my_rr=$f1/read_r.fq												 				
+	if [[ "$my_p_rd" == *".fq" ]] || [[ "$my_p_rd" == *".fastq" ]] ; then 
+		my_p_rd=$f1/read_s_ctrl.fq											 	
+	fi
+	my_p_rf=$f1/read_f_ctrl.fq 														
+	my_p_rr=$f1/read_r_ctrl.fq									
+fi
 
 # Set internal variables according to the SNP validation stringency chosen by the user
 if [ $stringency == high_stringency ]; then
@@ -79,12 +95,6 @@ else
 	problemSample_snpQualityTheshold="30"
 
 fi
-
-# Define the folders in the easymap directory 
-f0=user_data
-f1=$project_name/1_intermediate_files
-f2=$project_name/2_logs
-f3=$project_name/3_workflow_output
 
 # Write PID to status file
 my_status_file=$f2/status
@@ -442,6 +452,7 @@ else
 	control_format="fastq"
 	get_control_va
 fi
+rm -f $f1/*.fq
 
 # Run VA operations: Remove control SNPs from problem file
 {

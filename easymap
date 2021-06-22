@@ -32,6 +32,7 @@ parser.add_argument('--low-stringency', '-ls', action = 'store_true', dest = 'st
 parser.add_argument('--exp-design', '-ed', action = 'store', default = 'n/p', dest = 'exp_design')
 parser.add_argument('--exp-mut-type', '-emt', action = 'store', default = 'EMS', dest = 'exp_mut_type')
 parser.add_argument('--threads', '-tr', action = 'store', default = '1', dest = 'threads')
+parser.add_argument('--preprocessing', '-ppc', action = 'store_true', dest = 'preprocessing')
 
 args = parser.parse_args()
 
@@ -99,9 +100,8 @@ if args.exp_design != "n/p":
 	cross_type = args.exp_design.split('_')[1]
 	control_type = args.exp_design.split('_')[2]
 
-if control_type == "n/p":
-	control_parental = "n/p"
-	snp_analysis_type = "n/p"
+control_parental = "n/p"
+snp_analysis_type = "n/p"
 
 reads_control = args.reads_control
 read_s = "n/p"
@@ -540,6 +540,15 @@ if workflow == "snp" or workflow == "dens" or workflow == "qtl":
 else:
 	stringency = "n/p"
 
+# Deal with the --preprocessing parameter
+if workflow == "snp" or workflow == "dens" or workflow == "qtl" or workflow == "vars":
+	if args.preprocessing:
+		preprocessing = "yes"
+	else:
+		preprocessing = "no"
+else:
+	preprocessing = "n/p"
+
 # Deal with the ex_mut_type parameter
 if args.exp_mut_type: 
 	exp_mut_type = args.exp_mut_type
@@ -579,8 +588,8 @@ if error == 1:
 
 
 # Run easymap.sh
-                     # 1                    2                3                   4               5               6                7                8              9              10             11                      12                     13                     14                     15                       16                    17                 18                        19                       20              21                 22              23					24					  25
-master_program_input = project_name + " " + workflow + " " + data_source + " " + ref_seq + " " + ins_seq + " " + gff_file + " " + ann_file + " " + read_s + " " + read_f + " " + read_r + " " + lib_type_sample + " " + read_s_control + " " + read_f_control + " " + read_r_control + " " + lib_type_control + " " + is_ref_strain + " " + cross_type + " " + snp_analysis_type + " " + control_parental + " " + sim_mut + " " + sim_recsel + " " + sim_seq + " " + stringency + " " + exp_mut_type  + " " + threads 
+                     # 1                    2                3                   4               5               6                7                8              9              10             11                      12                     13                     14                     15                       16                    17                 18                        19                       20              21                 22              23					24					  25				26
+master_program_input = project_name + " " + workflow + " " + data_source + " " + ref_seq + " " + ins_seq + " " + gff_file + " " + ann_file + " " + read_s + " " + read_f + " " + read_r + " " + lib_type_sample + " " + read_s_control + " " + read_f_control + " " + read_r_control + " " + lib_type_control + " " + is_ref_strain + " " + cross_type + " " + snp_analysis_type + " " + control_parental + " " + sim_mut + " " + sim_recsel + " " + sim_seq + " " + stringency + " " + exp_mut_type  + " " + threads  + " " + preprocessing
 
 #print master_program_input
 

@@ -52,7 +52,7 @@ fi
 
 ################################################################################
 
-# Compile bcftools, bowtie, hisat and samtools
+# Compile bcftools, bowtie, hisat, fastp and samtools
 
 cd ./htslib
 make clean
@@ -73,6 +73,11 @@ make
 cd ../hisat2
 make clean
 make
+
+cd ../fastp
+make clean
+make
+sudo make install 
 
 cd ..
 

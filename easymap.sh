@@ -28,6 +28,7 @@
 # [23] $stringency
 # [24] $exp_mut_type
 # [25] $n_threads
+# [26] $preprocessing
 
 
 
@@ -99,6 +100,7 @@ sim_seq=${22}
 stringency=${23}
 exp_mut_type=${24}
 n_threads=${25}
+preprocessing=${26}
 
 ############################################################
 # Several necessary checking/preparation steps before actually running easymap
@@ -194,6 +196,7 @@ echo "Simulator (sim-seq.py) command:				" ${22} >> $my_log_file
 echo "Stringency:									" ${23} >> $my_log_file
 echo "Expected mutation type:                                                                       " ${24} >> $my_log_file
 echo "Number of cores:                                                                       " $n_threads >> $my_log_file
+echo "Read data preprocessing with fastp:                                        " $preprocessing >> $my_log_file
 
 
 echo "" >> $my_log_file
@@ -240,7 +243,7 @@ fi
 
 echo $(date "+%F > %T")": STARTING INPUT PROCESSING..." >> $my_log_file
 
-process_input=`./process_input/process-input.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $ref_seq $lib_type_ctrl`
+process_input=`./process_input/process-input.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $ref_seq $lib_type_ctrl $preprocessing`
 
 if [ $process_input == 0 ]; then
 	echo $(date "+%F > %T")": All inputs correct." >> $my_log_file
@@ -286,7 +289,7 @@ if [ $workflow == 'ins' ]; then
 fi
 
 if [ $workflow == 'snp' ]; then
-	workflow_result=`./workflows/workflow-snp.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $cross_type $is_ref_strain $control_parental $snp_analysis_type $lib_type_ctrl $stringency $exp_mut_type $n_threads`
+	workflow_result=`./workflows/workflow-snp.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $cross_type $is_ref_strain $control_parental $snp_analysis_type $lib_type_ctrl $stringency $exp_mut_type $n_threads $preprocessing`
 
 	if [ $workflow_result == 0 ]; then
 		echo $(date "+%F > %T")": Analysis workflow finished correctly." >> $my_log_file
@@ -299,7 +302,7 @@ if [ $workflow == 'snp' ]; then
 fi
 
 if [ $workflow == 'dens' ]; then
-	workflow_result=`./workflows/workflow-dens.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $cross_type $is_ref_strain $control_parental $snp_analysis_type $lib_type_ctrl $stringency $exp_mut_type $n_threads`
+	workflow_result=`./workflows/workflow-dens.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $cross_type $is_ref_strain $control_parental $snp_analysis_type $lib_type_ctrl $stringency $exp_mut_type $n_threads $preprocessing`
 	if [ $workflow_result == 0 ]; then
 		echo $(date "+%F > %T")": Analysis workflow finished correctly." >> $my_log_file
 	else
@@ -311,7 +314,7 @@ if [ $workflow == 'dens' ]; then
 fi
 
 if [ $workflow == 'vars' ]; then
-	workflow_result=`./workflows/workflow-vars.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $cross_type $is_ref_strain $control_parental $snp_analysis_type $lib_type_ctrl $stringency $exp_mut_type $n_threads`
+	workflow_result=`./workflows/workflow-vars.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $cross_type $is_ref_strain $control_parental $snp_analysis_type $lib_type_ctrl $stringency $exp_mut_type $n_threads $preprocessing`
 	if [ $workflow_result == 0 ]; then
 		echo $(date "+%F > %T")": Analysis workflow finished correctly." >> $my_log_file
 	else
@@ -323,7 +326,7 @@ if [ $workflow == 'vars' ]; then
 fi
 
 if [ $workflow == 'qtl' ]; then
-	workflow_result=`./workflows/workflow-qtl.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $cross_type $is_ref_strain $control_parental $snp_analysis_type $lib_type_ctrl $stringency $exp_mut_type $n_threads`
+	workflow_result=`./workflows/workflow-qtl.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $cross_type $is_ref_strain $control_parental $snp_analysis_type $lib_type_ctrl $stringency $exp_mut_type $n_threads $preprocessing`
 	if [ $workflow_result == 0 ]; then
 		echo $(date "+%F > %T")": QTL analysis workflow finished correctly." >> $my_log_file
 	else

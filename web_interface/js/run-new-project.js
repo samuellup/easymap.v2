@@ -313,6 +313,7 @@ window.onload = function() {
 			document.getElementById("simRecselInterface").style.display = "none";
 			document.getElementById("dataSource").style.display = "block";
 			document.getElementById("checkBoxStringency").style.display = "none";
+			document.getElementById("checkBoxPreprocessing").style.display = "none";
 			document.getElementById("checkBoxMultithread").style.display = "none";
 			document.getElementById("numberThreads").style.display = "none";
 
@@ -340,6 +341,7 @@ window.onload = function() {
 			document.getElementById("simRecselInterface").style.display = "block";
 			document.getElementById("dataSource").style.display = "block";
 			document.getElementById("checkBoxStringency").style.display = "block";
+			document.getElementById("checkBoxPreprocessing").style.display = "block";
 			document.getElementById("checkBoxMultithread").style.display = "block";
 
 			// Help messages
@@ -353,11 +355,12 @@ window.onload = function() {
 			if (cmdArgs[3] == 'exp') {
 				document.getElementById("expDataInterface").style.display = "block";
 				document.getElementById("checkBoxStringency").style.display = "block";
+				document.getElementById("checkBoxPreprocessing").style.display = "block";
 				document.getElementById("checkBoxMultithread").style.display = "block";
 			}
 			if (cmdArgs[3] == 'sim') {
 				document.getElementById("simDataInterface").style.display = "block";
-				document.getElementById("checkBoxStringency").style.display = "block";
+				document.getElementById("checkBoxPreprocessing").style.display = "block";
 				document.getElementById("checkBoxMultithread").style.display = "block";
 				//document.getElementById("numberThreads").style.display = "none";
 
@@ -370,6 +373,7 @@ window.onload = function() {
 			document.getElementById("readsControl").style.display = "block";
 			document.getElementById("expMutType").style.display = "block";
 			document.getElementById("checkBoxStringency").style.display = "block";
+			document.getElementById("checkBoxPreprocessing").style.display = "block";
 			document.getElementById("checkBoxMultithread").style.display = "block";
 			//document.getElementById("numberThreads").style.display = "block";
 			document.getElementById("backgroundCrossCtype").style.display = "none";
@@ -394,6 +398,7 @@ window.onload = function() {
 			document.getElementById("readsControl").style.display = "block";
 			document.getElementById("expMutType").style.display = "block";
 			document.getElementById("checkBoxStringency").style.display = "none";
+			document.getElementById("checkBoxPreprocessing").style.display = "block";
 			document.getElementById("checkBoxMultithread").style.display = "block";
 			document.getElementById("backgroundCrossCtype").style.display = "none";
 			document.getElementById("insSeqField").style.display = "none";
@@ -414,6 +419,7 @@ window.onload = function() {
 			document.getElementById("readsControl").style.display = "block";
 			document.getElementById("expMutType").style.display = "none";
 			document.getElementById("checkBoxStringency").style.display = "block";
+			document.getElementById("checkBoxPreprocessing").style.display = "block";
 			document.getElementById("checkBoxMultithread").style.display = "block";
 			document.getElementById("backgroundCrossCtype").style.display = "none";
 			document.getElementById("insSeqField").style.display = "none";
@@ -683,6 +689,13 @@ window.onload = function() {
 		}
 	}
 
+	function checkPreprocessing() {
+		if (this.checked) {
+			cmdArgs[26] = 'yes';
+		} else {
+			cmdArgs[26] = 'no';
+		}
+	}
 
 	// Check if the number of threads is properly defined
 	function verifyMultithreading(){
@@ -1086,7 +1099,7 @@ window.onload = function() {
 							   "&sim_mut=" + cmdArgs[20] +
 							   "&sim_recsel=" + cmdArgs[21] +
 							   "&sim_seq=" + cmdArgs[22] + 
-							   "&stringency=" + cmdArgs[23] + "&exp_mut_type=" + cmdArgs[24] + "&n_threads=" + cmdArgs[25];
+							   "&stringency=" + cmdArgs[23] + "&exp_mut_type=" + cmdArgs[24] + "&n_threads=" + cmdArgs[25] + "&preprocessing=" + cmdArgs[26];
 
 
 		//console.log('argsStringToPost: ' + argsStringToPost);
@@ -1162,7 +1175,7 @@ window.onload = function() {
 					'n/p','n/p','n/p','n/p',
 					'n/p','n/p','n/p','n/p',
 					'n/p','n/p','n/p','n/p',
-					'n/p','n/p','n/p','n/p','n/p','n/p'];
+					'n/p','n/p','n/p','n/p','n/p','n/p','n/p'];
 
 
 	// Create the command string for the first time (for development purposes only)
@@ -1229,6 +1242,9 @@ window.onload = function() {
 
 	// React to interactions with stringency button
 	document.getElementById("stringency").onclick = checkStringency;
+
+	// React to interactions with preprocessing button
+	document.getElementById("preprocessing").onclick = checkPreprocessing;
 
 	// React to interactions with multithreading button
 	document.getElementById("multithreading").onclick = checkMultithreading;
