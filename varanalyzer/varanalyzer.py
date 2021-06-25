@@ -151,10 +151,13 @@ if gff_source != "user_data/n/p":
 		for line_gff in input_gff:
 			if not line_gff.startswith('#'):
 				fields_gff = line_gff.split('\t')
-				if fields_gff[2].lower() == 'mrna':
-					useful_gff_info = fields_gff[2].lower(), fields_gff[0].lower(), int(fields_gff[3]), int(fields_gff[4]), fields_gff[6], fields_gff[8].split(';')[0][3:]
-					gff_array1.append(useful_gff_info)
-
+				try: 
+					if fields_gff[2].lower() == 'mrna':
+						useful_gff_info = fields_gff[2].lower(), fields_gff[0].lower(), int(fields_gff[3]), int(fields_gff[4]), fields_gff[6], fields_gff[8].split(';')[0][3:]
+						gff_array1.append(useful_gff_info)
+				except: 
+					pass
+				
 # Check whether each mutation position lies within a mRNA sequence or a putative regulatory region of the template gff file
 variants_info = []
 for variant in mut_array:
