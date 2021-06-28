@@ -495,30 +495,36 @@ if t_format == "fastq":
 
 #Read depth distribution graphics
 if t_format == "fastq":
-	if mut_type == 'snp' or mut_type == "dens"  or mut_type == "vars" or mut_type == "qtl": 
+	for f in files: 
+		if "frequence_depth_alignment_distribution_sample.png" in str(f): 
+			if mut_type == 'snp' or mut_type == "dens"  or mut_type == "vars" or mut_type == "qtl": 
+				output.write(
+				'		<b>Read depth distribution<br></b>' + '\n'
+				'		<p>Test sample<br></p>' + '\n'
+				'		<center> <img class="img" src="frequence_depth_alignment_distribution_sample.png" > </center> ' + '\n'
+					)
+				if c_format == "fastq": 
+					output.write(
+					'		<p>Control sample<br></p>' + '\n'
+					'		<center> <img class="img" src="frequence_depth_alignment_distribution_control.png" > </center> ' + '\n'
+					'		<hr class="easymap">' + '\n'
+						)
+				else: 
+					output.write(
+					'		<hr class="easymap">' + '\n'
+						)
+			if mut_type == 'lin': 
+				output.write(
+				'		<b>Read depth distribution<br></b>' + '\n'
+				'		<center> <img class="img" src="frequence_depth_alignment_distribution_sample.png" > </center> ' + '\n'
+				'		<hr class="easymap">' + '\n'
+					)
+			hit=True
+			break
+	if hit != True: 
 		output.write(
-		'		<b>Read depth distribution<br></b>' + '\n'
-		'		<p>Test sample<br></p>' + '\n'
-		'		<center> <img class="img" src="frequence_depth_alignment_distribution_sample.png" > </center> ' + '\n'
-			)
-		if c_format == "fastq": 
-			output.write(
-			'		<p>Control sample<br></p>' + '\n'
-			'		<center> <img class="img" src="frequence_depth_alignment_distribution_control.png" > </center> ' + '\n'
-			'		<hr class="easymap">' + '\n'
-				)
-		else: 
-			output.write(
-			'		<hr class="easymap">' + '\n'
-				)
-
-	if mut_type == 'lin': 
-		output.write(
-		'		<b>Read depth distribution<br></b>' + '\n'
-		'		<center> <img class="img" src="frequence_depth_alignment_distribution_sample.png" > </center> ' + '\n'
 		'		<hr class="easymap">' + '\n'
-			)
-
+		)
 
 #__________________________________LIN cartographic report________________________________________________________________
 if mut_type == 'lin': 

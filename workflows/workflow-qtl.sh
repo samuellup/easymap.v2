@@ -234,7 +234,6 @@ function get_problem_va {
 	#Intermediate files cleanup
 	rm -f $f1/*.sam
 	rm -f $f1/*.bam
-	rm -f $f1/*.bai
 	rm -f $f1/*.vcf
 
 }
@@ -337,7 +336,6 @@ function get_control_va {
 	#Intermediate files cleanup
 	rm -f $f1/*.sam
 	rm -f $f1/*.bam
-	rm -f $f1/*.bai
 	rm -f $f1/*.vcf
 }
 
