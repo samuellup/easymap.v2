@@ -55,9 +55,8 @@ elif args.my_mut == 'dens':
 	dens_ovw()
 	gene_plot()	
 
-	
 elif args.my_mut == 'qtl':
-	qtl_plot()
+	#qtl_plot()
 	qtl_plot_points()
 	#legend_qtl()
 	if args.gff != "user_data/n/p": 
