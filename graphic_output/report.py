@@ -495,6 +495,7 @@ if t_format == "fastq":
 
 #Read depth distribution graphics
 if t_format == "fastq":
+	hit == False 
 	for f in files: 
 		if "frequence_depth_alignment_distribution_sample.png" in str(f): 
 			if mut_type == 'snp' or mut_type == "dens"  or mut_type == "vars" or mut_type == "qtl": 
