@@ -342,4 +342,4 @@ echo $(date "+%F > %T")": Execution of project {" $project_name "} finished." >>
 echo 'status:finished' >> $my_status_file
 
 # This message must remain as is because install.sh relies on it to know whether the installation was successfull or not.
-echo "Easymap analysis completed."
+echo "Easymap analysis properly completed."
