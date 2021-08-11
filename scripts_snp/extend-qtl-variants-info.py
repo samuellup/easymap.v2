@@ -19,7 +19,7 @@ with open(args.output, "w") as out:
 	with open(args.cand_list, "r") as candidates: 
 		for line in candidates: 
 			if not line.startswith("@"):
-				sp = line.split()
+				sp = line.split("\t")
 				if len(str(sp[3])) == 1 and len(str(sp[4])) == 1: mut_type = "snp"
 				else: mut_type = "indel"
 				pos, cont = str(sp[2]).lower(), str(sp[1]).lower()
