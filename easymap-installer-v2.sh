@@ -3,8 +3,8 @@
 # Administraror privileges are required for the execution of this installer. 
 
 # Links to the main Easymap repositories
-git_address="https://github.com/samuellup/easymap.v2.git"      #'git://git.code.sf.net/p/easymap-v1/code easymap'	#'https://github.com/MicolLab/easymap.git'
-sf_download="wget -O easymap.zip https://sourceforge.net/projects/easymap-v1/files/latest/download"
+git_address="https://github.com/samuellup/easymap.v2.git"     
+#sf_download="wget -O easymap.zip https://sourceforge.net/projects/easymap-v1/files/latest/download"
 # Default access port: 8100, can be changed adding a port number as an argument when running the script
 if ! [ $1 ]; then
 	port=8100
@@ -49,7 +49,7 @@ Beggining Easymap installation in' $dis'. Please wait for the process to finish,
 	then
 		apt-get update
 		apt-get install build-essential zlib1g-dev libbz2-dev git wget tar zip liblzma-dev libncurses5-dev libncursesw5-dev libssl-dev make -y
-		if [ -d easymap ]; then rm -rf easymap; fi
+		if [ -d easymap.v2 ]; then rm -rf easymap.v2; fi
 		git clone $git_address
 		#$sf_download
 		#unzip easymap.zip
@@ -62,61 +62,61 @@ Beggining Easymap installation in' $dis'. Please wait for the process to finish,
 	then
 		apt-get update  
 		apt-get install build-essential zlib1g-dev libbz2-dev git wget tar zip liblzma-dev libncurses5-dev libncursesw5-dev libssl1.0-dev -y
-		if [ -d easymap ]; then rm -rf easymap; fi
-		#git clone $git_address
-		$sf_download
-		unzip easymap.zip
-		chmod -R 755 easymap
-		cd easymap
+		if [ -d easymap.v2 ]; then rm -rf easymap.v2; fi
+		git clone $git_address
+		#$sf_download
+		#unzip easymap.zip
+		chmod -R 755 easymap.v2
+		cd easymap.v2
 		./install.sh server $port
 	fi
 
-        if [ $dis == 'Ubuntu_16' ] || [ $dis == 'Ubuntu_14' ]
-        then
+    if [ $dis == 'Ubuntu_16' ] || [ $dis == 'Ubuntu_14' ]
+    then
 		apt-get update
 		apt-get install build-essential zlib1g-dev libbz2-dev git wget tar zip liblzma-dev libncurses5-dev libncursesw5-dev libssl-dev -y
-		if [ -d easymap ]; then rm -rf easymap; fi
-		#git clone $git_address
-		$sf_download
-		unzip easymap.zip
-		chmod -R 755 easymap
-		cd easymap
+		if [ -d easymap.v2 ]; then rm -rf easymap.v2; fi
+		git clone $git_address
+		#$sf_download
+		#unzip easymap.zip
+		chmod -R 755 easymap.v2
+		cd easymap.v2
 		./install.sh server $port
-        fi
+    fi
 
-        if [ $dis == 'Linux_AMI' ]
-        then
-                yum groupinstall -y "Development Tools"
+    if [ $dis == 'Linux_AMI' ]
+    then
+        yum groupinstall -y "Development Tools"
 		yum groupinstall -y "Development Libraries"
 		yum install -y wget zlib-devel bzip2-devel git ncurses-devel ncurses openssl-devel
 		yum install -y xz-devel
-		if [ -d easymap ]; then rm -rf easymap; fi
-		#git clone $git_address
-		$sf_download
-		unzip easymap.zip
-		chmod -R 755 easymap
-		cd easymap
+		if [ -d easymap.v2 ]; then rm -rf easymap.v2; fi
+		git clone $git_address
+		#$sf_download
+		#unzip easymap.zip
+		chmod -R 755 easymap.v2
+		cd easymap.v2
 		./install.sh cli
 		sudo -H -u $SUDO_USER bash -c "nohup ./src/Python-2.7.18/.localpython/bin/python -m CGIHTTPServer $port" &
-        fi
+	fi
 
-        if [ $dis == 'Linux_Redhat' ]
-        then
+    if [ $dis == 'Linux_Redhat' ]
+    then
 		yum groupinstall -y "Development Tools"
 		yum groupinstall -y "Development Libraries"
 		yum install -y wget zlib-devel bzip2-devel git ncurses-devel ncurses openssl-devel
 		yum install -y xz-devel
 		yum install -y curl-devel
 		yum install -y curl
-		if [ -d easymap ]; then rm -rf easymap; fi
-		#git clone $git_address
-		$sf_download
-		unzip easymap.zip
-		chmod -R 755 easymap
-		cd easymap
+		if [ -d easymap.v2 ]; then rm -rf easymap.v2; fi
+		git clone $git_address
+		#$sf_download
+		#unzip easymap.zip
+		chmod -R 755 easymap.v2
+		cd easymap.v2
 		./install.sh cli
 		sudo -H -u $SUDO_USER bash -c "nohup ./src/Python-2.7.18/.localpython/bin/python -m CGIHTTPServer $port" &
-        fi
+    fi
 
 	if [ $dis == 'OS_X(Yosemite)' ]
 	then
@@ -137,10 +137,10 @@ Proceeding with easymap installation.
 				"
 				xcode-select --install
 				brew install zlib xz bzip2 git
-				if [ -d easymap ]; then rm -rf easymap; fi
+				if [ -d easymap.v2 ]; then rm -rf easymap.v2; fi
 				git clone $git_address
-				chmod -R 755 easymap
-				cd easymap
+				chmod -R 755 easymap.v2
+				cd easymap.v2
 				./install.sh server $port
 				break
 			else
