@@ -1458,7 +1458,7 @@ if mut_type == 'qtl':
 	with open(input_var) as candidates:
 		for line in candidates:
 			if not line.startswith('@'):
-				sp = line.split()
+				sp = line.split('\n')
 				if sp[12].strip() != "nh" and str(sp[17]).strip() != "intron" and str(sp[16]).strip() != "-" :
 					try: 
 						if float(str(sp[10]).strip()) > 0.4 :
