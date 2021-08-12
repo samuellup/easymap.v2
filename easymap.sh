@@ -243,7 +243,7 @@ fi
 
 echo $(date "+%F > %T")": STARTING INPUT PROCESSING..." >> $my_log_file
 
-process_input=`./process_input/process-input.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $ref_seq $lib_type_ctrl $preprocessing`
+process_input=`./process_input/process-input.sh $my_log_file $project_name $workflow $data_source $lib_type_sample $ins_seq $read_s $read_f $read_r $gff_file $ann_file $read_s_ctrl $read_f_ctrl $read_r_ctrl $ref_seq $lib_type_ctrl $preprocessing $n_threads`
 
 if [ $process_input == 0 ]; then
 	echo $(date "+%F > %T")": All inputs correct." >> $my_log_file
