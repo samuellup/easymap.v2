@@ -1455,16 +1455,18 @@ if mut_type == 'qtl':
 
 	#first we check that there are candidates 
 	n_candidates = 0
-	with open(input_var) as candidates:
-		for line in candidates:
-			if not line.startswith('@'):
-				sp = line.split('\n')
-				if sp[12].strip() != "nh" and str(sp[17]).strip() != "intron" and str(sp[16]).strip() != "-" :
-					try: 
-						if float(str(sp[10]).strip()) > 0.4 :
-							n_candidates = n_candidates + 1
-					except: pass
-
+	try: 
+		with open(input_var) as candidates:
+			for line in candidates:
+				if not line.startswith('@'):
+					sp = line.split('\n')
+					if sp[12].strip() != "nh" and str(sp[17]).strip() != "intron" and str(sp[16]).strip() != "-" :
+						try: 
+							if float(str(sp[10]).strip()) > 0.4 :
+								n_candidates = n_candidates + 1
+						except: pass
+	except: pass
+	
 	#then if the number of candidates is > 0, we write the candidates in a table
 
 	if n_candidates == 0:
