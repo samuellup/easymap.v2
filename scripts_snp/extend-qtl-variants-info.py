@@ -10,7 +10,7 @@ args = parser.parse_args()
 dic_af = dict()
 with open(args.af_info, "r") as info: 
 	for line in info: 
-		sp = line.split()
+		sp = line.split("\t")
 		va_id = str(sp[1]).lower() + "-" + str(sp[0]).lower()
 		dic_af[va_id] = [sp[9], sp[10], sp[11]]
 

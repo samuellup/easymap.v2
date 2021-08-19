@@ -29,12 +29,16 @@
 #
 # David Wilson - dws1985@hotmail.com
 #
+#
 
-# SDL - V4 - Fixed splicing detection, increased GFF compatibility, implemented multithreading
+# UPDATE - Fixed splicing detection, SDL
+
+
+
 
 import argparse
-from multiprocessing import Pool, Manager
 from string import maketrans
+
 
 # Parse command arguments
 parser = argparse.ArgumentParser()
@@ -46,7 +50,6 @@ parser.add_argument('-gff', action="store", dest='gff_source', required=True)
 parser.add_argument('-var', action="store", dest='variants_source', required=True)
 parser.add_argument('-rrl', action="store", dest='regulatory_region_length', required=True) # To turn off, set to 0
 parser.add_argument('-ann', action="store", dest='gene_ann_source')
-parser.add_argument('-thr', action="store", dest='threads')
 
 args = parser.parse_args()
 
@@ -59,7 +62,6 @@ variants_source = args.variants_source
 regulatory_region_length = int(args.regulatory_region_length)
 gene_ann_source = args.gene_ann_source
 output = args.output
-threads = int(args.threads)
 
 # Function to parse fasta file (based on one of the Biopython IOs)
 def read_fasta(fp):
@@ -172,55 +174,44 @@ if gff_source != "user_data/n/p":
 del transcript_list
 
 # Check whether each mutation position lies within a mRNA sequence or a putative regulatory region of the template gff file
-manager = Manager()
-variants_info = manager.list()
-def worker_1(variant, variants_info): 
-	try: 
-		# Reset 'hit' variable
-		is_hit = False
-		
-		# For each input mutation/variant, go through the gff info and detect hits. A single mutation can
-		# affect simultaneously more than one transcription unit or putatve regulatory sequence. This is 
-		# handled in the code. The output is written to 'variants_info' array.
-		for mrna in gff_array1:
-		
-			if variant[1] == mrna[1] and variant[2] >= mrna[2] and variant[2] <= mrna[3]: # mrna[1]: mRNA chrom, mrna[2]: mRNA left coord, mrna[3]: mRNA right coord
-				is_hit = True
-				hit = 'tu'
-				dumped_info = variant[0], variant[1], variant[2], variant[3], variant[4], hit, mrna[2], mrna[3], mrna[4], mrna[5]
-				variants_info.append(dumped_info)
-			
-			if regulatory_region_length > 0:
-			
-				if mrna[4] == '+':
-					if variant[1] == mrna[1] and variant[2] < mrna[2] and variant[2] >= (mrna[2] - regulatory_region_length):
-						is_hit = True
-						hit = 'rr'
-						dumped_info = variant[0], variant[1], variant[2], variant[3], variant[4], hit, mrna[2], mrna[3], mrna[4], mrna[5], 'promoter', '-', '-', '-'
-						variants_info.append(dumped_info)
-
-				if mrna[4] == '-':
-					if variant[1] == mrna[1] and variant[2] > mrna[3] and variant[2] <= (mrna[3] + regulatory_region_length):
-						is_hit = True
-						hit = 'rr'
-						dumped_info = variant[0], variant[1], variant[2], variant[3], variant[4], hit, mrna[2], mrna[3], mrna[4], mrna[5], 'promoter', '-', '-', '-'
-						variants_info.append(dumped_info)
-
-		# If no mRNA or putative regulatory region is hit, parse the mutation and add its info to 'variants_info'
-		if is_hit == False:
-			hit = 'nh'
-			dumped_info = variant[0], variant[1], variant[2], variant[3], variant[4], hit, '-', '-', '-', '-', '-', '-', '-', '-'
-			variants_info.append(dumped_info)
-	except: pass
-
-# Multithreading worker_1 
-pool_size = threads  
-pool = Pool(pool_size)
-
+variants_info = []
 for variant in mut_array:
-    pool.apply_async(worker_1, (variant, variants_info))
-pool.close()
-pool.join()
+
+	# Reset 'hit' variable
+	is_hit = False
+	
+	# For each input mutation/variant, go through the gff info and detect hits. A single mutation can
+	# affect simultaneously more than one transcription unit or putatve regulatory sequence. This is 
+	# handled in the code. The output is written to 'variants_info' array.
+	for mrna in gff_array1:
+	
+		if variant[1] == mrna[1] and variant[2] >= mrna[2] and variant[2] <= mrna[3]: # mrna[1]: mRNA chrom, mrna[2]: mRNA left coord, mrna[3]: mRNA right coord
+			is_hit = True
+			hit = 'tu'
+			dumped_info = variant[0], variant[1], variant[2], variant[3], variant[4], hit, mrna[2], mrna[3], mrna[4], mrna[5]
+			variants_info.append(dumped_info)
+		
+		if regulatory_region_length > 0:
+		
+			if mrna[4] == '+':
+				if variant[1] == mrna[1] and variant[2] < mrna[2] and variant[2] >= (mrna[2] - regulatory_region_length):
+					is_hit = True
+					hit = 'rr'
+					dumped_info = variant[0], variant[1], variant[2], variant[3], variant[4], hit, mrna[2], mrna[3], mrna[4], mrna[5], 'promoter', '-', '-', '-'
+					variants_info.append(dumped_info)
+
+			if mrna[4] == '-':
+				if variant[1] == mrna[1] and variant[2] > mrna[3] and variant[2] <= (mrna[3] + regulatory_region_length):
+					is_hit = True
+					hit = 'rr'
+					dumped_info = variant[0], variant[1], variant[2], variant[3], variant[4], hit, mrna[2], mrna[3], mrna[4], mrna[5], 'promoter', '-', '-', '-'
+					variants_info.append(dumped_info)
+
+	# If no mRNA or putative regulatory region is hit, parse the mutation and add its info to 'variants_info'
+	if is_hit == False:
+		hit = 'nh'
+		dumped_info = variant[0], variant[1], variant[2], variant[3], variant[4], hit, '-', '-', '-', '-', '-', '-', '-', '-'
+		variants_info.append(dumped_info)
 
 del mut_array, gff_array1
 
@@ -241,9 +232,9 @@ if gff_source != "user_data/n/p":
 						gff_array2.append(useful_gff_info)
 				except: pass
 # Analyze variants that are marked as interrupting a mRNA or putative regulatory region
-variants_info2 = manager.list()
+variants_info2 = []
+for variant_info in variants_info:
 
-def worker_2(variant_info, variants_info2): 
 	if variant_info[5] == 'tu':
 		
 		# Check if mutation position lies in 'UTRs' (untranslated regions) or introns
@@ -473,15 +464,6 @@ def worker_2(variant_info, variants_info2):
 	else:
 		# If no transcriptional unit has been hit, simply copy 'variants_info' to the new array 'variants_info2'
 		variants_info2.append(variant_info)
-
-# Multithreading worker_2
-pool_size = threads  
-pool = Pool(pool_size)
-
-for variant_info in variants_info:
-    pool.apply_async(worker_2, (variant_info, variants_info2))
-pool.close()
-pool.join()
 
 del input_mut, input_gff, variants_info
 	
