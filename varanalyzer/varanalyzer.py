@@ -169,7 +169,8 @@ if gff_source != "user_data/n/p":
 								gff_array1.append(useful_gff_info)
 					except: 
 						pass
-del transcript_list
+try: del transcript_list
+except: pass
 
 # Check whether each mutation position lies within a mRNA sequence or a putative regulatory region of the template gff file
 manager = Manager()
@@ -222,8 +223,8 @@ for variant in mut_array:
 pool.close()
 pool.join()
 
-del mut_array, gff_array1
-
+try: del mut_array, gff_array1
+except: pass
 
 # From input gff file, load (cds, exon, UTRs x chrom, feat, start, end, model) in array
 # I add exons so I can later use this array to analyze mutation within introns, although this
@@ -483,8 +484,8 @@ for variant_info in variants_info:
 pool.close()
 pool.join()
 
-del input_mut, input_gff, variants_info
-	
+try: del input_mut, input_gff, variants_info
+except: pass
 
 # Retrieve gene functional annotation and create final output
 
