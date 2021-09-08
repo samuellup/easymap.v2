@@ -835,8 +835,6 @@ then
 	# (2) Run vcf filter to get SNPs with af > 0.75
 	{
 		python2 $location/scripts_snp/variants-filter.py -a $f1/control_filtered.va -b $f1/control_filtered2.va -step 3 -fasta $f1/$my_gs -in_format $control_format -af_min 0.75  2>> $my_log_file
-		#draw snps
-		python2 $location/graphic_output/graphic-output.py -my_mut af_control -asnp $f1/control_filtered2.va -bsnp $f1/$my_gs -rrl $my_rrl -iva $2/1_intermediate_files/varanalyzer_output.txt -gff $f0/$my_gff -pname $2  -cross $my_cross -snp_analysis_type $snp_analysis_type  2>> $my_log_file
 
 	} || {
 		echo $(date "+%F > %T")': Error during the second execution of variants-filter.py .' >> $my_log_file

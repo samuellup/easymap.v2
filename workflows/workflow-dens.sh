@@ -374,14 +374,8 @@ function get_control_va_from_vcf {
 
 	#Run vcf filter
 
-	if [ $av_rd -gt 25 ]; then dp_min=12 ; fi
-	if [ $av_rd -le 25 ]; then dp_min=6 ; fi
-
-	dp_max=$(($av_rd * 3))
-	if [ $dp_max -le 40 ]; then dp_max=100 ; fi
-
 	{
-		python2 $location/scripts_snp/variants-filter.py -in_format "vcf"  -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -dp_max $dp_max -qual_min 20  2>> $my_log_file
+		python2 $location/scripts_snp/variants-filter.py -in_format "vcf"  -a $f1/control_raw.va -b $f1/control_filtered.va -step 3 -fasta $f1/$my_gs -qual_min 20  2>> $my_log_file
 
 	} || {
 		echo $(date "+%F > %T")': Error during execution of variants-filter.py with control data.' >> $my_log_file
