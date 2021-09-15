@@ -46,7 +46,7 @@ parser.add_argument('-gff', action="store", dest='gff_source', required=True)
 parser.add_argument('-var', action="store", dest='variants_source', required=True)
 parser.add_argument('-rrl', action="store", dest='regulatory_region_length', required=True) # To turn off, set to 0
 parser.add_argument('-ann', action="store", dest='gene_ann_source')
-parser.add_argument('-thr', action="store", dest='threads')
+parser.add_argument('-thr', action="store", dest='threads', default = '1')
 
 args = parser.parse_args()
 
