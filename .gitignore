@@ -1,5 +1,6 @@
 dens
-hisat2
+hisat2/
+./hisat2
 htslib
 config/config
 user_projects/
@@ -12,6 +13,7 @@ user_data/
 */tmp_upload_files
 src/
 bowtie2/
+fastp/
 graphic_output/Pillow-4.2.1/
 bcftools-1.3.1/
 samtools1/
