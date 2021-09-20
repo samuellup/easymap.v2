@@ -25,7 +25,7 @@ with open(args.output, "w") as out:
 				pos, cont = str(sp[2]).lower(), str(sp[1]).lower()
 				va_id = pos + "-" + cont
 				try: 
-					af_mut, af_wt, daf = str(dic_af[va_id][0])[:6], str(dic_af[va_id][1])[:6], str(dic_af[va_id][2])[:6]
+					af_mut, af_wt, daf = str(dic_af[va_id][0])[:6], str(dic_af[va_id][1])[:6], str(dic_af[va_id][2])[:6].strip()
 					out.write(
 						mut_type + "\t" + cont + "\t" + pos + "\t" + str(sp[3]) + "\t" + str(sp[4]) + "\t" + str(sp[5]) + "\t" +  str(sp[6]) + "\t" + str(sp[7]) + "\t" + af_mut + "\t" +
 						af_wt + "\t" + daf + "\t" + str(sp[9]) + "\t" + str(sp[10]) + "\t" + str(sp[11]) + "\t" + str(sp[12]) + "\t" + str(sp[13]) + "\t" + str(sp[14]) + "\t" + str(sp[15]) + "\t" + str(sp[16]) + "\t" + str(sp[17]) + "\t" +
