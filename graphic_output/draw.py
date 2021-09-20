@@ -1562,6 +1562,11 @@ def qtl_plot_points():
 					mbs = mbs + 5000000/scaling_factor_x +1
 					x_tag = x_tag + 5
 
+				mbs = int(0/scaling_factor_x) + 68
+				while mbs in range(68, wide-50):
+					draw.line((mbs, int(80.5/100.0*height) ) + (mbs, int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)						
+					mbs = mbs + 1000000/scaling_factor_x +1
+
 			if max_contig_len > 90000000 :
 				mbs = int(0/scaling_factor_x) + 68
 				x_tag = 0
@@ -1576,6 +1581,11 @@ def qtl_plot_points():
 					
 					mbs = mbs + 25000000/scaling_factor_x +1
 					x_tag = x_tag + 25
+
+				mbs = int(0/scaling_factor_x) + 68
+				while mbs in range(68, wide-50):
+					draw.line((mbs, int(80.5/100.0*height) ) + (mbs, int(80/100.0*height)), fill=(0, 0, 0, 0), width=1)						
+					mbs = mbs + 5000000/scaling_factor_x +1
 
 			elif max_contig_len <= 1000000:
 				mbs = int(0/scaling_factor_x) + 68
