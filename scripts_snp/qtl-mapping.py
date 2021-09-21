@@ -44,7 +44,7 @@ for chr in chromosomes:
 
 recount = list()
 for ch in chromosomes:
-	for center_pos in range(width/2, (int(ch[1])-width/2), step):
+	for center_pos in range(step/2, (int(ch[1])-step/2), step):   # for center_pos in range(width/2, (int(ch[1])-width/2), step):
 		avgAF = 0
 		AF_sum = 0.0
 		snp_count = 0 
