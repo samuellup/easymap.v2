@@ -59,8 +59,9 @@ for ch in chromosomes:
 						snp_count = snp_count + 1
 						AF_sum = AF_sum + float(sp[11])
 		try: 
-			avgAF = float(AF_sum/float(snp_count))
-			recount.append([ch[0], center_pos, avgAF]) 
+			if int(snp_count) > 1: 
+				avgAF = float(AF_sum/float(snp_count))
+				recount.append([ch[0], center_pos, avgAF]) 
 		except: pass
 
 # Weighted averages 
