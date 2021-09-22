@@ -118,7 +118,7 @@ Beggining Easymap installation in' $dis'. Please wait for the process to finish,
 		sudo -H -u $SUDO_USER bash -c "nohup ./src/Python-2.7.18/.localpython/bin/python -m CGIHTTPServer $port" &
     fi
 
-	if [ $dis == 'OS_X(Yosemite)' ]
+	if [ $dis == 'OS_X' ]
 	then
 		echo 'Does your machine have proctools installed?
 		'
@@ -141,7 +141,7 @@ Proceeding with easymap installation.
 				git clone $git_address
 				chmod -R 755 easymap.v2
 				cd easymap.v2
-				./install.sh server $port
+				./install-osx.sh server $port
 				break
 			else
 				echo "
