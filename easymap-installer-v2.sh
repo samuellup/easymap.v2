@@ -29,7 +29,7 @@ PS3='
 
 Enter a number: '
 
-distrs='Ubuntu_20 Ubuntu_18 Ubuntu_16 Ubuntu_14 Linux_AMI Linux_Redhat Quit'
+distrs='Ubuntu_20 Ubuntu_18 Ubuntu_16 Ubuntu_14 Linux_AMI Linux_Redhat OSX Quit'
 select dis in $distrs
 do
 	if [ $dis == 'Quit' ]
@@ -120,37 +120,22 @@ Beggining Easymap installation in' $dis'. Please wait for the process to finish,
 
 	if [ $dis == 'OS_X' ]
 	then
-		echo 'Does your machine have proctools installed?
-		'
-		PS3='
-Enter a number: '
-
-		answ='Yes No'
-		select dis in $answ
-		do
-			if [ $dis == 'Yes' ]
-			then
-				echo "
+		echo "
 				
 Proceeding with easymap installation.
 				
 				"
+				ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" 2> /dev/null
+				brew install proctools
 				xcode-select --install
 				brew install zlib xz bzip2 git
 				if [ -d easymap.v2 ]; then rm -rf easymap.v2; fi
 				git clone $git_address
 				chmod -R 755 easymap.v2
 				cd easymap.v2
-				./install-osx.sh server $port
+				./install.sh server $port
 				break
-			else
-				echo "
-Please make sure proctools is installed in this machine. You can get proctools at (https://sourceforge.net/projects/proctools/).
-				
-				"
-				break
-			fi
-		done
+	
 	fi
 	break
 done
