@@ -1,0 +1,14 @@
+214c214
+< #_socket socketmodule.c timemodule.c
+---
+> _socket socketmodule.c timemodule.c
+218,221c218,221
+< #SSL=/usr/local/ssl
+< #_ssl _ssl.c \
+< #	-DUSE_SSL -I$(SSL)/include -I$(SSL)/include/openssl \
+< #	-L$(SSL)/lib -lssl -lcrypto
+---
+> SSL=/usr/local/Cellar/openssl/1.0.2m
+> _ssl _ssl.c \
+> 	-DUSE_SSL -I$(SSL)/include -I$(SSL)/include/openssl \
+> 	-L$(SSL)/lib -lssl -lcrypto
