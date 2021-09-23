@@ -125,7 +125,6 @@ Beggining Easymap installation in' $dis'. Please wait for the process to finish,
 Proceeding with easymap installation.
 				
 				"
-				ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" 2> /dev/null
 				brew install proctools
 				xcode-select --install
 				brew install zlib xz bzip2 git
