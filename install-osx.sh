@@ -98,7 +98,7 @@ tar -zxvf Python-2.7.18.tgz
 # Install Python-2.7.18
 cd Python-2.7.18
 [ -d .localpython ] || mkdir .localpython
-./configure --prefix=$PWD/.localpython  
+./configure --prefix=$PWD/.localpython  --with-threads=no 
 patch Modules/Setup ../../python-static-ssl-setup.patch
 make
 make install
