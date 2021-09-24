@@ -118,23 +118,17 @@ Beggining Easymap installation in' $dis'. Please wait for the process to finish,
 		sudo -H -u $SUDO_USER bash -c "nohup ./src/Python-2.7.18/.localpython/bin/python -m CGIHTTPServer $port" &
     fi
 
-	if [ $dis == 'OS_X' ]
+	if [ $dis == 'OSX' ]
 	then
-		echo "
-				
-Proceeding with easymap installation.
-				
-				"
-				brew install proctools
-				xcode-select --install
-				brew install zlib xz bzip2 git
-				if [ -d easymap.v2 ]; then rm -rf easymap.v2; fi
-				git clone $git_address
-				chmod -R 755 easymap.v2
-				cd easymap.v2
-				./install.sh server $port
-				break
-	
+		#brew install proctools
+		xcode-select --install
+		#brew install zlib xz bzip2 git
+		if [ -d easymap.v2 ]; then rm -rf easymap.v2; fi
+		git clone $git_address
+		chmod -R 755 easymap.v2
+		cd easymap.v2
+		./install-osx.sh server $port
+		break
 	fi
 	break
 done
