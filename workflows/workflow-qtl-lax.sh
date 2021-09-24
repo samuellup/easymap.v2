@@ -106,15 +106,15 @@ echo $(date "+%F > %T")': set-interval.py finished, interval set at: '$interval_
 # Set variant density mapping window width and step according to genome size
 if [ $interval_width -lt 4000000 ]; then
 	wd_width=1000000
-	wd_step=500000
+	wd_step=250000
 	interval_width=2000000
 elif [ $interval_width -ge 4000000 ] && [ $interval_width -lt 11000000 ]; then
 	wd_width=2000000
-	wd_step=1000000
+	wd_step=500000
 	interval_width=5000000
 elif [ $interval_width -ge 11000000 ]; then
 	wd_width=20000000
-	wd_step=10000000
+	wd_step=5000000
 	interval_width=20000000
 fi
 
