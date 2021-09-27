@@ -1459,10 +1459,10 @@ if mut_type == 'qtl':
 		with open(input_var) as candidates:
 			for line in candidates:
 				if not line.startswith('@'):
-					sp = line.split('\n')
+					sp = line.split()
 					if sp[12].strip() != "nh" and str(sp[17]).strip() != "intron" and str(sp[16]).strip() != "-" :
 						try: 
-							if float(str(sp[10]).strip()) > 0.4 :
+							if abs(float(str(sp[10]).strip())) > 0.4 :
 								n_candidates = n_candidates + 1
 						except: pass
 	except: pass
@@ -1532,7 +1532,7 @@ if mut_type == 'qtl':
 						annotation = ' Functional annotation not available'
 					if str(sp[17]).strip() != "intron" and gene != "-" : 
 						try: 
-							if float(dAF) > 0.4: 
+							if abs(float(dAF)) > 0.4: 
 								variants_list.append([str(i), contig, position, AF_test, dAF, nucleotide, gene, aminoacid, primer_f, primer_r, upstream, downstream, annotation, alt_nt])
 
 								output.write(
