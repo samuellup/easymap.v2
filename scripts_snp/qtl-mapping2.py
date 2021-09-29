@@ -145,7 +145,7 @@ del out_list
 
 # CR selection 
 regs = list()
-cr_size = int(args.cand_interval)/2
+cr_size = int(args.cand_interval)
 
 for peak in dAF_peaks: 
 	start_CR = int(peak[1]) - int(cr_size)/2
