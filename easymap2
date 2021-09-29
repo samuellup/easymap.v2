@@ -555,6 +555,9 @@ if args.exp_mut_type:
 else: 
 	exp_mut_type = "EMS"
 
+if workflow == "qtl":
+	exp_mut_type = "all"
+
 # Deal with the threads parameter
 if args.threads: 
 	threads = args.threads
