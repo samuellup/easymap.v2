@@ -185,7 +185,7 @@ function listInputFiles() {
 			var otherFiles = inputFilesresponse[3];
 			var annFiles = document.getElementById('annFileSelector');
 			if (otherFiles.length < 1) {
-				annFiles.options[annFiles.options.length] = new Option('There are no files with the appropriate extension');
+				annFiles.options[annFiles.options.length] = new Option('There are no files with the appropriate extension', 'n/p');
 			} else {
 				annFiles.options[annFiles.options.length] = new Option('Select a file', 'n/p');
 				for (i = 0; i < otherFiles.length; i++) {
