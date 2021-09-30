@@ -179,10 +179,10 @@ if mode == "qtl":
 				dAF = str(float(AF_mut) - float(AF_wt))
 				# f3 goes to mutation mapping module
 				ind = float(AF_mut) + float(AF_wt)
-				if float(ind) < 1.9 and float(AF_mut) > 0.2 and float(AF_wt) > 0.2 : 
+				if float(ind) < 1.9 : 
 					f3.write( str(chr) + '\t' + str(i) + '\t' + str(dic_mut[i][0]) +'\t' +  str(dic_mut[i][1]) +'\t' +  str(dic_mut[i][2]) + '\t' + str(dic_wt[i][3]) +'\t' +  str(dic_wt[i][4]) + '\t' + str(dic_mut[i][3]) + '\t' + str(dic_mut[i][4]) + '\t' + AF_mut + '\t' + AF_wt + '\t' + dAF + '\n')
 				# f4 goes to candidates processing
-				if abs(float(dAF)) > 0.4: 
+				if abs(float(dAF)) > 0.3: 
 					f4.write(str(chr) + '\t' + str(i) + '\t' + str(dic_mut[i][0]) +'\t' +  str(dic_mut[i][1]) +'\t' +  str(dic_mut[i][2]) + '\t' + str(dic_wt[i][3]) +'\t' +  str(dic_wt[i][4]) + '\t' + str(dic_mut[i][3]) + '\t' + str(dic_mut[i][4]) + '\t' + AF_mut + '\t' + AF_wt + '\t' + dAF + '\n')
 		
 		# F2 variants

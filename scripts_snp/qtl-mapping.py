@@ -12,11 +12,15 @@ parser.add_argument('-f_input', action="store", dest = 'f_input')
 parser.add_argument('-mut_type', action="store", dest = 'mut_type') # implementation of different window sizes depending on SNP density
 parser.add_argument('-cand_interval', action="store", dest= "cand_interval")
 parser.add_argument('-out2', action="store", dest = 'out2')
+parser.add_argument('-mapqual', action="store", dest = 'mapqual')
+
+
 
 args = parser.parse_args()
 
 width = int(args.width)
 step = int(args.step)
+mapqual = float(args.mapqual)
 
 in_file = args.in_file
 f_input = args.f_input
@@ -55,7 +59,7 @@ for ch in chromosomes:
 				sp = line.split()
 				if str(sp[0]) == str(ch[0]) and int(sp[1]) > left and int(sp[1]) < right:
 					ind = float(sp[9]) + float(sp[10])
-					if float(ind) < 1.9 and float(sp[9]) > 0.2 and float(sp[10]) > 0.2 and float(sp[4]) > 100.0 :    # Criteria for selection of mapping SNP 
+					if float(ind) < 1.9 and float(sp[9]) > 0.15 and float(sp[10]) > 0.15 and float(sp[4]) > mapqual :    # Criteria for selection of mapping SNP 
 						snp_count = snp_count + 1
 						AF_sum = AF_sum + float(sp[11])
 		try: 

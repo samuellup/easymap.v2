@@ -82,11 +82,11 @@ fi
 # Set internal variables according to the SNP validation stringency chosen by the user
 if [ $stringency == high_stringency ]; then
 	problemSample_mpileup_C="-C50"
-	problemSample_snpQualityTheshold="100"
+	problemSample_snpQualityTheshold="60"
 else
 	problemSample_bowtie_mp="--mp 3,2"
 	problemSample_mpileup_C=""
-	problemSample_snpQualityTheshold="30"
+	problemSample_snpQualityTheshold="20"
 fi
 
 
@@ -106,7 +106,7 @@ echo $(date "+%F > %T")': set-interval.py finished, interval set at: '$interval_
 # Set variant density mapping window width and step according to genome size
 if [ $interval_width -lt 4000000 ]; then
 	wd_width=1000000
-	wd_step=100000
+	wd_step=250000
 	interval_width=2000000
 elif [ $interval_width -ge 4000000 ] && [ $interval_width -lt 11000000 ]; then
 	wd_width=2000000
@@ -114,7 +114,7 @@ elif [ $interval_width -ge 4000000 ] && [ $interval_width -lt 11000000 ]; then
 	interval_width=5000000
 elif [ $interval_width -ge 11000000 ]; then
 	wd_width=20000000
-	wd_step=10000000
+	wd_step=5000000
 	interval_width=20000000
 fi
 
@@ -218,8 +218,7 @@ function get_problem_va {
 	depth_alignment $f1/alignment1.bam $f3/frequence_depth_alignment_distribution_sample.png
 
 	#Run vcf filter
-	dp_min=5
-
+	dp_min=3
 	{
 		python2 $location/scripts_snp/variants-filter.py -a $f1/F2_raw.va -b $f1/F2_filtered.va -step 3 -fasta $f1/$my_gs -dp_min $dp_min -qual_min $problemSample_snpQualityTheshold -mut_type $exp_mut_type  2>> $my_log_file
 
@@ -409,7 +408,7 @@ echo $(date "+%F > %T")': Allelic frequence comparison finished.' >> $my_log_fil
 # Run QTL mapping 
 {
 	touch $f1/candidate_region.txt
-	python2 $location/scripts_snp/qtl-mapping.py -in $f1/F2_control_comparison.va  -out $f1/mapping_info.txt -out2 $f1/candidate_region.txt -width $wd_width -step $wd_step -f_input $f1/$my_gs	-cand_interval $interval_width 2>> $my_log_file
+	python2 $location/scripts_snp/qtl-mapping.py -in $f1/F2_control_comparison.va -mapqual $problemSample_snpQualityTheshold -out $f1/mapping_info.txt -out2 $f1/candidate_region.txt -width $wd_width -step $wd_step -f_input $f1/$my_gs	-cand_interval $interval_width 2>> $my_log_file
 
 } || {
 	echo $(date "+%F > %T")': Error during execution of dens-mapping.py .' >> $my_log_file
