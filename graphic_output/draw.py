@@ -2672,7 +2672,7 @@ def gene_plot():
 				temp_list.append(sp[1])
 				temp_list.append(sp[2])
 				temp_list.append('-')
-				temp_list.append(sp[9])
+				temp_list.append(str(sp[9]).replace(" ", ""))
 				refalt = [sp[12].strip(), sp[13].strip(), sp[11].strip(), sp[3].strip(), sp[4].strip(), sp[8].strip()]
 				temp_list.append(refalt)
 				intermediate_list.append(temp_list)
@@ -2693,7 +2693,7 @@ def gene_plot():
 			if not line.startswith('#'):
 				sp = line.split('\t')
 				try: 
-					if (p[3] + ';')  in (sp[8].strip() + ';'):
+					if (p[3] + ';')  in ((sp[8].strip()).replace(" ", "") + ';'):
 						feature = [sp[2], sp[3], sp[4]]
 						positions.append(int(sp[3]))
 						positions.append(int(sp[4]))

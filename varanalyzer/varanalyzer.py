@@ -151,7 +151,7 @@ if gff_source != "user_data/n/p":
 				fields_gff = line_gff.split('\t')
 				try: 
 					if fields_gff[2].lower() == 'mrna':
-						useful_gff_info = fields_gff[2].lower(), fields_gff[0].lower(), int(fields_gff[3]), int(fields_gff[4]), fields_gff[6], fields_gff[8].split(';')[0][3:]
+						useful_gff_info = fields_gff[2].lower(), fields_gff[0].lower(), int(fields_gff[3]), int(fields_gff[4]), fields_gff[6], (fields_gff[8].split(';')[0][3:]).replace(" ", "")
 						gff_array1.append(useful_gff_info)
 				except: 
 					pass
@@ -163,9 +163,9 @@ if gff_source != "user_data/n/p":
 					fields_gff = line_gff.split('\t')
 					try: 
 						if fields_gff[2].lower() == 'transcript':
-							if str(fields_gff[8].split(';')[0][3:]) not in transcript_list:
-								transcript_list.append(str(fields_gff[8].split(';')[0][3:]))
-								useful_gff_info = fields_gff[2].lower(), fields_gff[0].lower(), int(fields_gff[3]), int(fields_gff[4]), fields_gff[6], fields_gff[8].split(';')[0][3:]
+							if str(fields_gff[8].split(';')[0][3:]).replace(" ", "") not in transcript_list:
+								transcript_list.append(str(fields_gff[8].split(';')[0][3:]).replace(" ", ""))
+								useful_gff_info = fields_gff[2].lower(), fields_gff[0].lower(), int(fields_gff[3]), int(fields_gff[4]), fields_gff[6], (fields_gff[8].split(';')[0][3:]).replace(" ", "")
 								gff_array1.append(useful_gff_info)
 					except: 
 						pass
