@@ -119,10 +119,10 @@ with open(input_log, 'r') as f1:
 
 		if line.startswith('SNP analysis type [par/f2wt]:'):
 			sp = line.split()
-			if str(sp[-1]) == 'par': snp_analysis_type = 'parental'
+			if str(sp[-1]) == 'par': snp_analysis_type = 'parent'
 			if str(sp[-1]) == 'f2wt': snp_analysis_type = 'wild type F2'
 
-		if line.startswith('Parental used as control [mut/nomut/no]:'):
+		if line.startswith('Parent used as control [mut/nomut/no]:'):
 			sp = line.split()
 			if str(sp[-1]) == 'mut': parental_used_as_control = 'mutant'
 			elif str(sp[-1]) == 'nomut': parental_used_as_control = 'wild type'
@@ -130,8 +130,8 @@ with open(input_log, 'r') as f1:
 
 if mut_type == 'snp':
 	#SNP mappint control samples
-	if snp_analysis_type == 'parental' and parental_used_as_control == 'mutant' : control = ' the parental of the mutant strain.'
-	if snp_analysis_type == 'parental' and parental_used_as_control == 'wild type' : control = ' the wild type parental of the mapping population.'
+	if snp_analysis_type == 'parental' and parental_used_as_control == 'mutant' : control = ' the parent of the mutant strain.'
+	if snp_analysis_type == 'parental' and parental_used_as_control == 'wild type' : control = ' the wild type parent of the mapping population.'
 	if snp_analysis_type == 'parental' and parental_used_as_control == 'none' : control = ' not provided.'
 	if snp_analysis_type == 'wild type F2' : control = ' the wild type F2 of the mapping population.'
 
